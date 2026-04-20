@@ -405,6 +405,7 @@
     <div class="nav-item" onclick="showPage('rules')"><span class="nav-icon">◈</span> SAVE-RULES</div>
     <div class="nav-item" onclick="showPage('tracker')"><span class="nav-icon">◈</span> SAVE-TRACKER</div>
     <div class="nav-item" onclick="showPage('conf')"><span class="nav-icon">◈</span> Classified</div>
+    <div class="nav-item admin-only" id="nav-panel" onclick="showPage('panel')" style="display:none;border-left-color:var(--gold)"><span class="nav-icon">⬡</span> Supervisor Panel</div>
   </nav>
   <div class="status-bar">
     <span class="status-dot"></span>SYSTEM ONLINE<br>
@@ -900,6 +901,61 @@
       <div class="conf-sub">SAVE SOP · Confidential — Wild Journey Studio<br><br>This section is restricted.<br>Access is granted by SAVE Command only.</div>
     </div>
   </div>
+  <!-- SUPERVISOR PANEL -->
+  <div class="page" id="page-panel">
+    <div class="page-title">Supervisor Panel</div>
+    <div class="page-subtitle" id="panel-subtitle">SAVE COMMAND · RESTRICTED ACCESS</div>
+
+    <!-- Password Reset (all admins) -->
+    <div class="section-block" style="margin-bottom:20px">
+      <div class="section-block-header"><h2>Account Settings</h2><span class="section-tag">Your Account</span></div>
+      <div class="section-block-body">
+        <p style="color:var(--text-dim);font-size:13px;margin-bottom:16px;line-height:1.7">Send a password reset link to your own email address.</p>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span id="panel-email-display" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim)"></span>
+          <button class="admin-btn" onclick="sendOwnPasswordReset()">⬡ SEND RESET LINK</button>
+          <span id="reset-own-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);display:none"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invite + Manage Admins (owner only) -->
+    <div class="section-block" id="owner-section" style="display:none">
+      <div class="section-block-header"><h2>Admin Management</h2><span class="section-tag">Owner Only</span></div>
+      <div class="section-block-body">
+
+        <!-- Invite -->
+        <div style="margin-bottom:28px">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Invite New Supervisor</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <input type="email" id="panel-invite-email" placeholder="email@example.com"
+              style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px 12px;
+                     color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;
+                     outline:none;width:280px;-webkit-user-select:text;user-select:text">
+            <select id="panel-invite-role"
+              style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px 12px;
+                     color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;outline:none">
+              <option value="supervisor">Supervisor</option>
+              <option value="owner">Owner</option>
+            </select>
+            <button class="admin-btn" onclick="doPanelInvite()">⬡ SEND INVITE</button>
+          </div>
+          <div id="panel-invite-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;margin-top:10px;min-height:16px"></div>
+        </div>
+
+        <!-- Active admins list -->
+        <div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Active Admins</div>
+          <table class="data-table" id="admins-table">
+            <thead><tr><th>Email</th><th>Role</th><th>Added</th><th>Actions</th></tr></thead>
+            <tbody id="admins-tbody"><tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- ══ INVITE ADMIN MODAL ════════════════════════════════════ -->
@@ -1008,11 +1064,13 @@
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
-    const map = { home:0, sop:1, rules:2, tracker:3, conf:4 };
-    document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+    const map = { home:0, sop:1, rules:2, tracker:3, conf:4, panel:5 };
+    const navItems = document.querySelectorAll('.nav-item');
+    if (navItems[map[id]]) navItems[map[id]].classList.add('active');
     document.getElementById('bc').textContent = id.toUpperCase();
     window.scrollTo(0, 0);
     if (id === 'tracker') loadPersonnel();
+    if (id === 'panel')   loadPanel();
   }
 
   function scrollToSection(id) {
@@ -1108,8 +1166,9 @@
       document.getElementById('login-error').textContent = 'Authentication failed: ' + error.message;
       return;
     }
+    const role = await fetchRole(data.user.id);
     closeModal('login-modal');
-    setAdminMode(true, data.user.email);
+    setAdminMode(true, data.user.email, role);
     if (document.getElementById('page-tracker').classList.contains('active')) loadPersonnel();
   }
 
@@ -1119,23 +1178,29 @@
     if (document.getElementById('page-tracker').classList.contains('active')) loadPersonnel();
   }
 
-  function setAdminMode(on, email) {
+  function setAdminMode(on, email, role) {
     document.body.classList.toggle('admin-mode', on);
     const btn   = document.getElementById('admin-toggle-btn');
     const label = document.getElementById('admin-user-label');
     document.getElementById('sup-actions-col').style.display = on ? '' : 'none';
     document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
+    document.getElementById('nav-panel').style.display = on ? 'flex' : 'none';
     if (on) {
       btn.textContent = '⬡ SIGN OUT';
       btn.classList.add('signed-in');
-      label.textContent = email;
+      const roleLabel = role === 'owner' ? '👑 ' : '';
+      label.textContent = roleLabel + email;
       label.style.display = 'inline';
       document.getElementById('invite-admin-btn').style.display = 'inline-block';
+      window._adminRole  = role;
+      window._adminEmail = email;
     } else {
       btn.textContent = '⬡ ADMIN LOGIN';
       btn.classList.remove('signed-in');
       label.style.display = 'none';
       document.getElementById('invite-admin-btn').style.display = 'none';
+      window._adminRole  = null;
+      window._adminEmail = null;
     }
   }
 
@@ -1276,9 +1341,106 @@
   });
 
   // ── Check existing session on load ─────────────────────────
-  sb.auth.getSession().then(({ data: { session } }) => {
-    if (session) setAdminMode(true, session.user.email);
+  sb.auth.getSession().then(async ({ data: { session } }) => {
+    if (session) {
+      const role = await fetchRole(session.user.id);
+      setAdminMode(true, session.user.email, role);
+    }
   });
+
+  // ── Role helper ────────────────────────────────────────────
+  async function fetchRole(userId) {
+    const { data } = await sb.from('admin_roles').select('role').eq('id', userId).single();
+    return data?.role || 'supervisor';
+  }
+
+  // ── Supervisor Panel ───────────────────────────────────────
+  async function loadPanel() {
+    const role  = window._adminRole;
+    const email = window._adminEmail;
+    document.getElementById('panel-email-display').textContent = email || '';
+    document.getElementById('panel-subtitle').textContent =
+      role === 'owner' ? 'SAVE COMMAND · OWNER ACCESS' : 'SAVE COMMAND · SUPERVISOR ACCESS';
+    document.getElementById('reset-own-msg').style.display = 'none';
+
+    // Owner section
+    const ownerSec = document.getElementById('owner-section');
+    if (role === 'owner') {
+      ownerSec.style.display = 'block';
+      loadAdminsList();
+    } else {
+      ownerSec.style.display = 'none';
+    }
+  }
+
+  async function loadAdminsList() {
+    const { data, error } = await sb.from('admin_roles').select('*').order('created_at');
+    const tbody = document.getElementById('admins-tbody');
+    if (error || !data) {
+      tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);padding:16px">Error loading admins.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.map(r => `
+      <tr>
+        <td class="mono">${r.email}</td>
+        <td><span class="rank-tag">${r.role.toUpperCase()}</span></td>
+        <td class="mono">${new Date(r.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+        <td>
+          ${r.email !== window._adminEmail ? `
+            <button class="admin-btn" style="font-size:9px;padding:3px 10px;color:var(--blue-bright);border-color:var(--blue-bright)"
+              onclick="sendPasswordReset('${r.email}')">RESET PW</button>
+            <button class="admin-btn" style="font-size:9px;padding:3px 10px;color:var(--red);border-color:var(--red);margin-left:4px"
+              onclick="removeAdmin('${r.id}','${r.email}')">REMOVE</button>
+          ` : '<span style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text-dim)">YOU</span>'}
+        </td>
+      </tr>`).join('');
+  }
+
+  async function doPanelInvite() {
+    const email = document.getElementById('panel-invite-email').value.trim();
+    const role  = document.getElementById('panel-invite-role').value;
+    const msg   = document.getElementById('panel-invite-msg');
+    msg.style.color = 'var(--red)';
+    msg.textContent = '';
+
+    if (!email || !email.includes('@')) { msg.textContent = 'Enter a valid email.'; return; }
+
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch('https://xnqjdgixcocekzehsote.supabase.co/functions/v1/invite-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ email, role })
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) { msg.textContent = result.error || 'Invite failed.'; return; }
+
+    document.getElementById('panel-invite-email').value = '';
+    msg.style.color = 'var(--green)';
+    msg.textContent = `✓ Invite sent to ${email} as ${role}`;
+    loadAdminsList();
+  }
+
+  async function sendOwnPasswordReset() {
+    const email = window._adminEmail;
+    const { error } = await sb.auth.resetPasswordForEmail(email);
+    const el = document.getElementById('reset-own-msg');
+    if (error) { el.style.color = 'var(--red)'; el.textContent = 'Failed: ' + error.message; }
+    else        { el.style.color = 'var(--green)'; el.textContent = '✓ Reset link sent to ' + email; }
+    el.style.display = 'inline';
+  }
+
+  async function sendPasswordReset(email) {
+    const { error } = await sb.auth.resetPasswordForEmail(email);
+    if (error) { alert('Failed: ' + error.message); return; }
+    alert(`✓ Password reset link sent to ${email}`);
+  }
+
+  async function removeAdmin(id, email) {
+    if (!confirm(`Remove ${email} from admins? They will lose all access.`)) return;
+    const { error } = await sb.from('admin_roles').delete().eq('id', id);
+    if (error) { alert('Failed: ' + error.message); return; }
+    loadAdminsList();
+  }
 
   // ── Security: block save/print/source/devtools ─────────────
   document.addEventListener('contextmenu', e => { e.preventDefault(); return false; });
