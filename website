@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S.A.V.E. — Statewide Anti-Violence Enforcement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0c10;
+    --surface:   #111318;
+    --surface2:  #181b22;
+    --border:    #252932;
+    --gold:      #c9a84c;
+    --gold-dim:  #8a6f2e;
+    --blue:      #2a6496;
+    --blue-bright: #3a8fd1;
+    --red:       #c0392b;
+    --amber:     #e67e22;
+    --green:     #27ae60;
+    --purple:    #8e44ad;
+    --text:      #d4d8e0;
+    --text-dim:  #7a8394;
+    --text-bright: #f0f2f5;
+    --nav-w:     260px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Security: disable text selection on content areas ── */
+  .page, nav, .sidebar-header, .top-bar {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 14px;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* SIDEBAR */
+  #sidebar {
+    width: var(--nav-w);
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  .sidebar-header {
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .badge { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+
+  .badge-icon {
+    width: 44px; height: 44px;
+    background: var(--gold);
+    clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+    flex-shrink: 0;
+  }
+
+  .badge-text h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2px; line-height: 1;
+  }
+
+  .badge-text p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; color: var(--text-dim);
+    letter-spacing: 1px; margin-top: 3px; text-transform: uppercase;
+  }
+
+  .org-label { font-size: 10px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.6; }
+  .org-label span { color: var(--text); display: block; font-size: 11px; }
+
+  nav { padding: 16px 0; flex: 1; }
+
+  .nav-section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: 2px; color: var(--text-dim);
+    padding: 8px 20px 4px; text-transform: uppercase;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; cursor: pointer;
+    transition: background .15s, color .15s;
+    border-left: 3px solid transparent;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px; font-weight: 600; letter-spacing: 1px;
+    color: var(--text-dim); user-select: none;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { border-left-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.07); }
+  .nav-icon { font-size: 13px; width: 18px; text-align: center; opacity: .7; }
+
+  .status-bar {
+    padding: 12px 20px; border-top: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim);
+  }
+
+  .status-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green); margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+
+  /* MAIN */
+  #main { margin-left: var(--nav-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+  .top-bar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 32px; height: 50px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+
+  .breadcrumb { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+  .breadcrumb span { color: var(--gold); }
+  .top-bar-right { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); }
+
+  .page { display: none; padding: 40px; max-width: 1100px; width: 100%; margin: 0 auto; animation: fadeIn .25s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  .page-title {
+    font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700;
+    color: var(--text-bright); letter-spacing: 3px; text-transform: uppercase;
+    border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 6px;
+  }
+
+  .page-subtitle { font-size: 12px; color: var(--text-dim); letter-spacing: 1.5px; margin-bottom: 32px; font-family: 'Share Tech Mono', monospace; }
+
+  .section-block { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+
+  .section-block-header {
+    background: var(--surface2); padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .section-block-header h2 {
+    font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700;
+    color: var(--gold); letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px;
+    background: rgba(201,168,76,.15); color: var(--gold);
+    padding: 2px 8px; border-radius: 2px; letter-spacing: 1px;
+  }
+
+  .section-block-body { padding: 20px 24px; }
+
+  .rule-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); line-height: 1.7; }
+  .rule-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .rule-label { font-family: 'Rajdhani', sans-serif; font-weight: 700; color: var(--text-bright); font-size: 15px; margin-bottom: 4px; letter-spacing: .5px; }
+  .rule-text { color: var(--text); font-size: 13.5px; line-height: 1.75; }
+
+  .rule-note {
+    background: rgba(201,168,76,.06); border-left: 3px solid var(--gold);
+    padding: 10px 14px; margin-top: 10px; font-size: 13px; color: var(--text-dim); font-style: italic;
+  }
+
+  .bullet-list { list-style: none; margin-top: 6px; }
+  .bullet-list li { padding: 3px 0 3px 16px; position: relative; font-size: 13.5px; color: var(--text); line-height: 1.6; }
+  .bullet-list li::before { content: '▸'; position: absolute; left: 0; color: var(--gold); font-size: 11px; top: 5px; }
+
+  /* TABLES */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th {
+    background: var(--surface2); color: var(--gold);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    letter-spacing: 1.5px; font-size: 12px; text-transform: uppercase;
+    padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--gold-dim); white-space: nowrap;
+  }
+  .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,.02); }
+  .mono { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-dim); }
+
+  /* OFFENSE CARDS */
+  .offense-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .offense-card { border-radius: 3px; padding: 12px 14px; border-left: 4px solid; background: var(--surface2); }
+  .offense-card.minor   { border-color: var(--blue-bright); }
+  .offense-card.general { border-color: var(--amber); }
+  .offense-card.serious { border-color: var(--red); }
+  .offense-card.severe  { border-color: #8e44ad; }
+  .offense-card.special { border-color: var(--text-dim); }
+
+  .offense-id { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); margin-bottom: 4px; }
+  .offense-name { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; color: var(--text-bright); margin-bottom: 5px; }
+  .offense-desc { font-size: 12.5px; color: var(--text); line-height: 1.55; }
+
+  .cat-badge { display: inline-block; font-family: 'Share Tech Mono', monospace; font-size: 9px; padding: 2px 7px; border-radius: 2px; margin-bottom: 6px; letter-spacing: .5px; }
+  .cat-badge.minor   { background: rgba(58,143,209,.15); color: var(--blue-bright); }
+  .cat-badge.general { background: rgba(230,126,34,.15); color: var(--amber); }
+  .cat-badge.serious { background: rgba(192,57,43,.15); color: #e74c3c; }
+  .cat-badge.severe  { background: rgba(142,68,173,.15); color: #a569bd; }
+  .cat-badge.special { background: rgba(122,131,148,.15); color: var(--text-dim); }
+
+  /* HOME */
+  .hero {
+    text-align: center; padding: 60px 20px 50px;
+    border-bottom: 1px solid var(--border); margin-bottom: 40px; position: relative;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .hero-star {
+    width: 90px; height: 90px; background: var(--gold);
+    clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+    margin: 0 auto 24px; filter: drop-shadow(0 0 20px rgba(201,168,76,.4));
+  }
+  .hero h1 { font-family: 'Rajdhani', sans-serif; font-size: 52px; font-weight: 700; color: var(--gold); letter-spacing: 6px; line-height: 1; margin-bottom: 8px; }
+  .hero h2 { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 400; color: var(--text-dim); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; }
+  .hero-divider { width: 200px; height: 1px; background: var(--gold-dim); margin: 20px auto; }
+  .hero-meta { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 2px; line-height: 2; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--gold); padding: 20px; text-align: center; border-radius: 3px; }
+  .stat-card .num { font-family: 'Rajdhani', sans-serif; font-size: 36px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .stat-card .label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .info-card { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; border-radius: 3px; }
+  .info-card h3 { font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .info-card p { font-size: 13.5px; color: var(--text); line-height: 1.75; }
+
+  /* TRACKER */
+  .status-badge { display: inline-flex; align-items: center; gap: 6px; font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 5px 12px; border-radius: 2px; letter-spacing: 1px; }
+  .status-active   { background: rgba(39,174,96,.15); color: var(--green); border: 1px solid rgba(39,174,96,.3); }
+  .status-inactive { background: rgba(122,131,148,.1); color: var(--text-dim); border: 1px solid var(--border); }
+  .callsign { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 16px; color: var(--gold); letter-spacing: 1px; }
+  .rank-tag { font-family: 'Share Tech Mono', monospace; font-size: 10px; background: rgba(201,168,76,.1); color: var(--gold); padding: 2px 8px; border-radius: 2px; display: inline-block; }
+
+  /* RADIO */
+  .code-badge { font-family: 'Share Tech Mono', monospace; font-size: 12px; background: rgba(42,100,150,.2); color: var(--blue-bright); padding: 3px 10px; border-radius: 2px; display: inline-block; font-weight: 600; }
+  .example-box { background: var(--bg); border: 1px solid var(--border); padding: 8px 12px; border-radius: 3px; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--gold); margin-top: 4px; font-style: italic; }
+
+  /* TOC */
+  .toc { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 30px; }
+  .toc-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; transition: border-color .15s; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: .5px; }
+  .toc-item:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .toc-num { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); min-width: 30px; }
+
+  .anchor { scroll-margin-top: 20px; }
+
+  /* NATURAL RIGHTS */
+  .rights-card { background: var(--surface2); border: 1px solid var(--border); border-left: 4px solid var(--blue-bright); padding: 16px 18px; border-radius: 3px; margin-bottom: 10px; }
+  .rights-card h3 { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; color: var(--blue-bright); margin-bottom: 6px; letter-spacing: .5px; }
+  .rights-card p { font-size: 13px; color: var(--text); line-height: 1.65; }
+
+  /* CLASSIFIED */
+  .conf-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; }
+  .conf-icon { font-size: 64px; margin-bottom: 24px; opacity: .3; }
+  .conf-title { font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px; }
+  .conf-sub { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 2px; line-height: 2; }
+
+  /* FILTER */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-btn { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; padding: 6px 16px; border-radius: 3px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim); cursor: pointer; letter-spacing: 1px; transition: all .15s; }
+  .filter-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+  .filter-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  .filter-btn.f-minor.active   { background: var(--blue-bright); border-color: var(--blue-bright); color:#fff; }
+  .filter-btn.f-general.active { background: var(--amber); border-color: var(--amber); color:#fff; }
+  .filter-btn.f-serious.active { background: var(--red); border-color: var(--red); color:#fff; }
+  .filter-btn.f-severe.active  { background: var(--purple); border-color: var(--purple); color:#fff; }
+  .filter-btn.f-special.active { background: var(--text-dim); border-color: var(--text-dim); color:#fff; }
+
+  .hidden { display: none !important; }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── ADMIN CONTROLS ── */
+  .admin-btn {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1px;
+    padding: 5px 14px; border-radius: 2px; cursor: pointer; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text-dim); transition: all .15s;
+  }
+  .admin-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .admin-btn.signed-in { border-color: var(--green); color: var(--green); }
+  .admin-btn.signed-in:hover { background: rgba(39,174,96,.1); }
+
+  .edit-btn, .delete-btn, .add-row-btn {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: .5px;
+    padding: 3px 10px; border-radius: 2px; cursor: pointer; border: 1px solid;
+    transition: all .15s; display: none;
+  }
+  .edit-btn   { border-color: var(--blue-bright); color: var(--blue-bright); background: rgba(58,143,209,.08); }
+  .edit-btn:hover { background: rgba(58,143,209,.2); }
+  .delete-btn { border-color: var(--red); color: var(--red); background: rgba(192,57,43,.08); margin-left: 4px; }
+  .delete-btn:hover { background: rgba(192,57,43,.2); }
+  .add-row-btn {
+    border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.08);
+    margin: 14px 0 0 24px; padding: 6px 18px; font-size: 11px;
+  }
+  .add-row-btn:hover { background: rgba(201,168,76,.18); }
+  body.admin-mode .edit-btn,
+  body.admin-mode .delete-btn,
+  body.admin-mode .add-row-btn { display: inline-block; }
+
+  /* ── OVERLAY MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.7); backdrop-filter: blur(3px);
+    z-index: 1000; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-top: 2px solid var(--gold); border-radius: 4px;
+    padding: 32px 36px; width: 100%; max-width: 440px;
+    font-family: 'Rajdhani', sans-serif;
+    animation: fadeIn .2s ease;
+  }
+  .modal h2 {
+    font-size: 20px; font-weight: 700; color: var(--gold);
+    letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .modal .modal-sub {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--text-dim); letter-spacing: 1px; margin-bottom: 24px;
+  }
+  .modal label {
+    display: block; font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+    color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .modal input, .modal select {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 3px; padding: 9px 12px; color: var(--text);
+    font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    margin-bottom: 16px; outline: none; transition: border-color .15s;
+    -webkit-user-select: text; user-select: text;
+  }
+  .modal input:focus, .modal select:focus { border-color: var(--gold); }
+  .modal select option { background: var(--surface); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 8px; justify-content: flex-end; }
+  .modal-actions button {
+    font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
+    letter-spacing: 1.5px; padding: 8px 24px; border-radius: 3px;
+    cursor: pointer; border: 1px solid; transition: all .15s;
+  }
+  .btn-primary { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+  .btn-primary:hover { background: #e0b84e; }
+  .btn-cancel  { background: transparent; border-color: var(--border); color: var(--text-dim); }
+  .btn-cancel:hover { border-color: var(--text-dim); color: var(--text); }
+  .modal-error {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--red);
+    margin-bottom: 14px; min-height: 16px; letter-spacing: .5px;
+  }
+
+  /* wider modal for personnel form */
+  .modal.wide { max-width: 620px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="badge">
+      <div class="badge-icon"></div>
+      <div class="badge-text">
+        <h1>S.A.V.E.</h1>
+        <p>Illinois State Police</p>
+      </div>
+    </div>
+    <div class="org-label">
+      <span>Wild Journey Studio</span>
+      Statewide Anti-Violence<br>Enforcement Division
+    </div>
+  </div>
+  <nav>
+    <div class="nav-section-label">Navigation</div>
+    <div class="nav-item active" onclick="showPage('home')"><span class="nav-icon">⬡</span> Home</div>
+    <div class="nav-item" onclick="showPage('sop')"><span class="nav-icon">◈</span> SAVE-SOP</div>
+    <div class="nav-item" onclick="showPage('rules')"><span class="nav-icon">◈</span> SAVE-RULES</div>
+    <div class="nav-item" onclick="showPage('tracker')"><span class="nav-icon">◈</span> SAVE-TRACKER</div>
+    <div class="nav-item" onclick="showPage('conf')"><span class="nav-icon">◈</span> Classified</div>
+  </nav>
+  <div class="status-bar">
+    <span class="status-dot"></span>SYSTEM ONLINE<br>
+    <span style="opacity:.5">Wild Journey Studio · SAVE</span>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="top-bar">
+    <div class="breadcrumb">ISP / <span id="bc">HOME</span></div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span id="admin-user-label" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);display:none"></span>
+      <button class="admin-btn" id="admin-toggle-btn" onclick="openLoginModal()">⬡ ADMIN LOGIN</button>
+      <div class="top-bar-right" id="clock"></div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-star"></div>
+      <h1>S.A.V.E.</h1>
+      <h2>Statewide Anti-Violence Enforcement</h2>
+      <div class="hero-divider"></div>
+      <div class="hero-meta">
+        Illinois State Police &nbsp;·&nbsp; Wild Journey Studio<br>
+        Official Chicago Roleplay &nbsp;·&nbsp; Roblox Division
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num">11</div><div class="label">SOP Sections</div></div>
+      <div class="stat-card"><div class="num">28</div><div class="label">Defined Offenses</div></div>
+      <div class="stat-card"><div class="num">5</div><div class="label">Active Personnel</div></div>
+      <div class="stat-card"><div class="num">4</div><div class="label">Natural Rights</div></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Mission Statement</h3>
+        <p>The Statewide Anti-Violence Enforcement Unit exists to identify, deter, and suppress violent criminal activity throughout the State of Illinois — with particular emphasis on firearm-related offenses, repeat violent offenders, and high-risk crime corridors.</p>
+      </div>
+      <div class="info-card">
+        <h3>Core Values</h3>
+        <ul class="bullet-list">
+          <li>Professionalism in all conduct, on and off duty</li>
+          <li>Accountability to the public and command</li>
+          <li>Strict adherence to law and policy</li>
+          <li>Intelligence-driven, strategic enforcement</li>
+          <li>Respect for individual rights and dignity</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Operational Authority</h3>
+        <p>SAVE derives authority from the Illinois Compiled Statutes, Illinois State Police General Orders, Patrol and Criminal Investigation Directives, and constitutional protections under both the United States and Illinois Constitutions.</p>
+      </div>
+      <div class="info-card">
+        <h3>Quick Navigation</h3>
+        <ul class="bullet-list">
+          <li onclick="showPage('sop')" style="cursor:pointer">Standard Operating Procedures — 11 Sections</li>
+          <li onclick="showPage('rules')" style="cursor:pointer">Rules, Offenses &amp; Natural Rights</li>
+          <li onclick="showPage('tracker')" style="cursor:pointer">Personnel Roster &amp; Tracker</li>
+          <li onclick="showPage('conf')" style="cursor:pointer">Classified / Restricted Access</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOP -->
+  <div class="page" id="page-sop">
+    <div class="page-title">Standard Operating Procedure</div>
+    <div class="page-subtitle">SAVE-SOP · Authored by @aurxora · Subject to revision at any time</div>
+
+    <div class="toc">
+      <div class="toc-item" onclick="scrollTo('s1')"><span class="toc-num">§ 1</span> Purpose &amp; Authority</div>
+      <div class="toc-item" onclick="scrollTo('s2')"><span class="toc-num">§ 2</span> Mission &amp; Organization</div>
+      <div class="toc-item" onclick="scrollTo('s3')"><span class="toc-num">§ 3</span> Deployment &amp; Operations</div>
+      <div class="toc-item" onclick="scrollTo('s4')"><span class="toc-num">§ 4</span> Enforcement Standards</div>
+      <div class="toc-item" onclick="scrollTo('s5')"><span class="toc-num">§ 5</span> Use of Force</div>
+      <div class="toc-item" onclick="scrollTo('s6')"><span class="toc-num">§ 6</span> Arrest &amp; Processing</div>
+      <div class="toc-item" onclick="scrollTo('s7')"><span class="toc-num">§ 7</span> Interagency Coordination</div>
+      <div class="toc-item" onclick="scrollTo('s8')"><span class="toc-num">§ 8</span> Professional Conduct</div>
+      <div class="toc-item" onclick="scrollTo('s9')"><span class="toc-num">§ 9</span> Disciplinary Code</div>
+      <div class="toc-item" onclick="scrollTo('s10')"><span class="toc-num">§ 10</span> Operational Security</div>
+      <div class="toc-item" onclick="scrollTo('s11')"><span class="toc-num">§ 11</span> Radio Usage</div>
+    </div>
+
+    <div class="section-block anchor" id="s1">
+      <div class="section-block-header"><h2>Section 1 — Purpose and Authority</h2><span class="section-tag">§ 1.01 – 1.02</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">1.01 — Purpose</div>
+          <div class="rule-text">The Statewide Anti-Violence Enforcement (SAVE) Unit exists to identify, deter, and suppress violent criminal activity throughout the State of Illinois, with particular emphasis on firearm-related offenses, repeat violent offenders, and high-risk crime corridors.<br><br>All actions undertaken by SAVE personnel shall reflect professionalism, accountability, and strict adherence to the law. SAVE operates under the authority of the Illinois State Police through proactive, intelligence-driven enforcement strategies.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">1.02 — Authority</div>
+          <div class="rule-text">SAVE personnel derive authority from the Illinois Compiled Statutes, Illinois State Police General Orders, Patrol and Criminal Investigation Directives, and constitutional protections under both the United States and Illinois Constitutions.</div>
+          <div class="rule-note">No member assigned to SAVE shall exceed the lawful authority granted to sworn members of the Illinois State Police.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s2">
+      <div class="section-block-header"><h2>Section 2 — Mission and Organization</h2><span class="section-tag">§ 2.01 – 2.03</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">2.01 — Mission Objectives</div>
+          <div class="rule-text">The mission of SAVE is to reduce violent crime through targeted enforcement operations based on intelligence and crime analysis. The unit is responsible for:</div>
+          <ul class="bullet-list">
+            <li>Interdiction of illegal firearms across all operational areas</li>
+            <li>Apprehension of violent and repeat offenders</li>
+            <li>Collaboration with local, county, and federal agencies to suppress criminal activity</li>
+            <li>Maintaining a visible, professional deterrent presence in high-risk areas</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">2.02 — Organizational Structure</div>
+          <div class="rule-text">SAVE operates within the established command framework of the Illinois State Police. Personnel are selected based on performance, experience, and demonstrated professionalism. Assignments may include uniformed or plainclothes operations depending on operational requirements.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">2.03 — Command Oversight</div>
+          <div class="rule-text">Operational oversight is assigned to designated Patrol or Investigative Command staff. Daily supervision is maintained by a SAVE Supervisor holding the rank of Sergeant or above. Command staff retain full discretion over deployment decisions, assignment status, and operational priorities.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s3">
+      <div class="section-block-header"><h2>Section 3 — Deployment and Operations</h2><span class="section-tag">§ 3.01 – 3.03</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">3.01 — Intelligence-Driven Deployment</div>
+          <div class="rule-text">SAVE deployments shall be based on credible intelligence, crime trend analysis, repeat offender tracking, and interagency information sharing. Deployment decisions must be strategic and documented. Arbitrary or unsupported deployments are not authorized.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">3.02 — Operational Briefings</div>
+          <div class="rule-text">Prior to every enforcement operation, supervisory personnel shall conduct a structured briefing covering:</div>
+          <ul class="bullet-list">
+            <li>Target locations and threat assessments</li>
+            <li>Officer safety considerations</li>
+            <li>Body-worn camera compliance requirements</li>
+            <li>Arrest procedures and use-of-force reminders</li>
+            <li>Inter-unit coordination and communication assignments</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">3.03 — Enforcement Operations</div>
+          <div class="rule-text">Authorized operations include saturation patrols, directed patrols in designated areas, fugitive apprehension assistance, firearm interdiction efforts, and coordinated multi-agency enforcement details.</div>
+          <div class="rule-note">All operations must remain lawful, professional, and clearly documented. Operational improvisation that falls outside this SOP requires prior supervisory approval.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s4">
+      <div class="section-block-header"><h2>Section 4 — Enforcement Standards</h2><span class="section-tag">§ 4.01 – 4.04</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">4.01 — Lawful Stops and Detentions</div>
+          <div class="rule-text">All stops, detentions, and searches conducted by SAVE personnel must be supported by reasonable suspicion or probable cause consistent with constitutional standards. Members shall articulate the legal basis for all enforcement actions within official reports. Stops lacking documented justification are not permitted.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">4.02 — Firearm Enforcement Procedures</div>
+          <div class="rule-text">Firearm enforcement actions must comply with state statute and agency policy. Upon recovery of any firearm:</div>
+          <ul class="bullet-list">
+            <li>Secure the firearm safely and immediately</li>
+            <li>Process as evidence in accordance with chain-of-custody procedures</li>
+            <li>Document the recovery fully — location, circumstances, and involved individuals</li>
+            <li>Submit required reports prior to end of shift</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">4.03 — Documentation Requirements</div>
+          <div class="rule-text">All enforcement activity must be documented accurately and completely prior to the end of shift unless otherwise authorized by a supervisor. Reports must reflect objective facts, lawful justification, and a complete account of the enforcement action taken.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">4.04 — Utilization of SAVE Equipment</div>
+          <div class="rule-text">SAVE Department equipment — including department vehicles, issued uniforms, and any other SAVE-designated resources — are to be used exclusively during active SAVE deployments. Members are expected to treat all issued equipment with care and professionalism.<br><br>Unless explicitly authorized by SAVE Command, members are not permitted to utilize any SAVE equipment outside of an active deployment. Members found in violation will receive a verbal or written warning; continued disregard may result in further disciplinary action as determined by Command Staff.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s5">
+      <div class="section-block-header"><h2>Section 5 — Use of Force</h2><span class="section-tag">§ 5.01 – 5.02</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">5.01 — Policy Compliance</div>
+          <div class="rule-text">SAVE personnel are bound by Illinois State Police Use of Force policy at all times. Force must be:</div>
+          <ul class="bullet-list">
+            <li>Objectively reasonable given the circumstances</li>
+            <li>Proportional to the threat presented</li>
+            <li>Consistent with constitutional standards and agency policy</li>
+          </ul>
+          <div class="rule-note">Any use of force that does not meet these three standards is a policy violation and will be treated as a serious infraction under Section 9 of this SOP.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">5.02 — Reporting and Review</div>
+          <div class="rule-text">Any reportable use of force requires immediate supervisory notification and completion of all required documentation. All incidents shall undergo administrative review to ensure compliance with policy and law. Members involved in a use-of-force incident shall not delay reporting.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s6">
+      <div class="section-block-header"><h2>Section 6 — Arrest and Processing</h2><span class="section-tag">§ 6.01 – 6.02</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">6.01 — Custodial Arrest Procedures</div>
+          <div class="rule-text">Members shall confirm probable cause prior to placing any individual under arrest. Upon arrest, the following procedures apply:</div>
+          <ul class="bullet-list">
+            <li>Conduct a lawful search incident to arrest</li>
+            <li>Ensure safe custody procedures are followed throughout transport</li>
+            <li>Transport individuals in accordance with agency standards</li>
+            <li>Complete all required processing documentation prior to end of shift</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">6.02 — Multi-Agency Arrest Protocol</div>
+          <div class="rule-text">During joint operations, the primary arresting authority must be clearly identified and documented before the operation begins. Coordination with prosecutorial entities shall occur when charges are being considered. Ambiguity in arresting authority is not acceptable.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s7">
+      <div class="section-block-header"><h2>Section 7 — Interagency Coordination</h2><span class="section-tag">§ 7.01 – 7.02</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">7.01 — Notification and Jurisdiction</div>
+          <div class="rule-text">When operationally appropriate, SAVE shall notify the local jurisdiction prior to conducting large-scale enforcement operations within their area. SAVE maintains statewide authority but shall respect jurisdictional relationships and coordinate proactively where possible.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">7.02 — Unified Command Structure</div>
+          <div class="rule-text">All joint operations require a clearly defined command structure established before execution. Responsibilities — including operational command, communications lead, and documentation authority — shall be assigned and confirmed during the pre-operation briefing.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s8">
+      <div class="section-block-header"><h2>Section 8 — Professional Conduct</h2><span class="section-tag">§ 8.01 – 8.02</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">8.01 — Ethical Standards</div>
+          <div class="rule-text">All SAVE personnel are expected to conduct themselves with the highest level of professionalism at all times — on duty, off duty, and in all communications. This includes:</div>
+          <ul class="bullet-list">
+            <li>Treating all individuals with dignity and respect regardless of circumstances</li>
+            <li>Exercising impartial judgment free from personal bias</li>
+            <li>Refusing to participate in or tolerate misconduct by any member</li>
+            <li>Reporting observed violations through the appropriate chain of command</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">8.02 — Integrity and Public Trust</div>
+          <div class="rule-text">The effectiveness of SAVE depends on public confidence in the unit's integrity. Members shall not engage in conduct — on or off duty — that would bring discredit to SAVE or the Illinois State Police. Any member whose conduct compromises public trust is subject to removal from the unit.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s9">
+      <div class="section-block-header"><h2>Section 9 — Disciplinary Code</h2><span class="section-tag">§ 9.01 – 9.06</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">9.01 — General Provisions</div>
+          <div class="rule-text">Violations of this SOP or Illinois State Police directives may result in disciplinary action. Discipline may be progressive where appropriate; however, serious violations may warrant immediate and severe action regardless of prior record.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">9.02 – 9.04 — Infraction Tiers</div>
+          <div class="rule-text" style="margin-bottom:12px">Infractions are classified into three tiers:</div>
+          <table class="data-table">
+            <thead><tr><th>Tier</th><th>Examples</th><th>Sanctions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="cat-badge minor">MINOR</span></td><td>Administrative deficiencies, minor equipment violations, incomplete documentation without malicious intent</td><td>Corrective counseling, written reprimand, performance review</td></tr>
+              <tr><td><span class="cat-badge general">MODERATE</span></td><td>Negligent conduct, failure to activate recording equipment, unprofessional behavior, improper evidence handling</td><td>Formal reprimand, suspension, retraining, removal from SAVE assignment</td></tr>
+              <tr><td><span class="cat-badge serious">SERIOUS</span></td><td>Abuse of authority, unlawful detention, excessive force, falsification of records, criminal conduct</td><td>Immediate removal from SAVE, administrative leave, termination, criminal referral</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">9.05 — Investigative Review Classifications</div>
+          <ul class="bullet-list">
+            <li><strong>Sustained</strong> — the allegation is supported by evidence</li>
+            <li><strong>Not Sustained</strong> — insufficient evidence to confirm or refute the allegation</li>
+            <li><strong>Unfounded</strong> — the alleged conduct did not occur</li>
+            <li><strong>Exonerated</strong> — the conduct occurred but was lawful and within policy</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">9.06 — Removal from SAVE</div>
+          <div class="rule-text">SAVE is a selective assignment, not a guaranteed position. Command staff may remove a member from the unit at any time for performance deficiencies, conduct concerns, operational necessity, or loss of confidence — with or without a formal disciplinary finding.</div>
+          <div class="rule-note">Removal from SAVE does not automatically constitute separation from the agency. However, removal may be accompanied by additional disciplinary action depending on the circumstances.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s10">
+      <div class="section-block-header"><h2>Section 10 — Operational Security and Reporting</h2><span class="section-tag">§ 10.01 – 10.02</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">10.01 — Operational Security</div>
+          <div class="rule-text">Operational details, target locations, and enforcement strategies shall remain confidential prior to and during execution. Members shall not discuss operational specifics outside of authorized channels.</div>
+          <ul class="bullet-list">
+            <li>Media inquiries shall be referred to the Illinois State Police Public Information Office</li>
+            <li>Tactical details shall not be transmitted over unsecured channels</li>
+            <li>Unauthorized disclosure of operational information is a serious infraction under Section 9</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">10.02 — Reporting and Performance Review</div>
+          <div class="rule-text">SAVE operations shall track the following enforcement metrics:</div>
+          <ul class="bullet-list">
+            <li>Firearms recovered</li>
+            <li>Arrests made and charges filed</li>
+            <li>Warrants served</li>
+            <li>Measurable impact on violent crime trends in target areas</li>
+          </ul>
+          <div class="rule-note" style="margin-top:10px">Multi-day operations require formal after-action reporting and supervisory review prior to closure.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block anchor" id="s11">
+      <div class="section-block-header"><h2>Section 11 — Radio Usage</h2><span class="section-tag">§ 11.01 – 11.03</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">11.01 — Voice Communication Requirement (VC)</div>
+          <div class="rule-text">All SAVE personnel are required to maintain active voice communication capability while engaged in any operational deployment. Members shall remain connected to the designated operational channel for the duration of their assignment unless directed otherwise by a supervisor.</div>
+          <div class="rule-note">Text-based communication alone is not authorized during active enforcement operations. Failure to maintain required voice comms may result in administrative review and removal from the detail.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">11.02 — Radio Callout Procedures</div>
+          <div class="rule-text" style="margin-bottom:12px">During all enforcement operations, SAVE personnel shall use the standardized callouts below:</div>
+          <table class="data-table">
+            <thead><tr><th>Code</th><th>Type</th><th>Required Format</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="code-badge">10-11</span></td>
+                <td>Traffic Stop</td>
+                <td>Code + vehicle (model/color) + occupants + location + units needed</td>
+                <td><div class="example-box">10-11, Black TRX, X2 occ., Journey Auto Sale, 32s needed</div></td>
+              </tr>
+              <tr>
+                <td><span class="code-badge">Code 5</span></td>
+                <td>Felony Stop</td>
+                <td>Code + vehicle + occupants + location + units needed (min. 2 units incl. yourself)</td>
+                <td><div class="example-box">Code 5, Black SRT Hellcat, X2 occ., Journey Auto Sale, two 32s needed</div></td>
+              </tr>
+              <tr>
+                <td><span class="code-badge">10-50</span></td>
+                <td>MVA</td>
+                <td>Code + location + vehicles/individuals involved + units needed</td>
+                <td><div class="example-box">10-50, Journey Auto Sale, two vehicles involved, 32s needed</div></td>
+              </tr>
+              <tr>
+                <td><span class="code-badge">10-80</span></td>
+                <td>Pursuit</td>
+                <td>Code + vehicle (model/color) + occupants + current location (update every 10–15 sec.)</td>
+                <td><div class="example-box">10-80, Black Dodge Challenger, X2 occ., heading toward Illegal Dealer</div></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="rule-note" style="margin-top:10px">Location updates during a pursuit are required every 10 to 15 seconds. Any callout not listed above should follow the same structure: code + description + location + units needed.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">11.03 — Professional Radio Conduct</div>
+          <div class="rule-text">The following are prohibited during active operations:</div>
+          <ul class="bullet-list">
+            <li>Non-essential or personal conversation over the operational channel</li>
+            <li>Transmission of sensitive tactical details over unsecured channels (except for officer safety)</li>
+            <li>Unauthorized radio silence during enforcement operations</li>
+            <li>Failure to use required callout formats</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div class="page" id="page-rules">
+    <div class="page-title">Rules &amp; Regulations</div>
+    <div class="page-subtitle">SAVE-RULES · Criminal categories, defined offenses, and natural rights</div>
+
+    <div class="section-block">
+      <div class="section-block-header"><h2>Section 1 — Criminal Categories</h2><span class="section-tag">Offense &amp; Punishment Classification</span></div>
+      <div class="section-block-body">
+        <table class="data-table" style="margin-bottom:20px">
+          <thead><tr><th>Category</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="cat-badge minor">MINOR</span></td><td>Low-level infractions with lighter consequences. Often first-time or situational violations.</td></tr>
+            <tr><td><span class="cat-badge general">GENERAL</span></td><td>Repeated or more impactful violations. Escalation from minor, or standalone mid-tier breaches.</td></tr>
+            <tr><td><span class="cat-badge serious">SERIOUS</span></td><td>Significant violations that directly harm the community, unit integrity, or individual members.</td></tr>
+            <tr><td><span class="cat-badge severe">SEVERE</span></td><td>Critical violations warranting immediate and severe consequences, up to permanent blacklist.</td></tr>
+            <tr><td><span class="cat-badge special">SPECIAL</span></td><td>Punishment is determined individually based on the nature and circumstances of the offense.</td></tr>
+          </tbody>
+        </table>
+        <table class="data-table">
+          <thead><tr><th>Tier</th><th>Punishment</th></tr></thead>
+          <tbody>
+            <tr><td><span class="cat-badge minor">MINOR</span></td><td>Warning, followed by suspension (1–3 days) if repeated.</td></tr>
+            <tr><td><span class="cat-badge general">GENERAL</span></td><td>Suspension (3–7 days), followed by removal of position &amp; rank if repeated.</td></tr>
+            <tr><td><span class="cat-badge serious">SERIOUS</span></td><td>Long-term suspension (7+ days), followed by blacklist from SAVE.</td></tr>
+            <tr><td><span class="cat-badge severe">SEVERE</span></td><td>Immediate blacklist from ISP and SAVE as a whole.</td></tr>
+            <tr><td><span class="cat-badge special">SPECIAL</span></td><td>Punishment determined individually by severity and circumstances.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-block-header"><h2>Section 2 — Criminal Offenses</h2><span class="section-tag">Articles 1.01 – 1.28</span></div>
+      <div class="section-block-body">
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="filterOffenses('all',this)">ALL</button>
+          <button class="filter-btn f-minor" onclick="filterOffenses('minor',this)">MINOR</button>
+          <button class="filter-btn f-general" onclick="filterOffenses('general',this)">GENERAL</button>
+          <button class="filter-btn f-serious" onclick="filterOffenses('serious',this)">SERIOUS</button>
+          <button class="filter-btn f-severe" onclick="filterOffenses('severe',this)">SEVERE</button>
+          <button class="filter-btn f-special" onclick="filterOffenses('special',this)">SPECIAL</button>
+        </div>
+        <div class="offense-grid" id="offense-grid">
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.01</div><div class="offense-name">Abuse of Power / AOT</div><div class="offense-desc">Utilizing tools or authority improperly, in conflict with established regulations.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.02</div><div class="offense-name">Accessory to Crime</div><div class="offense-desc">Knowingly assisting another individual in executing an action that violates the Rules &amp; Regulations.</div></div>
+          <div class="offense-card serious" data-cat="serious"><div class="cat-badge serious">SERIOUS</div><div class="offense-id">Art. 1.03</div><div class="offense-name">Alternate Account Usage</div><div class="offense-desc">Using an alternate account to bypass an active ban, blacklist, or suspension. Exception requires prior approval from WJS Staff and ISP Command.</div></div>
+          <div class="offense-card serious" data-cat="serious"><div class="cat-badge serious">SERIOUS</div><div class="offense-id">Art. 1.04</div><div class="offense-name">Blackmail</div><div class="offense-desc">Issuing threats to obtain something in return, or to conceal activity that violates the Rules &amp; Regulations.</div></div>
+          <div class="offense-card severe" data-cat="severe"><div class="cat-badge severe">SEVERE</div><div class="offense-id">Art. 1.05 / 1.05b</div><div class="offense-name">Classified Info Leak · Doxxing</div><div class="offense-desc">Distribution of classified info including real names, camera leaks, and confidential communications. Sub-article covers doxxing across platforms without authorization.</div></div>
+          <div class="offense-card serious" data-cat="serious"><div class="cat-badge serious">SERIOUS</div><div class="offense-id">Art. 1.06</div><div class="offense-name">Corruption</div><div class="offense-desc">Using your position to unfairly obtain information, rank, money, or other benefits — or advancing personal interests while neglecting duties.</div></div>
+          <div class="offense-card minor" data-cat="minor"><div class="cat-badge minor">MINOR</div><div class="offense-id">Art. 1.07</div><div class="offense-name">Criminal Attempt</div><div class="offense-desc">Attempting to violate any rule or regulation listed within this document, regardless of whether the attempt was successful.</div></div>
+          <div class="offense-card minor" data-cat="minor"><div class="cat-badge minor">MINOR</div><div class="offense-id">Art. 1.08</div><div class="offense-name">Criminal Negligence</div><div class="offense-desc">Acting in a manner that endangers yourself or others without reasonable caution, including exposing personal information that implicates other community members.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.09a</div><div class="offense-name">Avoiding Punishment</div><div class="offense-desc">Evading questioning or discipline from SAVE Staff or WJS Moderation. Includes interference, false information, or deliberately delaying official proceedings.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.09b</div><div class="offense-name">Excessive Punishment</div><div class="offense-desc">High-ranking officials issuing punishment exceeding what is appropriate for the listed criteria, or acting outside the defined punishment framework.</div></div>
+          <div class="offense-card serious" data-cat="serious"><div class="cat-badge serious">SERIOUS</div><div class="offense-id">Art. 1.10</div><div class="offense-name">Fabricating Evidence</div><div class="offense-desc">Presenting false, altered, or otherwise misleading evidence in any official context.</div></div>
+          <div class="offense-card minor" data-cat="minor"><div class="cat-badge minor">MINOR</div><div class="offense-id">Art. 1.11</div><div class="offense-name">Failure to Notify</div><div class="offense-desc">Failing to properly notify a user and their supervisor of a warning or punishment that has been issued.</div></div>
+          <div class="offense-card minor" data-cat="minor"><div class="cat-badge minor">MINOR</div><div class="offense-id">Art. 1.12</div><div class="offense-name">Failure to Report</div><div class="offense-desc">Failure to report a known rule violation within a 12-hour timeframe of becoming aware of it.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.13</div><div class="offense-name">False Representation / Impersonation</div><div class="offense-desc">Attempting to impersonate or represent a member, rank, or unit that you do not have the authority to represent.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.14</div><div class="offense-name">Harassment</div><div class="offense-desc">Harassing, intimidating, or persistently targeting another user — whether in-game or on Discord.</div></div>
+          <div class="offense-card serious" data-cat="serious"><div class="cat-badge serious">SERIOUS</div><div class="offense-id">Art. 1.15</div><div class="offense-name">RDM — Random Deathmatch</div><div class="offense-desc">Engaging in random player kills with no valid roleplay justification. May result in removal for violation of Use of Force guidelines.</div></div>
+          <div class="offense-card serious" data-cat="serious"><div class="cat-badge serious">SERIOUS</div><div class="offense-id">Art. 1.16</div><div class="offense-name">Murder</div><div class="offense-desc">The intentional or knowing act of causing the death of another individual outside of approved roleplay or Use of Force guidelines.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.17</div><div class="offense-name">Trolling / Disruptive Behavior</div><div class="offense-desc">Sustained immaturity, toxicity, or disruptive conduct across any on-duty communication channel, including Roblox and Discord.</div></div>
+          <div class="offense-card minor" data-cat="minor"><div class="cat-badge minor">MINOR</div><div class="offense-id">Art. 1.18</div><div class="offense-name">Threatening to Violate</div><div class="offense-desc">Explicitly threatening to break any rule or regulation outlined in this document.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.19</div><div class="offense-name">Vilipend</div><div class="offense-desc">Slandering, negatively memeing, or publicly disrespecting a user, faction, or unit with deliberate intent to damage their reputation.</div></div>
+          <div class="offense-card severe" data-cat="severe"><div class="cat-badge severe">SEVERE</div><div class="offense-id">Art. 1.20</div><div class="offense-name">Child Endangerment</div><div class="offense-desc">Showing, possessing, distributing, or engaging with any content that falls under the category of child endangerment. Zero tolerance.</div></div>
+          <div class="offense-card severe" data-cat="severe"><div class="cat-badge severe">SEVERE</div><div class="offense-id">Art. 1.21</div><div class="offense-name">Hate Crime</div><div class="offense-desc">Committing or promoting actions motivated by prejudice based on race, religion, sexual orientation, gender identity, or any other protected characteristic.</div></div>
+          <div class="offense-card severe" data-cat="severe"><div class="cat-badge severe">SEVERE</div><div class="offense-id">Art. 1.22</div><div class="offense-name">Treason</div><div class="offense-desc">Any attempt to undermine, overthrow, destabilize, or damage ISP or SAVE as a whole.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.23</div><div class="offense-name">Incompetency</div><div class="offense-desc">Demonstrating a sustained lack of ability necessary to perform a role effectively, and refusing to step down or delegate despite the detrimental impact on a unit.</div></div>
+          <div class="offense-card serious" data-cat="serious"><div class="cat-badge serious">SERIOUS</div><div class="offense-id">Art. 1.24</div><div class="offense-name">Retaliation</div><div class="offense-desc">Taking an unfavorable action against a user for reporting a crime or making a protected communication, including withholding a favorable action as punishment.</div></div>
+          <div class="offense-card general" data-cat="general"><div class="cat-badge general">GENERAL</div><div class="offense-id">Art. 1.25</div><div class="offense-name">Free Ranking / Incentive-Based Poaching</div><div class="offense-desc">Offering a member of another unit a position or reward in exchange for leaving their current unit and joining yours.</div></div>
+          <div class="offense-card serious" data-cat="serious"><div class="cat-badge serious">SERIOUS</div><div class="offense-id">Art. 1.26</div><div class="offense-name">Posting Inappropriate Content</div><div class="offense-desc">Posting or sharing NSFW content, slurs, or racially or sexually motivated material in any community channel.</div></div>
+          <div class="offense-card minor" data-cat="minor"><div class="cat-badge minor">MINOR</div><div class="offense-id">Art. 1.27</div><div class="offense-name">Regulation Abuse</div><div class="offense-desc">Intentionally and repeatedly violating established regulations such as uniform standards and vehicle regulations outlined in the SAVE SOP.</div></div>
+          <div class="offense-card special" data-cat="special"><div class="cat-badge special">SPECIAL</div><div class="offense-id">Art. 1.28</div><div class="offense-name">Miscellaneous Crimes</div><div class="offense-desc">Grants staff authority to act on harmful conduct not explicitly covered elsewhere in this document. Applied at staff discretion.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-block-header"><h2>Section 3 — Natural Rights</h2><span class="section-tag">Guaranteed to all personnel — non-negotiable</span></div>
+      <div class="section-block-body">
+        <p style="color:var(--text-dim);font-size:13px;margin-bottom:16px;line-height:1.7">Natural Rights are guaranteed to every user participating in any unit within SAVE. These rights may not be suspended, denied, or circumvented under any circumstances by any individual or unit — regardless of rank or role.</p>
+        <div class="rights-card"><h3>3.1 — Freedom of Speech and Opinion</h3><p>All users hold the right to free speech and expression of opinion. This right does not extend to speech that incites violence, promotes unlawful action, or targets individuals with the intent to harm.</p></div>
+        <div class="rights-card"><h3>3.2 — Innocent Until Proven Guilty</h3><p>No user may be treated as guilty prior to a finding supported by proper, verified evidence. Accusations alone do not constitute grounds for punishment.</p></div>
+        <div class="rights-card"><h3>3.3 — Bias Prohibition</h3><p>Users may not be excluded, targeted, or treated unfairly based on personal beliefs, religion, race, gender identity, or physical and mental disability. Equal treatment is non-negotiable.</p></div>
+        <div class="rights-card"><h3>3.4 — Freedom of Choice</h3><p>No SAVE personnel may be held against their will for choosing to leave or join the department. However, any member who departs without reasonable cause or notice will not be considered for re-entry into the SAVE Department.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRACKER -->
+  <div class="page" id="page-tracker">
+    <div class="page-title">Personnel Tracker</div>
+    <div class="page-subtitle">SAVE-TRACKER · Illinois State Police | Statewide Anti-Violence Enforcement · <span id="tracker-updated">Loading...</span></div>
+
+    <div class="section-block" style="margin-bottom:24px">
+      <div class="section-block-header"><h2>Supervisory Personnel</h2><span class="section-tag">Command &amp; Supervisory Ranks</span></div>
+      <div class="section-block-body" style="padding:0">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Callsign</th><th>Rank</th><th>Roblox Username</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Join Date</th><th>Status</th><th id="sup-actions-col" style="display:none"></th></tr></thead>
+          <tbody id="supervisory-tbody"><tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
+        </table>
+        <button class="add-row-btn" onclick="openPersonnelModal(null,'supervisory')">+ ADD PERSONNEL</button>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-block-header"><h2>General Personnel</h2><span class="section-tag">Assigned SAVE Personnel</span></div>
+      <div class="section-block-body" style="padding:0">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Callsign</th><th>Rank</th><th>Roblox Username</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Join Date</th><th>Status</th><th id="gen-actions-col" style="display:none"></th></tr></thead>
+          <tbody id="general-tbody"><tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
+        </table>
+        <button class="add-row-btn" onclick="openPersonnelModal(null,'general')">+ ADD PERSONNEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASSIFIED -->
+  <div class="page" id="page-conf">
+    <div class="conf-wrapper">
+      <div class="conf-icon">🔒</div>
+      <div class="conf-title">Classified</div>
+      <div class="conf-sub">SAVE SOP · Confidential — Wild Journey Studio<br><br>This section is restricted.<br>Access is granted by SAVE Command only.</div>
+    </div>
+  </div>
+</main>
+
+<!-- ══ LOGIN MODAL ══════════════════════════════════════════ -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal">
+    <h2>Admin Access</h2>
+    <div class="modal-sub">SAVE COMMAND · AUTHENTICATED PERSONNEL ONLY</div>
+    <div class="modal-error" id="login-error"></div>
+    <label>Email</label>
+    <input type="email" id="login-email" placeholder="admin@save.isp" autocomplete="username">
+    <label>Password</label>
+    <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('login-modal')">CANCEL</button>
+      <button class="btn-primary" onclick="doLogin()">AUTHENTICATE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PERSONNEL MODAL ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="personnel-modal">
+  <div class="modal wide">
+    <h2 id="personnel-modal-title">Add Personnel</h2>
+    <div class="modal-sub">SAVE TRACKER · SUPERVISORY EDIT ACCESS</div>
+    <div class="modal-error" id="personnel-error"></div>
+    <input type="hidden" id="pm-id">
+    <input type="hidden" id="pm-category">
+    <div class="form-grid">
+      <div>
+        <label>Slot #</label>
+        <input type="text" id="pm-slot" placeholder="O">
+      </div>
+      <div>
+        <label>Callsign</label>
+        <input type="text" id="pm-callsign" placeholder="301">
+      </div>
+      <div>
+        <label>Rank</label>
+        <input type="text" id="pm-rank" placeholder="LT.">
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="pm-status">
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Suspended">Suspended</option>
+          <option value="Vacant">Vacant</option>
+        </select>
+      </div>
+      <div>
+        <label>Roblox Username</label>
+        <input type="text" id="pm-roblox-user" placeholder="username">
+      </div>
+      <div>
+        <label>Roblox ID</label>
+        <input type="text" id="pm-roblox-id" placeholder="1234567890">
+      </div>
+      <div>
+        <label>Discord</label>
+        <input type="text" id="pm-discord" placeholder="handle">
+      </div>
+      <div>
+        <label>Discord ID</label>
+        <input type="text" id="pm-discord-id" placeholder="000000000000000000">
+      </div>
+    </div>
+    <label>Join Date</label>
+    <input type="text" id="pm-join-date" placeholder="Mar 30" style="max-width:160px">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('personnel-modal')">CANCEL</button>
+      <button class="btn-primary" onclick="savePersonnel()">SAVE RECORD</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ══════════════════════════════════════════════════════════
+  //  CONFIGURATION — fill in your Supabase project details
+  // ══════════════════════════════════════════════════════════
+  const SUPABASE_URL  = 'https://xnqjdgixcocekzehsote.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucWpkZ2l4Y29jZWt6ZWhzb3RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NTI4OTIsImV4cCI6MjA5MjIyODg5Mn0.U0zMSMRZE91RYnToZgooIel0VHDyLlxKK-Cr-Oh9ves';
+
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  // ── Nav / Clock ────────────────────────────────────────────
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    const map = { home:0, sop:1, rules:2, tracker:3, conf:4 };
+    document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+    document.getElementById('bc').textContent = id.toUpperCase();
+    window.scrollTo(0, 0);
+    if (id === 'tracker') loadPersonnel();
+  }
+
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function filterOffenses(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.offense-card').forEach(card => {
+      card.classList.toggle('hidden', cat !== 'all' && card.dataset.cat !== cat);
+    });
+  }
+
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour12: false }) + ' CST';
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── Auth ───────────────────────────────────────────────────
+  function openLoginModal() {
+    const session = sb.auth.getSession ? null : null; // checked below
+    if (document.body.classList.contains('admin-mode')) {
+      if (confirm('Sign out of admin mode?')) doLogout();
+      return;
+    }
+    document.getElementById('login-error').textContent = '';
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-modal').classList.add('open');
+  }
+
+  async function doLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-password').value;
+    document.getElementById('login-error').textContent = '';
+    if (!email || !pass) {
+      document.getElementById('login-error').textContent = 'Email and password required.';
+      return;
+    }
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) {
+      document.getElementById('login-error').textContent = 'Authentication failed: ' + error.message;
+      return;
+    }
+    closeModal('login-modal');
+    setAdminMode(true, data.user.email);
+    if (document.getElementById('page-tracker').classList.contains('active')) loadPersonnel();
+  }
+
+  async function doLogout() {
+    await sb.auth.signOut();
+    setAdminMode(false, '');
+    if (document.getElementById('page-tracker').classList.contains('active')) loadPersonnel();
+  }
+
+  function setAdminMode(on, email) {
+    document.body.classList.toggle('admin-mode', on);
+    const btn   = document.getElementById('admin-toggle-btn');
+    const label = document.getElementById('admin-user-label');
+    document.getElementById('sup-actions-col').style.display = on ? '' : 'none';
+    document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
+    if (on) {
+      btn.textContent = '⬡ SIGN OUT';
+      btn.classList.add('signed-in');
+      label.textContent = email;
+      label.style.display = 'inline';
+    } else {
+      btn.textContent = '⬡ ADMIN LOGIN';
+      btn.classList.remove('signed-in');
+      label.style.display = 'none';
+    }
+  }
+
+  // ── Tracker ────────────────────────────────────────────────
+  async function loadPersonnel() {
+    const { data, error } = await sb
+      .from('personnel')
+      .select('*')
+      .order('callsign', { ascending: true });
+
+    if (error) {
+      console.error('Supabase error:', error.message);
+      ['supervisory-tbody','general-tbody'].forEach(id => {
+        document.getElementById(id).innerHTML =
+          `<tr><td colspan="10" style="text-align:center;color:var(--red);padding:20px">Error loading data: ${error.message}</td></tr>`;
+      });
+      return;
+    }
+
+    const supervisory = data.filter(r => r.category === 'supervisory');
+    const general     = data.filter(r => r.category === 'general');
+
+    renderTable('supervisory-tbody', supervisory);
+    renderTable('general-tbody', general);
+
+    const now = new Date();
+    document.getElementById('tracker-updated').textContent =
+      'Last Updated: ' + now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function renderTable(tbodyId, rows) {
+    const tbody = document.getElementById(tbodyId);
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text-dim);padding:20px">No records found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(r => {
+      const isVacant = r.status === 'Vacant';
+      const statusBadge = isVacant
+        ? `<span class="status-badge status-inactive">Vacant</span>`
+        : `<span class="status-badge status-${r.status === 'Active' ? 'active' : 'inactive'}">
+             ${r.status === 'Active' ? '<span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span> ' : ''}${r.status}
+           </span>`;
+      const dash = v => v && v !== '—' ? v : '—';
+      return `<tr>
+        <td style="color:var(--text-dim)">${dash(r.slot_number)}</td>
+        <td><span class="callsign">${dash(r.callsign)}</span></td>
+        <td><span class="rank-tag">${dash(r.rank)}</span></td>
+        <td class="mono">${dash(r.roblox_username)}</td>
+        <td class="mono">${dash(r.roblox_id)}</td>
+        <td class="mono">${dash(r.discord)}</td>
+        <td class="mono">${dash(r.discord_id)}</td>
+        <td>${dash(r.join_date)}</td>
+        <td>${statusBadge}</td>
+        <td>
+          <button class="edit-btn"   onclick="openPersonnelModal('${r.id}','${r.category}')">EDIT</button>
+          <button class="delete-btn" onclick="deletePersonnel('${r.id}')">DEL</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Personnel CRUD ─────────────────────────────────────────
+  function openPersonnelModal(id, category) {
+    document.getElementById('personnel-error').textContent = '';
+    document.getElementById('pm-id').value       = id || '';
+    document.getElementById('pm-category').value = category;
+    document.getElementById('personnel-modal-title').textContent = id ? 'Edit Personnel' : 'Add Personnel';
+
+    if (id) {
+      // Fetch existing record and prefill
+      sb.from('personnel').select('*').eq('id', id).single().then(({ data }) => {
+        if (!data) return;
+        document.getElementById('pm-slot').value       = data.slot_number   || '';
+        document.getElementById('pm-callsign').value   = data.callsign      || '';
+        document.getElementById('pm-rank').value       = data.rank          || '';
+        document.getElementById('pm-status').value     = data.status        || 'Active';
+        document.getElementById('pm-roblox-user').value= data.roblox_username|| '';
+        document.getElementById('pm-roblox-id').value  = data.roblox_id     || '';
+        document.getElementById('pm-discord').value    = data.discord       || '';
+        document.getElementById('pm-discord-id').value = data.discord_id    || '';
+        document.getElementById('pm-join-date').value  = data.join_date     || '';
+      });
+    } else {
+      ['pm-slot','pm-callsign','pm-rank','pm-roblox-user','pm-roblox-id',
+       'pm-discord','pm-discord-id','pm-join-date'].forEach(i => document.getElementById(i).value = '');
+      document.getElementById('pm-status').value = 'Active';
+    }
+    document.getElementById('personnel-modal').classList.add('open');
+  }
+
+  async function savePersonnel() {
+    document.getElementById('personnel-error').textContent = '';
+    const id = document.getElementById('pm-id').value;
+    const payload = {
+      slot_number:      document.getElementById('pm-slot').value.trim(),
+      callsign:         document.getElementById('pm-callsign').value.trim(),
+      rank:             document.getElementById('pm-rank').value.trim(),
+      status:           document.getElementById('pm-status').value,
+      roblox_username:  document.getElementById('pm-roblox-user').value.trim(),
+      roblox_id:        document.getElementById('pm-roblox-id').value.trim(),
+      discord:          document.getElementById('pm-discord').value.trim(),
+      discord_id:       document.getElementById('pm-discord-id').value.trim(),
+      join_date:        document.getElementById('pm-join-date').value.trim(),
+      category:         document.getElementById('pm-category').value,
+    };
+
+    let error;
+    if (id) {
+      ({ error } = await sb.from('personnel').update(payload).eq('id', id));
+    } else {
+      ({ error } = await sb.from('personnel').insert(payload));
+    }
+
+    if (error) {
+      document.getElementById('personnel-error').textContent = 'Save failed: ' + error.message;
+      return;
+    }
+    closeModal('personnel-modal');
+    loadPersonnel();
+  }
+
+  async function deletePersonnel(id) {
+    if (!confirm('Delete this personnel record? This cannot be undone.')) return;
+    const { error } = await sb.from('personnel').delete().eq('id', id);
+    if (error) { alert('Delete failed: ' + error.message); return; }
+    loadPersonnel();
+  }
+
+  // ── Modal helpers ──────────────────────────────────────────
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  // ── Check existing session on load ─────────────────────────
+  sb.auth.getSession().then(({ data: { session } }) => {
+    if (session) setAdminMode(true, session.user.email);
+  });
+
+  // ── Security: block save/print/source/devtools ─────────────
+  document.addEventListener('contextmenu', e => { e.preventDefault(); return false; });
+  document.addEventListener('keydown', e => {
+    const ctrl = e.ctrlKey || e.metaKey;
+    if (ctrl && e.key === 's') { e.preventDefault(); return false; }
+    if (ctrl && e.key === 'u') { e.preventDefault(); return false; }
+    if (ctrl && e.key === 'p') { e.preventDefault(); return false; }
+    if (ctrl && e.key === 'a') { e.preventDefault(); return false; }
+    if (ctrl && e.shiftKey && ['i','I','j','J'].includes(e.key)) { e.preventDefault(); return false; }
+    if (e.key === 'F12') { e.preventDefault(); return false; }
+  });
+  document.addEventListener('dragstart', e => { e.preventDefault(); return false; });
+</script>
+</body>
+</html>
