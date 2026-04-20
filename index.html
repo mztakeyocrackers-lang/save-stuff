@@ -417,6 +417,7 @@
     <div class="breadcrumb">ISP / <span id="bc">HOME</span></div>
     <div style="display:flex;align-items:center;gap:16px">
       <span id="admin-user-label" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);display:none"></span>
+      <button class="admin-btn" id="invite-admin-btn" onclick="openInviteModal()" style="display:none">⬡ INVITE ADMIN</button>
       <button class="admin-btn" id="admin-toggle-btn" onclick="openLoginModal()">⬡ ADMIN LOGIN</button>
       <div class="top-bar-right" id="clock"></div>
     </div>
@@ -477,17 +478,17 @@
     <div class="page-subtitle">SAVE-SOP · Authored by @aurxora · Subject to revision at any time</div>
 
     <div class="toc">
-      <div class="toc-item" onclick="scrollTo('s1')"><span class="toc-num">§ 1</span> Purpose &amp; Authority</div>
-      <div class="toc-item" onclick="scrollTo('s2')"><span class="toc-num">§ 2</span> Mission &amp; Organization</div>
-      <div class="toc-item" onclick="scrollTo('s3')"><span class="toc-num">§ 3</span> Deployment &amp; Operations</div>
-      <div class="toc-item" onclick="scrollTo('s4')"><span class="toc-num">§ 4</span> Enforcement Standards</div>
-      <div class="toc-item" onclick="scrollTo('s5')"><span class="toc-num">§ 5</span> Use of Force</div>
-      <div class="toc-item" onclick="scrollTo('s6')"><span class="toc-num">§ 6</span> Arrest &amp; Processing</div>
-      <div class="toc-item" onclick="scrollTo('s7')"><span class="toc-num">§ 7</span> Interagency Coordination</div>
-      <div class="toc-item" onclick="scrollTo('s8')"><span class="toc-num">§ 8</span> Professional Conduct</div>
-      <div class="toc-item" onclick="scrollTo('s9')"><span class="toc-num">§ 9</span> Disciplinary Code</div>
-      <div class="toc-item" onclick="scrollTo('s10')"><span class="toc-num">§ 10</span> Operational Security</div>
-      <div class="toc-item" onclick="scrollTo('s11')"><span class="toc-num">§ 11</span> Radio Usage</div>
+      <div class="toc-item" onclick="scrollToSection('s1')"><span class="toc-num">§ 1</span> Purpose &amp; Authority</div>
+      <div class="toc-item" onclick="scrollToSection('s2')"><span class="toc-num">§ 2</span> Mission &amp; Organization</div>
+      <div class="toc-item" onclick="scrollToSection('s3')"><span class="toc-num">§ 3</span> Deployment &amp; Operations</div>
+      <div class="toc-item" onclick="scrollToSection('s4')"><span class="toc-num">§ 4</span> Enforcement Standards</div>
+      <div class="toc-item" onclick="scrollToSection('s5')"><span class="toc-num">§ 5</span> Use of Force</div>
+      <div class="toc-item" onclick="scrollToSection('s6')"><span class="toc-num">§ 6</span> Arrest &amp; Processing</div>
+      <div class="toc-item" onclick="scrollToSection('s7')"><span class="toc-num">§ 7</span> Interagency Coordination</div>
+      <div class="toc-item" onclick="scrollToSection('s8')"><span class="toc-num">§ 8</span> Professional Conduct</div>
+      <div class="toc-item" onclick="scrollToSection('s9')"><span class="toc-num">§ 9</span> Disciplinary Code</div>
+      <div class="toc-item" onclick="scrollToSection('s10')"><span class="toc-num">§ 10</span> Operational Security</div>
+      <div class="toc-item" onclick="scrollToSection('s11')"><span class="toc-num">§ 11</span> Radio Usage</div>
     </div>
 
     <div class="section-block anchor" id="s1">
@@ -901,6 +902,25 @@
   </div>
 </main>
 
+<!-- ══ INVITE ADMIN MODAL ════════════════════════════════════ -->
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal">
+    <h2>Invite Admin</h2>
+    <div class="modal-sub">SAVE COMMAND · GRANTS FULL EDIT ACCESS</div>
+    <div class="modal-error" id="invite-error"></div>
+    <div id="invite-success" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);margin-bottom:14px;min-height:16px;letter-spacing:.5px;display:none"></div>
+    <label>Email Address</label>
+    <input type="email" id="invite-email" placeholder="user@example.com">
+    <p style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:-10px;margin-bottom:18px;line-height:1.7">
+      Supabase will email them a setup link. They click it, set a password, and can log in here immediately.
+    </p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('invite-modal')">CLOSE</button>
+      <button class="btn-primary" onclick="doInvite()">SEND INVITE</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ LOGIN MODAL ══════════════════════════════════════════ -->
 <div class="modal-overlay" id="login-modal">
   <div class="modal">
@@ -995,9 +1015,9 @@
     if (id === 'tracker') loadPersonnel();
   }
 
-  function scrollTo(id) {
+  function scrollToSection(id) {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function filterOffenses(cat, btn) {
@@ -1009,11 +1029,58 @@
   }
 
   function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour12: false }) + ' CST';
+    const now    = new Date();
+    const time   = now.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const tzAbbr = now.toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop();
+    document.getElementById('clock').textContent = time + ' ' + tzAbbr;
   }
   updateClock();
   setInterval(updateClock, 1000);
+
+  // ── Invite Admin ───────────────────────────────────────────
+  function openInviteModal() {
+    document.getElementById('invite-error').textContent = '';
+    document.getElementById('invite-success').style.display = 'none';
+    document.getElementById('invite-email').value = '';
+    document.getElementById('invite-modal').classList.add('open');
+  }
+
+  async function doInvite() {
+    const email = document.getElementById('invite-email').value.trim();
+    document.getElementById('invite-error').textContent = '';
+    document.getElementById('invite-success').style.display = 'none';
+
+    if (!email || !email.includes('@')) {
+      document.getElementById('invite-error').textContent = 'Enter a valid email address.';
+      return;
+    }
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+      document.getElementById('invite-error').textContent = 'You must be logged in to invite admins.';
+      return;
+    }
+
+    const res = await fetch('https://xnqjdgixcocekzehsote.supabase.co/functions/v1/invite-admin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      document.getElementById('invite-error').textContent = result.error || 'Invite failed.';
+      return;
+    }
+
+    document.getElementById('invite-email').value = '';
+    const successEl = document.getElementById('invite-success');
+    successEl.textContent = `✓ Invite sent to ${email}`;
+    successEl.style.display = 'block';
+  }
 
   // ── Auth ───────────────────────────────────────────────────
   function openLoginModal() {
@@ -1063,10 +1130,12 @@
       btn.classList.add('signed-in');
       label.textContent = email;
       label.style.display = 'inline';
+      document.getElementById('invite-admin-btn').style.display = 'inline-block';
     } else {
       btn.textContent = '⬡ ADMIN LOGIN';
       btn.classList.remove('signed-in');
       label.style.display = 'none';
+      document.getElementById('invite-admin-btn').style.display = 'none';
     }
   }
 
