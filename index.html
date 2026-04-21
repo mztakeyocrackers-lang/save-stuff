@@ -1078,12 +1078,119 @@
     gap: 18px;
     margin-bottom: 24px;
   }
+  .legal-hero-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, .95fr);
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  .legal-hero-panel {
+    position: relative;
+    overflow: hidden;
+    padding: 28px 30px;
+    border-radius: 12px;
+    border: 1px solid rgba(201,168,76,.18);
+    background:
+      radial-gradient(circle at top right, rgba(201,168,76,.16), transparent 38%),
+      linear-gradient(135deg, rgba(11,14,24,.98), rgba(17,22,36,.96));
+    box-shadow: 0 20px 44px rgba(0,0,0,.26);
+  }
+  .legal-hero-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--gold-light), rgba(74,159,212,.65));
+  }
+  .legal-hero-panel h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--text-bright);
+    line-height: 1.08;
+    max-width: 520px;
+    margin-bottom: 12px;
+  }
+  .legal-hero-panel p {
+    color: var(--text-muted);
+    font-size: 13.5px;
+    line-height: 1.9;
+    max-width: 620px;
+  }
+  .legal-hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .legal-hero-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 9px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(201,168,76,.22);
+    background: rgba(201,168,76,.08);
+    color: var(--gold-light);
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .legal-hero-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(201,168,76,.14);
+    border-color: rgba(201,168,76,.4);
+  }
+  .legal-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .legal-overview-card {
+    padding: 18px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(74,159,212,.14);
+    background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.9));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+  }
+  .legal-overview-card strong {
+    display: block;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .legal-overview-card span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.75;
+  }
   .legal-card {
+    position: relative;
+    overflow: hidden;
     background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.94));
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 22px;
     box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .legal-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(201,168,76,.85), rgba(74,159,212,.45), transparent);
+  }
+  .legal-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(201,168,76,.2);
+    box-shadow: 0 18px 38px rgba(0,0,0,.24);
   }
   .legal-card h3 {
     font-family: 'Rajdhani', sans-serif;
@@ -1302,6 +1409,55 @@
     font-size: 11px;
     line-height: 1.8;
   }
+  .reason-preset-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .reason-preset-btn {
+    text-align: left;
+    padding: 11px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(224,80,80,.18);
+    background: linear-gradient(180deg, rgba(24,18,22,.96), rgba(15,12,16,.92));
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+  .reason-preset-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(224,80,80,.3);
+    color: var(--text);
+    background: rgba(224,80,80,.08);
+  }
+  .reason-preset-btn.selected {
+    border-color: rgba(224,80,80,.55);
+    color: #ffe0e0;
+    background: linear-gradient(180deg, rgba(184,50,50,.22), rgba(39,20,20,.95));
+    box-shadow: 0 0 0 1px rgba(224,80,80,.14), 0 14px 24px rgba(0,0,0,.18);
+  }
+  .reason-preset-title {
+    display: block;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .reason-preset-copy {
+    display: block;
+    font-size: 11px;
+    line-height: 1.65;
+  }
+  .reason-helper-copy {
+    margin: -4px 0 12px;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    line-height: 1.7;
+  }
   @media (max-width: 960px) {
     .legal-banner,
     .legal-footer,
@@ -1309,8 +1465,13 @@
       flex-direction: column;
       align-items: flex-start;
     }
+    .legal-hero-shell,
     .legal-grid,
     .legal-citation-list {
+      grid-template-columns: 1fr;
+    }
+    .legal-overview-grid,
+    .reason-preset-grid {
       grid-template-columns: 1fr;
     }
     .legal-ack {
@@ -2155,6 +2316,37 @@
   <div class="page" id="page-legal">
     <div class="page-title">Legal and Compliance</div>
     <div class="page-subtitle">Terms of Use · Privacy Notice · Data Collection Notice · Effective April 20, 2026</div>
+    <div class="legal-hero-shell">
+      <div class="legal-hero-panel">
+        <span class="legal-kicker">Compliance Center</span>
+        <h3>Posted terms, monitoring notices, and data-use rules in one clear place.</h3>
+        <p>This section pulls the legal-facing protections for the portal into a more formal command-style layout, including access conditions, monitoring disclosures, copyright language, and Illinois-focused data-security references tied to the way this site actually operates.</p>
+        <div class="legal-hero-actions">
+          <button type="button" class="legal-hero-btn" onclick="scrollToSection('legal-terms')">Terms of Use</button>
+          <button type="button" class="legal-hero-btn" onclick="scrollToSection('legal-data')">Privacy and Data</button>
+          <button type="button" class="legal-hero-btn" onclick="scrollToSection('legal-monitoring')">Monitoring</button>
+          <button type="button" class="legal-hero-btn" onclick="scrollToSection('legal-copyright')">Copyright</button>
+        </div>
+      </div>
+      <div class="legal-overview-grid">
+        <div class="legal-overview-card">
+          <strong>Usage Terms</strong>
+          <span>Conditions for access, acceptable use, and enforcement rights.</span>
+        </div>
+        <div class="legal-overview-card">
+          <strong>Data Notice</strong>
+          <span>What identifiers and records may be processed through the portal.</span>
+        </div>
+        <div class="legal-overview-card">
+          <strong>Security Logging</strong>
+          <span>Monitoring disclosures tied to login attempts, privileged actions, and telemetry.</span>
+        </div>
+        <div class="legal-overview-card">
+          <strong>Illinois Citations</strong>
+          <span>Referenced statutes and federal copyright provisions linked to official sources.</span>
+        </div>
+      </div>
+    </div>
 
     <div class="section-block">
       <div class="section-block-header"><h2>Protected System Notice</h2><span class="section-tag">Authorized Use Only</span></div>
@@ -2413,6 +2605,33 @@
     <label>Your Username</label>
     <input type="text" id="add-strike-supervisor-username" placeholder="Your username">
     <label>Reason</label>
+    <div class="reason-helper-copy">Select one preset if it fits. Only one reason stays highlighted at a time, and you can still edit the text manually.</div>
+    <div class="reason-preset-grid" id="strike-reason-presets">
+      <button type="button" class="reason-preset-btn" data-reason="Failure to follow supervisor direction during an active SAVE assignment.">
+        <span class="reason-preset-title">Insubordination</span>
+        <span class="reason-preset-copy">Failure to follow supervisor direction during an active SAVE assignment.</span>
+      </button>
+      <button type="button" class="reason-preset-btn" data-reason="Unprofessional conduct that reflected poorly on SAVE operations or command presence.">
+        <span class="reason-preset-title">Unprofessional Conduct</span>
+        <span class="reason-preset-copy">Conduct that reflected poorly on SAVE operations or command presence.</span>
+      </button>
+      <button type="button" class="reason-preset-btn" data-reason="Violation of established SAVE regulations, SOP requirements, or tracker standards.">
+        <span class="reason-preset-title">Regulation Abuse</span>
+        <span class="reason-preset-copy">Violation of established SAVE regulations, SOP requirements, or tracker standards.</span>
+      </button>
+      <button type="button" class="reason-preset-btn" data-reason="Negligent or unsafe conduct that created unnecessary operational risk.">
+        <span class="reason-preset-title">Negligence</span>
+        <span class="reason-preset-copy">Negligent or unsafe conduct that created unnecessary operational risk.</span>
+      </button>
+      <button type="button" class="reason-preset-btn" data-reason="Unauthorized use or misuse of SAVE equipment, vehicle assets, or restricted tools.">
+        <span class="reason-preset-title">Equipment Misuse</span>
+        <span class="reason-preset-copy">Unauthorized use or misuse of SAVE equipment, vehicle assets, or restricted tools.</span>
+      </button>
+      <button type="button" class="reason-preset-btn" data-reason="Required reporting, documentation, or follow-up was not completed as directed.">
+        <span class="reason-preset-title">Reporting Failure</span>
+        <span class="reason-preset-copy">Required reporting, documentation, or follow-up was not completed as directed.</span>
+      </button>
+    </div>
     <textarea id="add-strike-reason" placeholder="Describe the violation or reason for this strike..."
       style="width:100%;background:var(--bg);border:1px solid var(--border-bright);border-radius:3px;
              padding:10px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;
@@ -2455,6 +2674,7 @@
   setLastUpdated();
   syncLegalYear();
   initNavPageBindings();
+  initStrikeReasonPresets();
 
   // Auto-stamp "last updated" whenever an admin saves the page
   function stampLastUpdated(adminEmail) {
@@ -2548,6 +2768,48 @@
       localStorage.setItem(LEGAL_NOTICE_STORAGE_KEY, new Date().toISOString());
     } catch {}
     updateLegalNoticeBanner();
+  }
+
+  function getStrikeReasonPresetButtons() {
+    return Array.from(document.querySelectorAll('#strike-reason-presets .reason-preset-btn'));
+  }
+
+  function syncStrikeReasonPresetFromText() {
+    const field = document.getElementById('add-strike-reason');
+    if (!field) return;
+    const current = field.value.trim();
+    getStrikeReasonPresetButtons().forEach(btn => {
+      const selected = (btn.dataset.reason || '').trim() === current && current.length > 0;
+      btn.classList.toggle('selected', selected);
+      btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+  }
+
+  function selectStrikeReasonPreset(reason) {
+    const field = document.getElementById('add-strike-reason');
+    if (!field) return;
+    field.value = reason || '';
+    syncStrikeReasonPresetFromText();
+    field.focus();
+  }
+
+  function initStrikeReasonPresets() {
+    const field = document.getElementById('add-strike-reason');
+    if (!field) return;
+
+    getStrikeReasonPresetButtons().forEach(btn => {
+      if (btn.dataset.bound === '1') return;
+      btn.dataset.bound = '1';
+      btn.setAttribute('aria-pressed', 'false');
+      btn.addEventListener('click', () => selectStrikeReasonPreset(btn.dataset.reason || ''));
+    });
+
+    if (field.dataset.reasonPresetBound !== '1') {
+      field.dataset.reasonPresetBound = '1';
+      field.addEventListener('input', syncStrikeReasonPresetFromText);
+    }
+
+    syncStrikeReasonPresetFromText();
   }
 
   function filterOffenses(cat, btn) {
@@ -3342,6 +3604,7 @@
     document.getElementById('add-strike-player-username').value = personnel.roblox_username || '';
     document.getElementById('add-strike-supervisor-username').value = guessSupervisorUsername();
     document.getElementById('add-strike-reason').value = '';
+    syncStrikeReasonPresetFromText();
     document.getElementById('add-strike-error').textContent = '';
     closeStrikesPopup();
     document.getElementById('add-strike-modal').classList.add('open');
