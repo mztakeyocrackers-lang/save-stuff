@@ -5,859 +5,832 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>S.A.V.E. — Statewide Anti-Violence Enforcement</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:            #07090d;
-    --surface:       #0d1017;
-    --surface2:      #131720;
-    --surface3:      #1a1f2a;
-    --border:        #1e2330;
-    --border-bright: #2e3548;
-    --gold:          #d4a843;
-    --gold-dim:      #7a5f24;
-    --gold-glow:     rgba(212,168,67,.15);
-    --blue:          #1e5f8a;
+    --bg:            #060810;
+    --surface:       #0b0e18;
+    --surface2:      #0f1320;
+    --surface3:      #141827;
+    --surface4:      #1a1f2e;
+    --border:        #1c2236;
+    --border-mid:    #242a3f;
+    --border-bright: #2e3854;
+    --gold:          #c9a84c;
+    --gold-light:    #e0c06e;
+    --gold-dim:      #6b5220;
+    --gold-glow:     rgba(201,168,76,.12);
+    --gold-glow2:    rgba(201,168,76,.06);
+    --blue:          #1a5278;
     --blue-bright:   #4a9fd4;
-    --red:           #c0392b;
-    --amber:         #e67e22;
-    --green:         #2ecc71;
-    --purple:        #8e44ad;
-    --text:          #c8cdd8;
-    --text-dim:      #50596b;
-    --text-bright:   #eef0f5;
-    --nav-w:         268px;
+    --red:           #b83232;
+    --red-bright:    #e05050;
+    --amber:         #d4731e;
+    --amber-bright:  #f0924e;
+    --green:         #2aba65;
+    --green-bright:  #4ed88a;
+    --purple:        #7c3db5;
+    --purple-bright: #a064d8;
+    --text:          #b8bfcf;
+    --text-dim:      #485062;
+    --text-muted:    #6a7490;
+    --text-bright:   #e8ecf5;
+    --nav-w:         260px;
+    --radius:        6px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── Security: disable text selection ── */
-  .page, nav, .sidebar-header, .top-bar {
-    -webkit-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-  }
-
-  /* ── Background grid texture ── */
   body {
     background: var(--bg);
     background-image:
-      linear-gradient(rgba(212,168,67,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(212,168,67,.03) 1px, transparent 1px);
-    background-size: 40px 40px;
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,.04) 0%, transparent 60%),
+      linear-gradient(rgba(201,168,76,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,.018) 1px, transparent 1px);
+    background-size: 100% 100%, 48px 48px, 48px 48px;
     color: var(--text);
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
   }
 
-  /* ── Scanline overlay ── */
   body::after {
     content: '';
     position: fixed; inset: 0;
     background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,.08) 2px,
-      rgba(0,0,0,.08) 4px
+      0deg, transparent, transparent 3px,
+      rgba(0,0,0,.06) 3px, rgba(0,0,0,.06) 4px
     );
-    pointer-events: none;
-    z-index: 9999;
+    pointer-events: none; z-index: 9999;
   }
 
   /* SIDEBAR */
   #sidebar {
     width: var(--nav-w);
     min-height: 100vh;
-    background: linear-gradient(180deg, #0b0e15 0%, #090c12 100%);
+    background: linear-gradient(180deg, #090c18 0%, #070a14 100%);
     border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0;
-    z-index: 100;
-    box-shadow: 4px 0 24px rgba(0,0,0,.4);
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0;
+    z-index: 200;
+    box-shadow: 4px 0 32px rgba(0,0,0,.5);
   }
 
-  /* gold line at top of sidebar */
   #sidebar::before {
     content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-light) 60%, transparent 100%);
+    box-shadow: 0 0 20px rgba(201,168,76,.4);
   }
 
   .sidebar-header {
-    padding: 28px 20px 22px;
+    padding: 24px 20px 20px;
     border-bottom: 1px solid var(--border);
-    position: relative;
+    user-select: none;
   }
 
-  .badge { display: flex; align-items: center; gap: 13px; margin-bottom: 14px; }
+  .badge { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
 
   .badge-icon {
-    width: 46px; height: 46px;
-    background: var(--gold);
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 60%, #a07830 100%);
     clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
     flex-shrink: 0;
-    filter: drop-shadow(0 0 10px rgba(212,168,67,.5));
-    animation: starPulse 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 14px rgba(201,168,76,.55));
+    animation: starPulse 5s ease-in-out infinite;
   }
 
   @keyframes starPulse {
-    0%,100% { filter: drop-shadow(0 0 8px rgba(212,168,67,.4)); }
-    50%      { filter: drop-shadow(0 0 18px rgba(212,168,67,.75)); }
+    0%,100% { filter: drop-shadow(0 0 10px rgba(201,168,76,.4)); }
+    50%      { filter: drop-shadow(0 0 24px rgba(201,168,76,.8)); }
   }
 
   .badge-text h1 {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 21px; font-weight: 700;
-    color: var(--gold);
-    letter-spacing: 3px; line-height: 1;
-    text-shadow: 0 0 20px rgba(212,168,67,.3);
+    font-size: 22px; font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 4px; line-height: 1;
+    text-shadow: 0 0 28px rgba(201,168,76,.35);
   }
-
   .badge-text p {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 9px; color: var(--text-dim);
-    letter-spacing: 1.5px; margin-top: 4px; text-transform: uppercase;
+    font-size: 9px; color: var(--text-muted);
+    letter-spacing: 1.5px; margin-top: 5px; text-transform: uppercase;
   }
 
   .org-label {
-    font-size: 10px; color: var(--text-dim);
-    letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.7;
-    padding: 8px 10px;
-    background: rgba(212,168,67,.04);
-    border: 1px solid rgba(212,168,67,.08);
-    border-radius: 3px;
+    font-size: 10px; color: var(--text-muted);
+    letter-spacing: 1px; text-transform: uppercase; line-height: 1.8;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, rgba(201,168,76,.04), rgba(201,168,76,.02));
+    border: 1px solid rgba(201,168,76,.1);
+    border-radius: var(--radius);
   }
-  .org-label span { color: var(--text); display: block; font-size: 11px; margin-bottom: 2px; }
+  .org-label span { color: var(--text); display: block; font-size: 11px; margin-bottom: 2px; letter-spacing: .5px; font-weight: 600; }
 
-  nav { padding: 16px 0; flex: 1; }
+  nav { padding: 14px 0; flex: 1; user-select: none; }
 
   .nav-section-label {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 9px; letter-spacing: 2.5px; color: var(--text-dim);
-    padding: 10px 20px 6px; text-transform: uppercase;
-    opacity: .6;
+    font-size: 8.5px; letter-spacing: 2.5px; color: var(--text-dim);
+    padding: 12px 20px 5px; text-transform: uppercase;
   }
 
   .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 11px 20px; cursor: pointer;
-    transition: all .2s ease;
-    border-left: 3px solid transparent;
+    display: flex; align-items: center; gap: 11px;
+    padding: 10px 20px; cursor: pointer;
+    transition: all .18s ease;
+    border-left: 2px solid transparent;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 15px; font-weight: 600; letter-spacing: 1px;
-    color: var(--text-dim); user-select: none;
-    position: relative;
-  }
-
-  .nav-item::after {
-    content: '';
-    position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-    width: 0; height: 20px;
-    background: var(--gold-glow);
-    transition: width .2s ease;
-    border-radius: 2px 0 0 2px;
+    font-size: 14.5px; font-weight: 600; letter-spacing: 1px;
+    color: var(--text-dim); position: relative;
+    margin: 1px 0;
   }
 
   .nav-item:hover {
-    background: rgba(212,168,67,.04);
+    background: rgba(201,168,76,.04);
     color: var(--text);
     border-left-color: var(--gold-dim);
   }
-  .nav-item:hover::after { width: 3px; }
 
   .nav-item.active {
     border-left-color: var(--gold);
-    color: var(--gold);
-    background: rgba(212,168,67,.07);
-    text-shadow: 0 0 12px rgba(212,168,67,.3);
+    color: var(--gold-light);
+    background: linear-gradient(90deg, rgba(201,168,76,.08) 0%, transparent 100%);
+    text-shadow: 0 0 16px rgba(201,168,76,.25);
   }
-  .nav-item.active::after { width: 3px; background: var(--gold); box-shadow: 0 0 8px var(--gold); }
 
-  .nav-icon { font-size: 13px; width: 18px; text-align: center; opacity: .6; }
+  .nav-icon {
+    width: 20px; text-align: center; font-size: 12px;
+    opacity: .5; transition: opacity .18s;
+  }
+  .nav-item.active .nav-icon,
+  .nav-item:hover .nav-icon { opacity: 1; }
 
   .status-bar {
     padding: 14px 20px; border-top: 1px solid var(--border);
-    font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim);
-    background: rgba(0,0,0,.2);
+    font-family: 'Share Tech Mono', monospace; font-size: 9.5px;
+    color: var(--text-dim); user-select: none;
+    background: rgba(0,0,0,.15);
+    line-height: 1.9;
   }
-
   .status-dot {
     display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--green); margin-right: 7px;
-    box-shadow: 0 0 6px var(--green);
-    animation: pulse 2.5s infinite;
+    background: var(--green-bright); margin-right: 7px;
+    box-shadow: 0 0 8px var(--green-bright);
+    animation: blink 2.8s infinite;
   }
-
-  @keyframes pulse { 0%,100% { opacity:1; box-shadow: 0 0 6px var(--green); } 50% { opacity:.4; box-shadow: none; } }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.3; } }
 
   /* MAIN */
   #main { margin-left: var(--nav-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
   .top-bar {
-    background: rgba(10,12,18,.95);
-    backdrop-filter: blur(12px);
+    background: rgba(8,11,20,.92);
+    backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
-    padding: 0 32px; height: 52px;
+    padding: 0 32px; height: 54px;
     display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 50;
-    box-shadow: 0 1px 0 rgba(212,168,67,.08), 0 4px 20px rgba(0,0,0,.3);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 0 rgba(201,168,76,.06), 0 8px 32px rgba(0,0,0,.4);
+    user-select: none;
   }
 
-  /* gold line under topbar */
-  .top-bar::after {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212,168,67,.2), transparent);
+  .breadcrumb {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10.5px; color: var(--text-dim); letter-spacing: 1.5px;
+    display: flex; align-items: center; gap: 8px;
   }
-
-  .breadcrumb { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 1.5px; }
-  .breadcrumb span { color: var(--gold); text-shadow: 0 0 10px rgba(212,168,67,.4); }
+  .breadcrumb-sep { opacity: .3; }
+  .breadcrumb span { color: var(--gold-light); text-shadow: 0 0 12px rgba(201,168,76,.35); }
   .top-bar-right { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); }
 
-  .page { display: none; padding: 40px; max-width: 1120px; width: 100%; margin: 0 auto; animation: fadeIn .3s ease; }
+  .page { display: none; padding: 36px 40px; max-width: 1160px; width: 100%; margin: 0 auto; animation: fadeIn .25s ease; }
   .page.active { display: block; }
-
-  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 
   .page-title {
-    font-family: 'Rajdhani', sans-serif; font-size: 34px; font-weight: 700;
+    font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700;
     color: var(--text-bright); letter-spacing: 4px; text-transform: uppercase;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 12px; margin-bottom: 6px;
-    position: relative;
+    padding-bottom: 14px; margin-bottom: 6px; position: relative;
   }
   .page-title::after {
     content: '';
     position: absolute; bottom: -1px; left: 0;
-    width: 80px; height: 2px;
-    background: var(--gold);
-    box-shadow: 0 0 10px rgba(212,168,67,.5);
+    width: 72px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    box-shadow: 0 0 12px rgba(201,168,76,.6);
   }
-
   .page-subtitle {
-    font-size: 11px; color: var(--text-dim); letter-spacing: 2px;
-    margin-bottom: 36px; font-family: 'Share Tech Mono', monospace;
+    font-size: 10.5px; color: var(--text-dim); letter-spacing: 2px;
+    margin-bottom: 12px; font-family: 'Share Tech Mono', monospace;
     text-transform: uppercase;
   }
 
+  /* LAST UPDATED BANNER */
+  .last-updated-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, rgba(201,168,76,.05) 0%, rgba(201,168,76,.02) 100%);
+    border: 1px solid rgba(201,168,76,.14);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 9px 18px;
+    margin-bottom: 28px;
+    font-family: 'Share Tech Mono', monospace;
+    box-shadow: 0 2px 12px rgba(0,0,0,.2);
+  }
+  .lub-left {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .lub-label {
+    font-size: 9px; letter-spacing: 2px; color: var(--gold);
+    text-transform: uppercase; font-weight: 700;
+  }
+  .lub-date {
+    font-size: 11px; color: var(--text); letter-spacing: 1px;
+  }
+  .lub-version {
+    font-size: 9px; color: var(--text-dim); letter-spacing: 1.5px;
+    background: rgba(201,168,76,.07); padding: 3px 10px;
+    border: 1px solid rgba(201,168,76,.12); border-radius: 3px;
+  }
+  .lub-author {
+    font-size: 9px; color: var(--text-dim); letter-spacing: 1px;
+  }
+
+  /* SECTION BLOCKS */
   .section-block {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 4px; margin-bottom: 20px; overflow: hidden;
-    transition: border-color .2s;
+    border-radius: var(--radius);
+    margin-bottom: 18px; overflow: visible;
+    transition: border-color .2s, box-shadow .2s;
   }
-  .section-block:hover { border-color: var(--border-bright); }
+  .section-block:hover { border-color: var(--border-mid); box-shadow: 0 4px 24px rgba(0,0,0,.3); }
 
   .section-block-header {
-    background: var(--surface2); padding: 13px 22px;
+    background: linear-gradient(135deg, var(--surface2) 0%, var(--surface3) 100%);
+    padding: 12px 22px;
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 12px;
-    position: relative;
+    position: relative; border-radius: var(--radius) var(--radius) 0 0;
   }
   .section-block-header::before {
     content: '';
-    position: absolute; left: 0; top: 0; bottom: 0;
-    width: 3px; background: var(--gold);
-    box-shadow: 0 0 8px rgba(212,168,67,.4);
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    border-radius: var(--radius) 0 0 0;
+    box-shadow: 0 0 12px rgba(201,168,76,.4);
   }
-
   .section-block-header h2 {
-    font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700;
-    color: var(--gold); letter-spacing: 2.5px; text-transform: uppercase;
+    font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--gold-light); letter-spacing: 2.5px; text-transform: uppercase;
   }
-
   .section-tag {
     font-family: 'Share Tech Mono', monospace; font-size: 9px;
-    background: var(--gold-glow); color: var(--gold);
-    padding: 3px 9px; border-radius: 2px; letter-spacing: 1px;
-    border: 1px solid rgba(212,168,67,.15);
+    background: rgba(201,168,76,.08); color: var(--gold);
+    padding: 3px 9px; border-radius: 3px; letter-spacing: 1px;
+    border: 1px solid rgba(201,168,76,.15);
   }
 
   .section-block-body { padding: 22px 26px; }
 
-  .rule-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); line-height: 1.7; }
+  .rule-item { margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); line-height: 1.7; }
   .rule-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
   .rule-label {
     font-family: 'Rajdhani', sans-serif; font-weight: 700;
-    color: var(--text-bright); font-size: 15px; margin-bottom: 6px; letter-spacing: .5px;
+    color: var(--text-bright); font-size: 14.5px; margin-bottom: 6px; letter-spacing: .5px;
   }
-  .rule-text { color: var(--text); font-size: 13.5px; line-height: 1.8; }
-
+  .rule-text { color: var(--text); font-size: 13px; line-height: 1.85; }
   .rule-note {
-    background: rgba(212,168,67,.05); border-left: 3px solid var(--gold);
-    padding: 10px 16px; margin-top: 12px; font-size: 13px;
-    color: var(--text-dim); font-style: italic;
-    border-radius: 0 3px 3px 0;
+    background: rgba(201,168,76,.04);
+    border-left: 3px solid var(--gold-dim);
+    padding: 10px 16px; margin-top: 12px; font-size: 12.5px;
+    color: var(--text-muted); font-style: italic;
+    border-radius: 0 4px 4px 0;
+  }
+  .rule-note.red {
+    background: rgba(224,80,80,.04);
+    border-left-color: var(--red-bright);
   }
 
-  .bullet-list { list-style: none; margin-top: 8px; }
+  .bullet-list { list-style: none; margin-top: 10px; }
   .bullet-list li {
-    padding: 4px 0 4px 18px; position: relative;
-    font-size: 13.5px; color: var(--text); line-height: 1.6;
+    padding: 4px 0 4px 20px; position: relative;
+    font-size: 13px; color: var(--text); line-height: 1.65;
   }
   .bullet-list li::before {
     content: '▸'; position: absolute; left: 0; color: var(--gold);
-    font-size: 11px; top: 6px;
+    font-size: 10px; top: 7px;
   }
 
   /* TABLES */
-  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   .data-table th {
     background: var(--surface3); color: var(--gold);
     font-family: 'Rajdhani', sans-serif; font-weight: 700;
-    letter-spacing: 2px; font-size: 11px; text-transform: uppercase;
-    padding: 11px 16px; text-align: left;
-    border-bottom: 1px solid var(--gold-dim); white-space: nowrap;
+    letter-spacing: 2px; font-size: 10.5px; text-transform: uppercase;
+    padding: 10px 16px; text-align: left;
+    border-bottom: 1px solid var(--border-mid); white-space: nowrap;
   }
   .data-table td {
     padding: 11px 16px; border-bottom: 1px solid var(--border);
     color: var(--text); vertical-align: middle;
   }
   .data-table tr:last-child td { border-bottom: none; }
-  .data-table tbody tr { transition: background .15s; }
-  .data-table tbody tr:hover td { background: rgba(212,168,67,.03); }
-  .mono { font-family: 'Share Tech Mono', monospace; font-size: 11.5px; color: var(--text-dim); }
+  .data-table tbody tr { transition: background .12s; }
+  .data-table tbody tr:hover td { background: rgba(201,168,76,.025); }
+  .mono { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-muted); }
 
   /* OFFENSE CARDS */
   .offense-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
   .offense-card {
-    border-radius: 3px; padding: 14px 16px; border-left: 3px solid;
-    background: var(--surface2);
-    transition: transform .15s, box-shadow .15s;
+    border-radius: var(--radius); padding: 14px 16px; border-left: 3px solid;
+    background: linear-gradient(135deg, var(--surface2) 0%, var(--surface3) 100%);
+    transition: transform .15s, box-shadow .15s, border-color .15s;
   }
-  .offense-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+  .offense-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
   .offense-card.minor   { border-color: var(--blue-bright); }
-  .offense-card.general { border-color: var(--amber); }
-  .offense-card.serious { border-color: var(--red); }
-  .offense-card.severe  { border-color: var(--purple); }
-  .offense-card.special { border-color: var(--text-dim); }
-
-  .offense-id { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); margin-bottom: 4px; }
+  .offense-card.general { border-color: var(--amber-bright); }
+  .offense-card.serious { border-color: var(--red-bright); }
+  .offense-card.severe  { border-color: var(--purple-bright); }
+  .offense-card.special { border-color: var(--text-muted); }
+  .offense-id { font-family: 'Share Tech Mono', monospace; font-size: 9.5px; color: var(--text-dim); margin-bottom: 3px; }
   .offense-name { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; color: var(--text-bright); margin-bottom: 6px; }
-  .offense-desc { font-size: 12.5px; color: var(--text); line-height: 1.55; }
+  .offense-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
 
   .cat-badge {
     display: inline-block; font-family: 'Share Tech Mono', monospace;
-    font-size: 9px; padding: 2px 8px; border-radius: 2px;
-    margin-bottom: 7px; letter-spacing: 1px;
+    font-size: 9px; padding: 2px 9px; border-radius: 3px;
+    margin-bottom: 7px; letter-spacing: 1px; font-weight: 700;
   }
   .cat-badge.minor   { background: rgba(74,159,212,.12); color: var(--blue-bright); border: 1px solid rgba(74,159,212,.2); }
-  .cat-badge.general { background: rgba(230,126,34,.12); color: var(--amber); border: 1px solid rgba(230,126,34,.2); }
-  .cat-badge.serious { background: rgba(192,57,43,.12); color: #e74c3c; border: 1px solid rgba(192,57,43,.2); }
-  .cat-badge.severe  { background: rgba(142,68,173,.12); color: #b97dd6; border: 1px solid rgba(142,68,173,.2); }
-  .cat-badge.special { background: rgba(80,89,107,.15); color: var(--text-dim); border: 1px solid rgba(80,89,107,.2); }
+  .cat-badge.general { background: rgba(240,146,78,.1); color: var(--amber-bright); border: 1px solid rgba(240,146,78,.2); }
+  .cat-badge.serious { background: rgba(224,80,80,.1); color: var(--red-bright); border: 1px solid rgba(224,80,80,.2); }
+  .cat-badge.severe  { background: rgba(160,100,216,.12); color: var(--purple-bright); border: 1px solid rgba(160,100,216,.2); }
+  .cat-badge.special { background: rgba(106,116,144,.1); color: var(--text-muted); border: 1px solid rgba(106,116,144,.2); }
 
-  /* HOME */
+  /* HOME PAGE */
   .hero {
-    text-align: center; padding: 64px 20px 56px;
-    border-bottom: 1px solid var(--border); margin-bottom: 40px; position: relative;
-    background: radial-gradient(ellipse at 50% 0%, rgba(212,168,67,.06) 0%, transparent 65%);
+    text-align: center; padding: 60px 20px 52px;
+    border-bottom: 1px solid var(--border); margin-bottom: 36px; position: relative;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,.07) 0%, transparent 70%),
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(201,168,76,.02) 0%, transparent 70%);
   }
   .hero::before {
     content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-    width: 500px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    box-shadow: 0 0 20px rgba(212,168,67,.3);
+    width: 400px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    box-shadow: 0 0 24px rgba(201,168,76,.4);
   }
   .hero-star {
-    width: 94px; height: 94px; background: var(--gold);
+    width: 88px; height: 88px;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #9a7030 100%);
     clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
-    margin: 0 auto 26px;
-    filter: drop-shadow(0 0 28px rgba(212,168,67,.6));
-    animation: starPulse 4s ease-in-out infinite;
+    margin: 0 auto 28px;
+    filter: drop-shadow(0 0 32px rgba(201,168,76,.65));
+    animation: starPulse 5s ease-in-out infinite;
   }
   .hero h1 {
-    font-family: 'Rajdhani', sans-serif; font-size: 56px; font-weight: 700;
-    color: var(--gold); letter-spacing: 8px; line-height: 1; margin-bottom: 8px;
-    text-shadow: 0 0 40px rgba(212,168,67,.3);
+    font-family: 'Rajdhani', sans-serif; font-size: 54px; font-weight: 700;
+    color: var(--gold-light); letter-spacing: 10px; line-height: 1; margin-bottom: 8px;
+    text-shadow: 0 0 48px rgba(201,168,76,.35), 0 2px 0 rgba(0,0,0,.5);
   }
   .hero h2 {
-    font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 400;
-    color: var(--text-dim); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 20px;
+    font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 400;
+    color: var(--text-muted); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 20px;
   }
-  .hero-divider { width: 180px; height: 1px; background: var(--gold-dim); margin: 22px auto; }
-  .hero-meta { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 2.5px; line-height: 2.2; }
+  .hero-divider { width: 160px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); margin: 22px auto; }
+  .hero-meta {
+    font-family: 'Share Tech Mono', monospace; font-size: 10.5px;
+    color: var(--text-dim); letter-spacing: 2px; line-height: 2.3;
+  }
 
-  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
   .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-top: 2px solid var(--gold);
-    padding: 22px; text-align: center; border-radius: 4px;
-    transition: border-color .2s, box-shadow .2s;
-    position: relative; overflow: hidden;
+    border-top: 2px solid var(--gold-dim);
+    padding: 22px 20px; text-align: center; border-radius: var(--radius);
+    transition: all .2s; position: relative; overflow: hidden;
   }
   .stat-card::before {
     content: '';
     position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-    width: 60%; height: 40px;
-    background: radial-gradient(ellipse, rgba(212,168,67,.08) 0%, transparent 70%);
+    width: 80%; height: 60px;
+    background: radial-gradient(ellipse, rgba(201,168,76,.06) 0%, transparent 70%);
   }
-  .stat-card:hover { border-color: var(--gold-dim); box-shadow: 0 0 20px rgba(212,168,67,.07); }
+  .stat-card:hover {
+    border-top-color: var(--gold);
+    box-shadow: 0 0 0 1px rgba(201,168,76,.1), 0 8px 32px rgba(0,0,0,.3);
+    transform: translateY(-2px);
+  }
   .stat-card .num {
-    font-family: 'Rajdhani', sans-serif; font-size: 40px; font-weight: 700;
+    font-family: 'Rajdhani', sans-serif; font-size: 42px; font-weight: 700;
     color: var(--gold); line-height: 1;
-    text-shadow: 0 0 20px rgba(212,168,67,.3);
+    text-shadow: 0 0 24px rgba(201,168,76,.35);
   }
   .stat-card .label {
     font-family: 'Share Tech Mono', monospace; font-size: 9px;
-    color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 6px;
+    color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 7px;
   }
 
-  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .info-card {
     background: var(--surface); border: 1px solid var(--border);
-    padding: 22px 26px; border-radius: 4px;
-    transition: border-color .2s;
+    padding: 22px 24px; border-radius: var(--radius); transition: all .2s;
   }
-  .info-card:hover { border-color: var(--border-bright); }
+  .info-card:hover { border-color: var(--border-mid); box-shadow: 0 4px 20px rgba(0,0,0,.25); }
   .info-card h3 {
-    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
     color: var(--gold); letter-spacing: 2.5px; text-transform: uppercase;
     margin-bottom: 14px; padding-bottom: 10px;
     border-bottom: 1px solid var(--border);
   }
-  .info-card p { font-size: 13.5px; color: var(--text); line-height: 1.8; }
+  .info-card p { font-size: 13px; color: var(--text); line-height: 1.85; }
 
   /* TRACKER */
-  .status-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    padding: 4px 12px; border-radius: 2px; letter-spacing: 1px;
+  .tracker-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 22px;
+    overflow: visible;
   }
-  .status-active   { background: rgba(46,204,113,.1); color: var(--green); border: 1px solid rgba(46,204,113,.25); }
-  .status-inactive { background: rgba(80,89,107,.1); color: var(--text-dim); border: 1px solid var(--border); }
-  .callsign { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 16px; color: var(--gold); letter-spacing: 1px; }
+  .tracker-section:hover { border-color: var(--border-mid); }
+
+  .tracker-header {
+    background: linear-gradient(135deg, var(--surface2) 0%, var(--surface3) 100%);
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    border-radius: var(--radius) var(--radius) 0 0;
+    position: relative;
+  }
+  .tracker-header::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    border-radius: var(--radius) 0 0 0;
+    box-shadow: 0 0 12px rgba(201,168,76,.4);
+  }
+  .tracker-header h2 {
+    font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--gold-light); letter-spacing: 2.5px; text-transform: uppercase;
+    padding-left: 6px;
+  }
+
+  .tracker-table-outer { overflow: visible; }
+  .tracker-data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .tracker-data-table th {
+    background: rgba(0,0,0,.2);
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1.5px; font-size: 9.5px; text-transform: uppercase;
+    padding: 9px 14px; text-align: left;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+    font-weight: 400;
+  }
+  .tracker-data-table td {
+    padding: 13px 14px; border-bottom: 1px solid var(--border);
+    color: var(--text); vertical-align: middle;
+  }
+  .tracker-data-table tr:last-child td { border-bottom: none; }
+  .tracker-data-table tbody tr { transition: background .12s; position: relative; }
+  .tracker-data-table tbody tr:hover td { background: rgba(201,168,76,.02); }
+
+  .callsign {
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 17px; color: var(--gold-light); letter-spacing: 1px;
+  }
   .rank-tag {
     font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    background: rgba(212,168,67,.08); color: var(--gold);
-    padding: 2px 9px; border-radius: 2px; display: inline-block;
-    border: 1px solid rgba(212,168,67,.15);
+    background: rgba(201,168,76,.08); color: var(--gold);
+    padding: 3px 9px; border-radius: 3px; display: inline-block;
+    border: 1px solid rgba(201,168,76,.15); letter-spacing: .5px;
   }
 
-  /* RADIO */
-  .code-badge {
-    font-family: 'Share Tech Mono', monospace; font-size: 12px;
-    background: rgba(74,159,212,.15); color: var(--blue-bright);
-    padding: 3px 10px; border-radius: 2px; display: inline-block; font-weight: 600;
-    border: 1px solid rgba(74,159,212,.2);
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Share Tech Mono', monospace; font-size: 9.5px;
+    padding: 4px 10px; border-radius: 3px; letter-spacing: 1px;
+    font-weight: 700; text-transform: uppercase;
   }
-  .example-box {
-    background: var(--bg); border: 1px solid var(--border);
-    padding: 9px 14px; border-radius: 3px;
-    font-family: 'Share Tech Mono', monospace; font-size: 11px;
-    color: var(--gold); margin-top: 6px; font-style: italic;
+  .status-dot-sm {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: currentColor; display: inline-block;
+  }
+  .status-active   { background: rgba(42,186,101,.1); color: var(--green-bright); border: 1px solid rgba(42,186,101,.25); }
+  .status-inactive { background: rgba(72,80,98,.1); color: var(--text-dim); border: 1px solid var(--border); }
+  .status-suspended { background: rgba(212,115,30,.1); color: var(--amber-bright); border: 1px solid rgba(212,115,30,.25); }
+  .status-vacant   { background: rgba(30,37,54,.5); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .strike-pips-wrap { display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 4px; border-radius: 4px; transition: background .12s; }
+  .strike-pips-wrap:hover { background: rgba(224,80,80,.07); }
+  .strike-pip {
+    width: 6px; height: 22px; border-radius: 2px;
+    background: var(--border-bright);
+    transition: background .15s, box-shadow .15s;
+    flex-shrink: 0;
+  }
+  .strike-pip.active {
+    background: var(--red-bright);
+    box-shadow: 0 0 8px rgba(224,80,80,.6);
+  }
+  .strike-count {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px;
+    color: var(--text-dim); margin-left: 4px; letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  .strike-count.has-strikes { color: var(--red-bright); }
+
+  #strikes-popup {
+    display: none;
+    position: fixed;
+    z-index: 9000;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-top: 2px solid var(--red-bright);
+    border-radius: var(--radius);
+    min-width: 300px; max-width: 360px;
+    box-shadow: 0 16px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(224,80,80,.08);
+    animation: popIn .15s ease;
+  }
+  #strikes-popup.open { display: block; }
+  @keyframes popIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+
+  .sp-header {
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--surface2); border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .sp-title {
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 2px; color: var(--text-bright); text-transform: uppercase;
+  }
+  .sp-count {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--red-bright); letter-spacing: 1px;
   }
 
-  /* TOC */
-  .toc { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 32px; }
+  .sp-entry {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  .sp-entry:last-of-type { border-bottom: none; }
+  .sp-entry:hover { background: rgba(224,80,80,.06); }
+  .sp-num {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--red-bright); min-width: 22px; font-weight: 700;
+  }
+  .sp-label { font-size: 12.5px; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sp-date {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px;
+    color: var(--text-dim); white-space: nowrap;
+  }
+  .sp-empty {
+    padding: 14px 16px; text-align: center;
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--text-dim); letter-spacing: 1px;
+  }
+  .sp-add-btn {
+    display: none; width: 100%; padding: 9px 16px;
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--red-bright); background: transparent;
+    border: none; border-top: 1px solid var(--border);
+    cursor: pointer; letter-spacing: 1px; text-align: center;
+    transition: background .12s; letter-spacing: 2px;
+  }
+  .sp-add-btn:hover { background: rgba(224,80,80,.08); }
+  body.admin-mode .sp-add-btn { display: block; }
+
+  .toc { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 30px; }
   .toc-item {
     display: flex; align-items: center; gap: 12px;
     padding: 10px 16px;
     background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 3px; cursor: pointer;
-    transition: all .2s;
+    border-radius: var(--radius); cursor: pointer;
+    transition: all .18s;
     font-family: 'Rajdhani', sans-serif; font-size: 13px;
     font-weight: 600; color: var(--text); letter-spacing: .5px;
   }
   .toc-item:hover {
-    border-color: var(--gold-dim); color: var(--gold);
-    background: rgba(212,168,67,.04);
-    transform: translateX(3px);
+    border-color: var(--gold-dim); color: var(--gold-light);
+    background: rgba(201,168,76,.04); transform: translateX(4px);
   }
-  .toc-num {
-    font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    color: var(--text-dim); min-width: 32px;
-  }
+  .toc-num { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); min-width: 32px; }
 
-  .anchor { scroll-margin-top: 24px; }
+  .anchor { scroll-margin-top: 22px; }
 
-  /* NATURAL RIGHTS */
   .rights-card {
     background: var(--surface2);
     border: 1px solid var(--border); border-left: 3px solid var(--blue-bright);
-    padding: 18px 20px; border-radius: 3px; margin-bottom: 10px;
-    transition: border-color .2s;
+    padding: 18px 20px; border-radius: var(--radius); margin-bottom: 10px;
+    transition: all .2s;
   }
-  .rights-card:hover { border-color: rgba(74,159,212,.4); }
+  .rights-card:hover { border-color: rgba(74,159,212,.35); box-shadow: 0 4px 16px rgba(0,0,0,.2); }
   .rights-card h3 {
-    font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700;
+    font-family: 'Rajdhani', sans-serif; font-size: 14.5px; font-weight: 700;
     color: var(--blue-bright); margin-bottom: 8px; letter-spacing: .5px;
   }
-  .rights-card p { font-size: 13px; color: var(--text); line-height: 1.7; }
+  .rights-card p { font-size: 12.5px; color: var(--text); line-height: 1.75; }
 
-  /* CLASSIFIED */
   .conf-wrapper {
     display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    min-height: 60vh; text-align: center;
+    align-items: center; justify-content: center; min-height: 75vh;
   }
-  .conf-icon { font-size: 64px; margin-bottom: 24px; opacity: .2; }
-  .conf-title {
-    font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700;
-    letter-spacing: 6px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 12px;
+  .conf-document {
+    width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 3px; padding: 30px 34px;
+    box-shadow: 0 0 0 8px rgba(0,0,0,.3), 0 24px 64px rgba(0,0,0,.6);
+    position: relative; overflow: hidden;
   }
-  .conf-sub {
-    font-family: 'Share Tech Mono', monospace; font-size: 11px;
-    color: var(--text-dim); letter-spacing: 2px; line-height: 2.2;
+  .conf-doc-header, .conf-doc-footer {
+    display: flex; justify-content: space-between; position: relative; z-index: 1;
   }
+  .conf-doc-header { margin-bottom: 22px; padding-bottom: 10px; border-bottom: 1px solid var(--border-bright); }
+  .conf-doc-footer { margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .conf-doc-id { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 1px; }
+  .conf-doc-body { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; min-height: 180px; }
+  .conf-lines { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-around; padding: 10px 0; }
+  .conf-line { height: 10px; background: var(--surface3); border-radius: 1px; border: 1px solid var(--border); }
+  .conf-line.short { width: 60%; }
+  .conf-stamp { position: relative; z-index: 10; transform: rotate(-18deg); animation: stampIn .5s cubic-bezier(.175,.885,.32,1.275) both; }
+  @keyframes stampIn { 0% { transform:rotate(-18deg) scale(2.5);opacity:0; } 60% { transform:rotate(-18deg) scale(.95);opacity:1; } 100% { transform:rotate(-18deg) scale(1);opacity:1; } }
+  .conf-stamp-inner { border: 5px solid #d03030; border-radius: 4px; padding: 10px 20px; box-shadow: 0 0 0 2px #d03030, 0 0 24px rgba(208,48,48,.2), inset 0 0 0 2px rgba(208,48,48,.12); background: rgba(208,48,48,.04); opacity: .92; }
+  .conf-stamp-top { font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700; color: #d03030; letter-spacing: 6px; line-height: 1; text-align: center; text-shadow: 0 0 20px rgba(208,48,48,.5); }
+  .conf-stamp-divider { height: 2px; background: #d03030; margin: 7px 0; opacity: .5; }
+  .conf-stamp-bottom { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #d03030; letter-spacing: 8px; text-align: center; line-height: 1; text-shadow: 0 0 14px rgba(208,48,48,.4); }
+  .conf-sub { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 2px; line-height: 2.2; text-align: center; margin-top: 28px; }
 
-  /* FILTER */
-  .filter-bar { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+  .filter-bar { display: flex; gap: 7px; margin-bottom: 20px; flex-wrap: wrap; }
   .filter-btn {
     font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    padding: 6px 16px; border-radius: 2px; border: 1px solid var(--border);
+    padding: 5px 14px; border-radius: 3px; border: 1px solid var(--border);
     background: var(--surface2); color: var(--text-dim); cursor: pointer;
     letter-spacing: 1px; transition: all .15s;
   }
   .filter-btn:hover { border-color: var(--gold-dim); color: var(--text); }
   .filter-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 700; }
   .filter-btn.f-minor.active   { background: var(--blue-bright); border-color: var(--blue-bright); color:#fff; }
-  .filter-btn.f-general.active { background: var(--amber); border-color: var(--amber); color:#fff; }
-  .filter-btn.f-serious.active { background: var(--red); border-color: var(--red); color:#fff; }
-  .filter-btn.f-severe.active  { background: var(--purple); border-color: var(--purple); color:#fff; }
-  .filter-btn.f-special.active { background: var(--text-dim); border-color: var(--text-dim); color:#fff; }
+  .filter-btn.f-general.active { background: var(--amber-bright); border-color: var(--amber-bright); color:#fff; }
+  .filter-btn.f-serious.active { background: var(--red-bright); border-color: var(--red-bright); color:#fff; }
+  .filter-btn.f-severe.active  { background: var(--purple-bright); border-color: var(--purple-bright); color:#fff; }
+  .filter-btn.f-special.active { background: var(--text-muted); border-color: var(--text-muted); color:#fff; }
 
   .hidden { display: none !important; }
 
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+  .code-badge {
+    font-family: 'Share Tech Mono', monospace; font-size: 11.5px;
+    background: rgba(74,159,212,.12); color: var(--blue-bright);
+    padding: 3px 10px; border-radius: 3px; display: inline-block;
+    border: 1px solid rgba(74,159,212,.2);
+  }
+  .example-box {
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 9px 14px; border-radius: 3px;
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    color: var(--gold); margin-top: 6px;
+  }
 
-  /* ── ADMIN CONTROLS ── */
   .admin-btn {
     font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1px;
-    padding: 6px 14px; border-radius: 2px; cursor: pointer;
+    padding: 6px 14px; border-radius: 3px; cursor: pointer;
     border: 1px solid var(--border-bright);
-    background: var(--surface2); color: var(--text-dim); transition: all .2s;
+    background: var(--surface2); color: var(--text-muted); transition: all .2s;
   }
   .admin-btn:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--gold-glow); }
-  .admin-btn.signed-in { border-color: rgba(46,204,113,.4); color: var(--green); }
-  .admin-btn.signed-in:hover { background: rgba(46,204,113,.08); }
+  .admin-btn.signed-in { border-color: rgba(42,186,101,.4); color: var(--green-bright); }
+  .admin-btn.signed-in:hover { background: rgba(42,186,101,.07); }
 
   .edit-btn, .delete-btn, .add-row-btn {
     font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: .5px;
-    padding: 3px 10px; border-radius: 2px; cursor: pointer; border: 1px solid;
+    padding: 3px 10px; border-radius: 3px; cursor: pointer; border: 1px solid;
     transition: all .15s; display: none;
   }
   .edit-btn   { border-color: rgba(74,159,212,.4); color: var(--blue-bright); background: rgba(74,159,212,.06); }
-  .edit-btn:hover { background: rgba(74,159,212,.15); }
-  .delete-btn { border-color: rgba(192,57,43,.4); color: var(--red); background: rgba(192,57,43,.06); margin-left: 4px; }
-  .delete-btn:hover { background: rgba(192,57,43,.15); }
+  .edit-btn:hover { background: rgba(74,159,212,.14); }
+  .delete-btn { border-color: rgba(224,80,80,.35); color: var(--red-bright); background: rgba(224,80,80,.05); margin-left: 5px; }
+  .delete-btn:hover { background: rgba(224,80,80,.14); }
   .add-row-btn {
-    border-color: rgba(212,168,67,.3); color: var(--gold); background: rgba(212,168,67,.05);
-    margin: 14px 0 0 24px; padding: 7px 20px; font-size: 11px;
+    border-color: rgba(201,168,76,.3); color: var(--gold); background: rgba(201,168,76,.04);
+    margin: 12px 0 0 24px; padding: 7px 20px; font-size: 11px;
   }
-  .add-row-btn:hover { background: rgba(212,168,67,.12); }
+  .add-row-btn:hover { background: rgba(201,168,76,.1); }
   body.admin-mode .edit-btn,
   body.admin-mode .delete-btn,
   body.admin-mode .add-row-btn { display: inline-block; }
+  body.admin-mode #srb-delete-btn { display: inline-block !important; }
 
-  /* ── OVERLAY MODAL ── */
   .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
-    z-index: 1000; align-items: center; justify-content: center;
+    background: rgba(0,0,0,.8); backdrop-filter: blur(8px);
+    z-index: 8000; align-items: center; justify-content: center;
   }
   .modal-overlay.open { display: flex; }
   .modal {
     background: var(--surface);
     border: 1px solid var(--border-bright);
     border-top: 2px solid var(--gold);
-    box-shadow: 0 0 0 1px rgba(212,168,67,.08), 0 30px 60px rgba(0,0,0,.6);
-    border-radius: 4px;
-    padding: 34px 38px; width: 100%; max-width: 440px;
+    box-shadow: 0 0 0 1px rgba(201,168,76,.07), 0 32px 72px rgba(0,0,0,.7);
+    border-radius: var(--radius);
+    padding: 32px 36px; width: 100%; max-width: 440px;
     font-family: 'Rajdhani', sans-serif;
-    animation: fadeIn .2s ease;
-    position: relative;
+    animation: fadeIn .2s ease; position: relative;
   }
   .modal::before {
     content: '';
-    position: absolute; top: 2px; left: 10%; right: 10%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212,168,67,.4), transparent);
+    position: absolute; top: 2px; left: 15%; right: 15%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,.35), transparent);
   }
-  .modal h2 {
-    font-size: 21px; font-weight: 700; color: var(--gold);
-    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 4px;
-    text-shadow: 0 0 20px rgba(212,168,67,.2);
-  }
-  .modal .modal-sub {
-    font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    color: var(--text-dim); letter-spacing: 1.5px; margin-bottom: 26px;
-  }
-  .modal label {
-    display: block; font-size: 11px; font-weight: 600; letter-spacing: 2px;
-    color: var(--text-dim); text-transform: uppercase; margin-bottom: 7px;
-  }
+  .modal h2 { font-size: 20px; font-weight: 700; color: var(--gold-light); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 3px; }
+  .modal .modal-sub { font-family: 'Share Tech Mono', monospace; font-size: 9.5px; color: var(--text-dim); letter-spacing: 1.5px; margin-bottom: 24px; }
+  .modal label { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; }
   .modal input, .modal select {
     width: 100%; background: var(--bg); border: 1px solid var(--border-bright);
     border-radius: 3px; padding: 10px 13px; color: var(--text);
     font-family: 'Share Tech Mono', monospace; font-size: 12px;
-    margin-bottom: 18px; outline: none; transition: border-color .15s, box-shadow .15s;
+    margin-bottom: 16px; outline: none; transition: border-color .15s, box-shadow .15s;
     -webkit-user-select: text; user-select: text;
   }
-  .modal input:focus, .modal select:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(212,168,67,.08);
-  }
-  .modal select option { background: var(--surface); }
-  .modal-actions { display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end; }
+  .modal input:focus, .modal select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.08); }
+  .modal select option { background: var(--surface2); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 8px; justify-content: flex-end; }
   .modal-actions button {
-    font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
-    letter-spacing: 2px; padding: 9px 26px; border-radius: 3px;
-    cursor: pointer; border: 1px solid; transition: all .15s;
+    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 2px; padding: 9px 24px; border-radius: 3px; cursor: pointer; border: 1px solid; transition: all .15s;
   }
-  .btn-primary {
-    background: var(--gold); border-color: var(--gold); color: var(--bg);
-    box-shadow: 0 0 16px rgba(212,168,67,.25);
-  }
-  .btn-primary:hover { background: #e0b84e; box-shadow: 0 0 24px rgba(212,168,67,.4); }
-  .btn-cancel  { background: transparent; border-color: var(--border-bright); color: var(--text-dim); }
-  .btn-cancel:hover { border-color: var(--text-dim); color: var(--text); }
-  .modal-error {
-    font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--red);
-    margin-bottom: 14px; min-height: 16px; letter-spacing: .5px;
-  }
-
-  /* wider modal for personnel form */
+  .btn-primary { background: var(--gold); border-color: var(--gold); color: var(--bg); box-shadow: 0 0 18px rgba(201,168,76,.22); }
+  .btn-primary:hover { background: var(--gold-light); box-shadow: 0 0 28px rgba(201,168,76,.4); }
+  .btn-cancel  { background: transparent; border-color: var(--border-bright); color: var(--text-muted); }
+  .btn-cancel:hover { border-color: var(--text-muted); color: var(--text); }
+  .modal-error { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--red-bright); margin-bottom: 12px; min-height: 16px; letter-spacing: .5px; }
   .modal.wide { max-width: 640px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
 
-  /* ── CLASSIFIED STAMP PAGE ── */
-  .conf-wrapper { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh; }
-
-  .conf-document {
-    width: 420px;
-    background: var(--surface);
-    border: 1px solid var(--border-bright);
-    border-radius: 2px;
-    padding: 28px 32px;
-    box-shadow: 0 0 0 6px rgba(0,0,0,.3), 0 20px 60px rgba(0,0,0,.5);
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* paper grain */
-  .conf-document::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0;
-  }
-
-  .conf-doc-header, .conf-doc-footer {
-    display: flex; justify-content: space-between;
-    position: relative; z-index: 1;
-  }
-  .conf-doc-header { margin-bottom: 22px; padding-bottom: 10px; border-bottom: 1px solid var(--border-bright); }
-  .conf-doc-footer { margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border); }
-
-  .conf-doc-id {
-    font-family: 'Share Tech Mono', monospace; font-size: 9px;
-    color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase;
-  }
-
-  .conf-doc-body {
-    position: relative; z-index: 1;
-    display: flex; align-items: center; justify-content: center;
-    min-height: 180px;
-  }
-
-  .conf-lines {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; justify-content: space-around; padding: 10px 0;
-  }
-  .conf-line {
-    height: 10px; background: var(--surface3); border-radius: 1px;
-    border: 1px solid var(--border);
-    opacity: 1;
-  }
-  .conf-line.short { width: 60%; }
-
-  /* THE STAMP */
-  .conf-stamp {
-    position: relative; z-index: 10;
-    transform: rotate(-18deg);
-    animation: stampIn .5s cubic-bezier(.175,.885,.32,1.275) both;
-  }
-
-  @keyframes stampIn {
-    0%   { transform: rotate(-18deg) scale(2.5); opacity: 0; }
-    60%  { transform: rotate(-18deg) scale(.95); opacity: 1; }
-    100% { transform: rotate(-18deg) scale(1); opacity: 1; }
-  }
-
-  .conf-stamp-inner {
-    border: 5px solid #e03030;
-    border-radius: 4px;
-    padding: 10px 20px;
-    box-shadow: 0 0 0 2px #e03030, 0 0 20px rgba(224,48,48,.2), inset 0 0 0 2px rgba(224,48,48,.15);
-    background: rgba(224,48,48,.04);
-    opacity: .92;
-  }
-
-  .conf-stamp-top {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 28px; font-weight: 700;
-    color: #e03030;
-    letter-spacing: 6px; line-height: 1;
-    text-align: center;
-    text-shadow: 0 0 16px rgba(224,48,48,.4);
-  }
-
-  .conf-stamp-divider {
-    height: 2px; background: #e03030;
-    margin: 7px 0; opacity: .5;
-    box-shadow: 0 0 6px rgba(224,48,48,.4);
-  }
-
-  .conf-stamp-bottom {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 18px; font-weight: 700;
-    color: #e03030; letter-spacing: 8px;
-    text-align: center; line-height: 1;
-    text-shadow: 0 0 12px rgba(224,48,48,.4);
-  }
-
-  .conf-sub {
-    font-family: 'Share Tech Mono', monospace; font-size: 11px;
-    color: var(--text-dim); letter-spacing: 2px; line-height: 2.2;
-    text-align: center;
-  }
-
-
-  /* ── STRIKES ── */
-  .strikes-cell { position: relative; cursor: pointer; }
-
-  .strike-pips {
-    display: flex; gap: 4px; align-items: center;
-    padding: 4px 6px; border-radius: 3px;
-    transition: background .15s;
-    min-width: 72px;
-  }
-  .strike-pips:hover { background: rgba(192,57,43,.08); }
-
-  .strike-pip {
-    width: 5px; height: 20px; border-radius: 2px;
-    background: var(--border-bright);
-    transition: background .15s, box-shadow .15s;
-    flex-shrink: 0;
-  }
-  .strike-pip.active {
-    background: var(--red);
-    box-shadow: 0 0 6px rgba(192,57,43,.5);
-  }
-  .strike-pip.active:nth-child(1) { animation: strikeIn .2s .0s both; }
-  .strike-pip.active:nth-child(2) { animation: strikeIn .2s .05s both; }
-  .strike-pip.active:nth-child(3) { animation: strikeIn .2s .10s both; }
-  .strike-pip.active:nth-child(4) { animation: strikeIn .2s .15s both; }
-  @keyframes strikeIn { from { transform: scaleY(0); opacity:0; } to { transform: scaleY(1); opacity:1; } }
-
-  /* Dropdown menu */
-  .strikes-dropdown {
-    display: none;
-    position: absolute; top: 100%; left: 0;
-    background: var(--surface);
-    border: 1px solid var(--border-bright);
-    border-top: 2px solid var(--red);
-    border-radius: 3px;
-    min-width: 280px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.5);
-    z-index: 200;
-    animation: fadeIn .15s ease;
-  }
-  .strikes-dropdown.open { display: block; }
-
-  .strikes-dropdown-header {
-    font-family: 'Share Tech Mono', monospace; font-size: 9px;
-    letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase;
-    padding: 8px 14px 6px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .strike-entry {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 14px; cursor: pointer;
-    border-bottom: 1px solid var(--border);
-    transition: background .12s;
-  }
-  .strike-entry:last-child { border-bottom: none; }
-  .strike-entry:hover { background: rgba(192,57,43,.06); }
-
-  .strike-num {
-    font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    color: var(--red); min-width: 22px; font-weight: 700;
-  }
-  .strike-label {
-    font-family: 'Rajdhani', sans-serif; font-size: 13px;
-    font-weight: 600; color: var(--text); flex: 1;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .strike-date {
-    font-family: 'Share Tech Mono', monospace; font-size: 9px;
-    color: var(--text-dim); white-space: nowrap;
-  }
-
-  .strikes-empty {
-    padding: 12px 14px;
-    font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    color: var(--text-dim); text-align: center; letter-spacing: 1px;
-  }
-
-  .strikes-add-btn {
-    display: none;
-    width: 100%; padding: 8px 14px;
-    font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    color: var(--red); background: transparent;
-    border: none; border-top: 1px solid var(--border);
-    cursor: pointer; letter-spacing: 1px; text-align: left;
-    transition: background .12s;
-  }
-  .strikes-add-btn:hover { background: rgba(192,57,43,.08); }
-  body.admin-mode .strikes-add-btn { display: block; }
-  body.admin-mode #srb-delete-btn { display: inline-block !important; }
-
-  /* Strike reason modal */
   .strike-reason-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
-    z-index: 1100; align-items: center; justify-content: center;
+    background: rgba(0,0,0,.8); backdrop-filter: blur(8px);
+    z-index: 9100; align-items: center; justify-content: center;
   }
   .strike-reason-overlay.open { display: flex; }
   .strike-reason-box {
     background: var(--surface);
     border: 1px solid var(--border-bright);
-    border-top: 2px solid var(--red);
-    border-radius: 4px;
-    padding: 28px 32px; width: 100%; max-width: 400px;
-    box-shadow: 0 30px 60px rgba(0,0,0,.6);
-    animation: fadeIn .2s ease;
+    border-top: 2px solid var(--red-bright);
+    border-radius: var(--radius); padding: 28px 32px;
+    width: 100%; max-width: 420px;
+    box-shadow: 0 32px 72px rgba(0,0,0,.7);
+    animation: fadeIn .18s ease;
   }
-  .strike-reason-box h3 {
-    font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700;
-    color: var(--red); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px;
+  .strike-reason-box h3 { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--red-bright); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px; }
+  .srb-meta { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 18px; }
+  .srb-reason { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--red-bright); padding: 14px 16px; border-radius: 3px; font-size: 13px; color: var(--text); line-height: 1.75; margin-bottom: 20px; }
+
+  #panel-invite-email, #panel-invite-role {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 3px;
+    padding: 8px 12px; color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 12px; outline: none;
+    -webkit-user-select: text; user-select: text;
   }
-  .strike-reason-box .srb-meta {
-    font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    color: var(--text-dim); letter-spacing: 1px; margin-bottom: 18px;
-  }
-  .strike-reason-box .srb-reason {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-left: 3px solid var(--red);
-    padding: 14px 16px; border-radius: 3px;
-    font-size: 13.5px; color: var(--text); line-height: 1.7;
-    margin-bottom: 20px;
+  #panel-invite-email:focus, #panel-invite-role:focus { border-color: var(--gold); }
+  #panel-invite-role option { background: var(--surface2); }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+  .tracker-footer {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,.1);
+    border-radius: 0 0 var(--radius) var(--radius);
   }
 
+  /* RANK STRUCTURE TABLE */
+  .rank-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .rank-table th {
+    background: var(--surface3); color: var(--gold);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    letter-spacing: 2px; font-size: 10.5px; text-transform: uppercase;
+    padding: 10px 16px; text-align: left;
+    border-bottom: 1px solid var(--border-mid);
+  }
+  .rank-table td {
+    padding: 11px 16px; border-bottom: 1px solid var(--border);
+    color: var(--text); vertical-align: middle;
+  }
+  .rank-table tr:last-child td { border-bottom: none; }
+  .rank-table tbody tr:hover td { background: rgba(201,168,76,.025); }
+  .rank-tier-cmd  { border-left: 3px solid var(--gold); }
+  .rank-tier-sup  { border-left: 3px solid var(--blue-bright); }
+  .rank-tier-line { border-left: 3px solid var(--text-dim); }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -888,14 +861,16 @@
   </nav>
   <div class="status-bar">
     <span class="status-dot"></span>SYSTEM ONLINE<br>
-    <span style="opacity:.5">Wild Journey Studio · SAVE</span>
+    <span style="opacity:.45">Wild Journey Studio · SAVE</span>
   </div>
 </aside>
 
 <main id="main">
   <div class="top-bar">
-    <div class="breadcrumb">ISP / <span id="bc">HOME</span></div>
-    <div style="display:flex;align-items:center;gap:16px">
+    <div class="breadcrumb">
+      ISP <span class="breadcrumb-sep">/</span> <span id="bc">HOME</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
       <span id="admin-user-label" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);display:none"></span>
       <button class="admin-btn" id="invite-admin-btn" onclick="openInviteModal()" style="display:none">⬡ INVITE ADMIN</button>
       <button class="admin-btn" id="admin-toggle-btn" onclick="openLoginModal()">⬡ ADMIN LOGIN</button>
@@ -916,7 +891,7 @@
       </div>
     </div>
     <div class="stat-grid">
-      <div class="stat-card"><div class="num">11</div><div class="label">SOP Sections</div></div>
+      <div class="stat-card"><div class="num">14</div><div class="label">SOP Sections</div></div>
       <div class="stat-card"><div class="num">28</div><div class="label">Defined Offenses</div></div>
       <div class="stat-card"><div class="num">5</div><div class="label">Active Personnel</div></div>
       <div class="stat-card"><div class="num">4</div><div class="label">Natural Rights</div></div>
@@ -943,7 +918,7 @@
       <div class="info-card">
         <h3>Quick Navigation</h3>
         <ul class="bullet-list">
-          <li onclick="showPage('sop')" style="cursor:pointer">Standard Operating Procedures — 11 Sections</li>
+          <li onclick="showPage('sop')" style="cursor:pointer">Standard Operating Procedures — 14 Sections</li>
           <li onclick="showPage('rules')" style="cursor:pointer">Rules, Offenses &amp; Natural Rights</li>
           <li onclick="showPage('tracker')" style="cursor:pointer">Personnel Roster &amp; Tracker</li>
           <li onclick="showPage('conf')" style="cursor:pointer">Classified / Restricted Access</li>
@@ -957,6 +932,18 @@
     <div class="page-title">Standard Operating Procedure</div>
     <div class="page-subtitle">SAVE-SOP · Authored by @aurxora · Subject to revision at any time</div>
 
+    <!-- LAST UPDATED BANNER -->
+    <div class="last-updated-bar">
+      <div class="lub-left">
+        <span class="lub-label">Last Updated</span>
+        <span class="lub-date" id="sop-last-updated">—</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="lub-author" id="sop-updated-by"></span>
+        <span class="lub-version" id="sop-version">REV 1.0</span>
+      </div>
+    </div>
+
     <div class="toc">
       <div class="toc-item" onclick="scrollToSection('s1')"><span class="toc-num">§ 1</span> Purpose &amp; Authority</div>
       <div class="toc-item" onclick="scrollToSection('s2')"><span class="toc-num">§ 2</span> Mission &amp; Organization</div>
@@ -969,8 +956,12 @@
       <div class="toc-item" onclick="scrollToSection('s9')"><span class="toc-num">§ 9</span> Disciplinary Code</div>
       <div class="toc-item" onclick="scrollToSection('s10')"><span class="toc-num">§ 10</span> Operational Security</div>
       <div class="toc-item" onclick="scrollToSection('s11')"><span class="toc-num">§ 11</span> Radio Usage</div>
+      <div class="toc-item" onclick="scrollToSection('s12')"><span class="toc-num">§ 12</span> Uniform &amp; Appearance</div>
+      <div class="toc-item" onclick="scrollToSection('s13')"><span class="toc-num">§ 13</span> Vehicle Operations</div>
+      <div class="toc-item" onclick="scrollToSection('s14')"><span class="toc-num">§ 14</span> Leave &amp; Inactivity</div>
     </div>
 
+    <!-- §1 -->
     <div class="section-block anchor" id="s1">
       <div class="section-block-header"><h2>Section 1 — Purpose and Authority</h2><span class="section-tag">§ 1.01 – 1.02</span></div>
       <div class="section-block-body">
@@ -986,6 +977,7 @@
       </div>
     </div>
 
+    <!-- §2 -->
     <div class="section-block anchor" id="s2">
       <div class="section-block-header"><h2>Section 2 — Mission and Organization</h2><span class="section-tag">§ 2.01 – 2.03</span></div>
       <div class="section-block-body">
@@ -1010,6 +1002,7 @@
       </div>
     </div>
 
+    <!-- §3 -->
     <div class="section-block anchor" id="s3">
       <div class="section-block-header"><h2>Section 3 — Deployment and Operations</h2><span class="section-tag">§ 3.01 – 3.03</span></div>
       <div class="section-block-body">
@@ -1036,6 +1029,7 @@
       </div>
     </div>
 
+    <!-- §4 -->
     <div class="section-block anchor" id="s4">
       <div class="section-block-header"><h2>Section 4 — Enforcement Standards</h2><span class="section-tag">§ 4.01 – 4.04</span></div>
       <div class="section-block-body">
@@ -1064,6 +1058,7 @@
       </div>
     </div>
 
+    <!-- §5 -->
     <div class="section-block anchor" id="s5">
       <div class="section-block-header"><h2>Section 5 — Use of Force</h2><span class="section-tag">§ 5.01 – 5.02</span></div>
       <div class="section-block-body">
@@ -1084,6 +1079,7 @@
       </div>
     </div>
 
+    <!-- §6 -->
     <div class="section-block anchor" id="s6">
       <div class="section-block-header"><h2>Section 6 — Arrest and Processing</h2><span class="section-tag">§ 6.01 – 6.02</span></div>
       <div class="section-block-body">
@@ -1104,6 +1100,7 @@
       </div>
     </div>
 
+    <!-- §7 -->
     <div class="section-block anchor" id="s7">
       <div class="section-block-header"><h2>Section 7 — Interagency Coordination</h2><span class="section-tag">§ 7.01 – 7.02</span></div>
       <div class="section-block-body">
@@ -1118,6 +1115,7 @@
       </div>
     </div>
 
+    <!-- §8 -->
     <div class="section-block anchor" id="s8">
       <div class="section-block-header"><h2>Section 8 — Professional Conduct</h2><span class="section-tag">§ 8.01 – 8.02</span></div>
       <div class="section-block-body">
@@ -1138,6 +1136,7 @@
       </div>
     </div>
 
+    <!-- §9 -->
     <div class="section-block anchor" id="s9">
       <div class="section-block-header"><h2>Section 9 — Disciplinary Code</h2><span class="section-tag">§ 9.01 – 9.06</span></div>
       <div class="section-block-body">
@@ -1174,6 +1173,7 @@
       </div>
     </div>
 
+    <!-- §10 -->
     <div class="section-block anchor" id="s10">
       <div class="section-block-header"><h2>Section 10 — Operational Security and Reporting</h2><span class="section-tag">§ 10.01 – 10.02</span></div>
       <div class="section-block-body">
@@ -1200,6 +1200,7 @@
       </div>
     </div>
 
+    <!-- §11 -->
     <div class="section-block anchor" id="s11">
       <div class="section-block-header"><h2>Section 11 — Radio Usage</h2><span class="section-tag">§ 11.01 – 11.03</span></div>
       <div class="section-block-body">
@@ -1214,30 +1215,10 @@
           <table class="data-table">
             <thead><tr><th>Code</th><th>Type</th><th>Required Format</th><th>Example</th></tr></thead>
             <tbody>
-              <tr>
-                <td><span class="code-badge">10-11</span></td>
-                <td>Traffic Stop</td>
-                <td>Code + vehicle (model/color) + occupants + location + units needed</td>
-                <td><div class="example-box">10-11, Black TRX, X2 occ., Journey Auto Sale, 32s needed</div></td>
-              </tr>
-              <tr>
-                <td><span class="code-badge">Code 5</span></td>
-                <td>Felony Stop</td>
-                <td>Code + vehicle + occupants + location + units needed (min. 2 units incl. yourself)</td>
-                <td><div class="example-box">Code 5, Black SRT Hellcat, X2 occ., Journey Auto Sale, two 32s needed</div></td>
-              </tr>
-              <tr>
-                <td><span class="code-badge">10-50</span></td>
-                <td>MVA</td>
-                <td>Code + location + vehicles/individuals involved + units needed</td>
-                <td><div class="example-box">10-50, Journey Auto Sale, two vehicles involved, 32s needed</div></td>
-              </tr>
-              <tr>
-                <td><span class="code-badge">10-80</span></td>
-                <td>Pursuit</td>
-                <td>Code + vehicle (model/color) + occupants + current location (update every 10–15 sec.)</td>
-                <td><div class="example-box">10-80, Black Dodge Challenger, X2 occ., heading toward Illegal Dealer</div></td>
-              </tr>
+              <tr><td><span class="code-badge">10-11</span></td><td>Traffic Stop</td><td>Code + vehicle (model/color) + occupants + location + units needed</td><td><div class="example-box">10-11, Black TRX, X2 occ., Journey Auto Sale, 32s needed</div></td></tr>
+              <tr><td><span class="code-badge">Code 5</span></td><td>Felony Stop</td><td>Code + vehicle + occupants + location + units needed (min. 2 units incl. yourself)</td><td><div class="example-box">Code 5, Black SRT Hellcat, X2 occ., Journey Auto Sale, two 32s needed</div></td></tr>
+              <tr><td><span class="code-badge">10-50</span></td><td>MVA</td><td>Code + location + vehicles/individuals involved + units needed</td><td><div class="example-box">10-50, Journey Auto Sale, two vehicles involved, 32s needed</div></td></tr>
+              <tr><td><span class="code-badge">10-80</span></td><td>Pursuit</td><td>Code + vehicle (model/color) + occupants + current location (update every 10–15 sec.)</td><td><div class="example-box">10-80, Black Dodge Challenger, X2 occ., heading toward Illegal Dealer</div></td></tr>
             </tbody>
           </table>
           <div class="rule-note" style="margin-top:10px">Location updates during a pursuit are required every 10 to 15 seconds. Any callout not listed above should follow the same structure: code + description + location + units needed.</div>
@@ -1254,13 +1235,124 @@
         </div>
       </div>
     </div>
+
+    <!-- §12 — NEW -->
+    <div class="section-block anchor" id="s12">
+      <div class="section-block-header"><h2>Section 12 — Uniform &amp; Appearance Standards</h2><span class="section-tag">§ 12.01 – 12.03</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">12.01 — Standard Uniform Requirements</div>
+          <div class="rule-text">All SAVE personnel operating in a uniformed capacity must wear the officially issued SAVE uniform in full and without unauthorized modification. The following standards apply at all times during uniformed deployment:</div>
+          <ul class="bullet-list">
+            <li>The issued SAVE uniform must be worn exactly as assigned — no substitutions, mix-and-match, or modifications are permitted without command approval</li>
+            <li>SAVE identification (badge, plate, or digital equivalent) must be visible and accessible at all times during active duty</li>
+            <li>Uniform appearance must be clean, professional, and presentable — worn in a manner that reflects the standards of the Illinois State Police</li>
+            <li>Personal cosmetic items or accessories not included in the issued loadout are not authorized for uniformed deployment</li>
+          </ul>
+          <div class="rule-note">Uniform violations discovered during a deployment must be corrected immediately. Repeated uniform non-compliance is subject to disciplinary action under Section 9 of this SOP.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">12.02 — Plainclothes and Undercover Operations</div>
+          <div class="rule-text">When authorized by SAVE Command for plainclothes or covert operations, members are not required to wear the standard uniform. However, the following requirements remain in effect:</div>
+          <ul class="bullet-list">
+            <li>Members must maintain a professional appearance appropriate to the operational context</li>
+            <li>SAVE credentials must be available for immediate presentation if challenged or if an arrest is made</li>
+            <li>Plainclothes authority must be granted in advance by a SAVE Supervisor or higher — self-authorization is not permitted</li>
+            <li>Members shall not represent themselves as civilian personnel while conducting enforcement actions</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">12.03 — Off-Duty Appearance and SAVE Branding</div>
+          <div class="rule-text">SAVE uniforms, markings, and insignia are official law enforcement identifiers and may not be worn or displayed in an off-duty context without explicit authorization from Command. Misuse of SAVE branding — including unauthorized use in other servers, communities, or personal promotional material — is a violation of this SOP and may constitute impersonation under the Rules &amp; Regulations.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- §13 — NEW -->
+    <div class="section-block anchor" id="s13">
+      <div class="section-block-header"><h2>Section 13 — Vehicle Operations</h2><span class="section-tag">§ 13.01 – 13.04</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">13.01 — Authorized Vehicle Use</div>
+          <div class="rule-text">SAVE-issued vehicles are department property and may only be operated during active, authorized deployments. Members are expected to operate all vehicles in a safe, legal, and professional manner consistent with in-game traffic law and department policy. The following rules apply:</div>
+          <ul class="bullet-list">
+            <li>Only personnel actively assigned to a deployment may operate a SAVE vehicle</li>
+            <li>SAVE vehicles may not be used for personal transportation, non-duty activities, or to assist non-SAVE individuals during deployment</li>
+            <li>Any vehicle damage sustained during a deployment must be reported to the on-duty supervisor before end of shift</li>
+            <li>Reckless operation of a SAVE vehicle — including unnecessary high-speed driving, collisions, or unsafe maneuvers outside of authorized pursuits — is a disciplinary offense</li>
+          </ul>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">13.02 — Emergency Vehicle Operation</div>
+          <div class="rule-text">Emergency lights and sirens may only be activated under the following circumstances:</div>
+          <ul class="bullet-list">
+            <li>During an active traffic stop, felony stop, or Code 5</li>
+            <li>During an active or authorized vehicle pursuit (10-80)</li>
+            <li>When responding to a priority call as directed by a supervisor</li>
+            <li>When providing emergency escort under supervisory authorization</li>
+          </ul>
+          <div class="rule-note">Activation of emergency equipment outside of these situations — including for roleplay, entertainment, or to clear traffic without cause — is a policy violation subject to disciplinary action.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">13.03 — Vehicle Pursuit Policy</div>
+          <div class="rule-text">Vehicle pursuits (10-80) carry a high risk of injury and collateral consequences and must be managed carefully. The following standards govern all pursuits:</div>
+          <ul class="bullet-list">
+            <li>A pursuit may only be initiated when a subject has fled following a lawful stop attempt and there is reasonable basis to believe continued pursuit is warranted</li>
+            <li>The initiating unit must immediately call out the pursuit using the 10-80 format defined in Section 11.02 and provide location updates every 10–15 seconds</li>
+            <li>A supervisor must be notified of any active pursuit as soon as feasible</li>
+            <li>A supervisor or on-scene senior officer may terminate a pursuit at any time if the risk to public safety outweighs the benefit of apprehension — this order must be followed immediately</li>
+            <li>Ramming, boxing, or using physical contact to disable a fleeing vehicle requires supervisory authorization unless an immediate threat to life exists</li>
+          </ul>
+          <div class="rule-note red">Unauthorized termination of a pursuit order, or continuation of a pursuit after a supervisor has called it off, is a serious infraction under Section 9 of this SOP.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">13.04 — Vehicle Damage and Reporting</div>
+          <div class="rule-text">All vehicle damage incurred during a deployment — regardless of cause — must be reported to the on-duty supervisor before the member goes off duty. The report must include the location and circumstances of the damage. Failure to report vehicle damage is treated as a negligence violation under Section 9.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- §14 — NEW -->
+    <div class="section-block anchor" id="s14">
+      <div class="section-block-header"><h2>Section 14 — Leave of Absence &amp; Inactivity</h2><span class="section-tag">§ 14.01 – 14.04</span></div>
+      <div class="section-block-body">
+        <div class="rule-item">
+          <div class="rule-label">14.01 — Leave of Absence (LOA) Requests</div>
+          <div class="rule-text">Any SAVE personnel who anticipate being unable to participate for a period of five (5) days or longer must submit a Leave of Absence request to their immediate supervisor or SAVE Command. LOA requests must include:</div>
+          <ul class="bullet-list">
+            <li>The expected start and end date of the leave</li>
+            <li>A brief reason for the absence (personal reasons is acceptable — detailed disclosure is not required)</li>
+            <li>Confirmation that the member intends to return to active duty</li>
+          </ul>
+          <div class="rule-note">LOA requests submitted with proper notice and good faith will generally be approved. Members on an approved LOA are considered in good standing and retain their rank and position during the leave period.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">14.02 — Unapproved Inactivity</div>
+          <div class="rule-text">Personnel who are absent for seven (7) or more consecutive days without submitting a LOA request or notifying Command shall be considered Inactive Without Notice. The following progressive actions may apply:</div>
+          <ul class="bullet-list">
+            <li><strong>7–13 days:</strong> The member's status will be updated to Inactive in the Personnel Tracker. A welfare check message will be sent via Discord.</li>
+            <li><strong>14–20 days:</strong> The member will be placed on administrative hold and may be removed from active assignments pending contact.</li>
+            <li><strong>21+ days:</strong> The member may be removed from SAVE entirely at Command's discretion. Position may be backfilled.</li>
+          </ul>
+          <div class="rule-note">Exceptional circumstances — including real-life emergencies — may be taken into account. Members who return following extended inactivity and provide reasonable context may be considered for reinstatement at Command's discretion.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">14.03 — Activity Expectations</div>
+          <div class="rule-text">All active SAVE personnel are expected to participate in at least one (1) deployment or sanctioned SAVE activity per week during periods when they are not on an approved LOA. Consistent failure to meet this minimum activity standard — without an approved LOA — may be treated as passive inactivity and subject to review. Command reserves the right to adjust activity requirements based on operational pace and server activity levels.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-label">14.04 — Return from Leave</div>
+          <div class="rule-text">Members returning from an approved LOA must notify their supervisor prior to resuming active duties. Upon return, the member's status in the Personnel Tracker will be updated to Active. Members returning from extended inactivity (21+ days) may be required to complete a brief operational reintegration confirmation with a supervisor before resuming full duties.</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- RULES -->
   <div class="page" id="page-rules">
     <div class="page-title">Rules &amp; Regulations</div>
     <div class="page-subtitle">SAVE-RULES · Criminal categories, defined offenses, and natural rights</div>
-
     <div class="section-block">
       <div class="section-block-header"><h2>Section 1 — Criminal Categories</h2><span class="section-tag">Offense &amp; Punishment Classification</span></div>
       <div class="section-block-body">
@@ -1286,7 +1378,6 @@
         </table>
       </div>
     </div>
-
     <div class="section-block">
       <div class="section-block-header"><h2>Section 2 — Criminal Offenses</h2><span class="section-tag">Articles 1.01 – 1.28</span></div>
       <div class="section-block-body">
@@ -1331,11 +1422,10 @@
         </div>
       </div>
     </div>
-
     <div class="section-block">
       <div class="section-block-header"><h2>Section 3 — Natural Rights</h2><span class="section-tag">Guaranteed to all personnel — non-negotiable</span></div>
       <div class="section-block-body">
-        <p style="color:var(--text-dim);font-size:13px;margin-bottom:16px;line-height:1.7">Natural Rights are guaranteed to every user participating in any unit within SAVE. These rights may not be suspended, denied, or circumvented under any circumstances by any individual or unit — regardless of rank or role.</p>
+        <p style="color:var(--text-muted);font-size:12.5px;margin-bottom:16px;line-height:1.8">Natural Rights are guaranteed to every user participating in any unit within SAVE. These rights may not be suspended, denied, or circumvented under any circumstances by any individual or unit — regardless of rank or role.</p>
         <div class="rights-card"><h3>3.1 — Freedom of Speech and Opinion</h3><p>All users hold the right to free speech and expression of opinion. This right does not extend to speech that incites violence, promotes unlawful action, or targets individuals with the intent to harm.</p></div>
         <div class="rights-card"><h3>3.2 — Innocent Until Proven Guilty</h3><p>No user may be treated as guilty prior to a finding supported by proper, verified evidence. Accusations alone do not constitute grounds for punishment.</p></div>
         <div class="rights-card"><h3>3.3 — Bias Prohibition</h3><p>Users may not be excluded, targeted, or treated unfairly based on personal beliefs, religion, race, gender identity, or physical and mental disability. Equal treatment is non-negotiable.</p></div>
@@ -1349,25 +1439,51 @@
     <div class="page-title">Personnel Tracker</div>
     <div class="page-subtitle">SAVE-TRACKER · Illinois State Police | Statewide Anti-Violence Enforcement · <span id="tracker-updated">Loading...</span></div>
 
-    <div class="section-block" style="margin-bottom:24px">
-      <div class="section-block-header"><h2>Supervisory Personnel</h2><span class="section-tag">Command &amp; Supervisory Ranks</span></div>
-      <div class="section-block-body" style="padding:0">
-        <table class="data-table">
-          <thead><tr><th>#</th><th>Callsign</th><th>Rank</th><th>Roblox Username</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Join Date</th><th>Status</th><th>Strikes</th><th id="sup-actions-col" style="display:none"></th></tr></thead>
-          <tbody id="supervisory-tbody"><tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
+    <div class="tracker-section">
+      <div class="tracker-header">
+        <h2>Supervisory Personnel</h2>
+        <span class="section-tag">Command &amp; Supervisory Ranks</span>
+      </div>
+      <div class="tracker-table-outer">
+        <table class="tracker-data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Callsign</th><th>Rank</th><th>Roblox</th><th>Roblox ID</th>
+              <th>Discord</th><th>Discord ID</th><th>Joined</th><th>Status</th><th>Strikes</th>
+              <th id="sup-actions-col" style="display:none"></th>
+            </tr>
+          </thead>
+          <tbody id="supervisory-tbody">
+            <tr><td colspan="11" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING RECORDS...</td></tr>
+          </tbody>
         </table>
-        <button class="add-row-btn" onclick="openPersonnelModal(null,'supervisory')">+ ADD PERSONNEL</button>
+      </div>
+      <div class="tracker-footer">
+        <button class="add-row-btn" style="margin:0" onclick="openPersonnelModal(null,'supervisory')">+ ADD PERSONNEL</button>
       </div>
     </div>
 
-    <div class="section-block">
-      <div class="section-block-header"><h2>General Personnel</h2><span class="section-tag">Assigned SAVE Personnel</span></div>
-      <div class="section-block-body" style="padding:0">
-        <table class="data-table">
-          <thead><tr><th>#</th><th>Callsign</th><th>Rank</th><th>Roblox Username</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Join Date</th><th>Status</th><th>Strikes</th><th id="gen-actions-col" style="display:none"></th></tr></thead>
-          <tbody id="general-tbody"><tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
+    <div class="tracker-section">
+      <div class="tracker-header">
+        <h2>General Personnel</h2>
+        <span class="section-tag">Assigned SAVE Personnel</span>
+      </div>
+      <div class="tracker-table-outer">
+        <table class="tracker-data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Callsign</th><th>Rank</th><th>Roblox</th><th>Roblox ID</th>
+              <th>Discord</th><th>Discord ID</th><th>Joined</th><th>Status</th><th>Strikes</th>
+              <th id="gen-actions-col" style="display:none"></th>
+            </tr>
+          </thead>
+          <tbody id="general-tbody">
+            <tr><td colspan="11" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING RECORDS...</td></tr>
+          </tbody>
         </table>
-        <button class="add-row-btn" onclick="openPersonnelModal(null,'general')">+ ADD PERSONNEL</button>
+      </div>
+      <div class="tracker-footer">
+        <button class="add-row-btn" style="margin:0" onclick="openPersonnelModal(null,'general')">+ ADD PERSONNEL</button>
       </div>
     </div>
   </div>
@@ -1389,12 +1505,9 @@
             </div>
           </div>
           <div class="conf-lines">
-            <div class="conf-line"></div>
-            <div class="conf-line"></div>
-            <div class="conf-line short"></div>
-            <div class="conf-line"></div>
-            <div class="conf-line short"></div>
-            <div class="conf-line"></div>
+            <div class="conf-line"></div><div class="conf-line"></div>
+            <div class="conf-line short"></div><div class="conf-line"></div>
+            <div class="conf-line short"></div><div class="conf-line"></div>
             <div class="conf-line short"></div>
           </div>
         </div>
@@ -1403,43 +1516,33 @@
           <span class="conf-doc-id">UNAUTHORISED DISCLOSURE PROHIBITED</span>
         </div>
       </div>
-      <div class="conf-sub" style="margin-top:28px">This section is restricted.<br>Access is granted by SAVE Command only.</div>
+      <div class="conf-sub">This section is restricted.<br>Access is granted by SAVE Command only.</div>
     </div>
   </div>
+
   <!-- SUPERVISOR PANEL -->
   <div class="page" id="page-panel">
     <div class="page-title">Supervisor Panel</div>
     <div class="page-subtitle" id="panel-subtitle">SAVE COMMAND · RESTRICTED ACCESS</div>
-
-    <!-- Password Reset (all admins) -->
     <div class="section-block" style="margin-bottom:20px">
       <div class="section-block-header"><h2>Account Settings</h2><span class="section-tag">Your Account</span></div>
       <div class="section-block-body">
-        <p style="color:var(--text-dim);font-size:13px;margin-bottom:16px;line-height:1.7">Send a password reset link to your own email address.</p>
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;line-height:1.8">Send a password reset link to your own email address.</p>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <span id="panel-email-display" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim)"></span>
           <button class="admin-btn" onclick="sendOwnPasswordReset()">⬡ SEND RESET LINK</button>
-          <span id="reset-own-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);display:none"></span>
+          <span id="reset-own-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green-bright);display:none"></span>
         </div>
       </div>
     </div>
-
-    <!-- Invite + Manage Admins (owner only) -->
     <div class="section-block" id="owner-section" style="display:none">
       <div class="section-block-header"><h2>Admin Management</h2><span class="section-tag">Owner Only</span></div>
       <div class="section-block-body">
-
-        <!-- Invite -->
         <div style="margin-bottom:28px">
-          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Invite New Supervisor</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Invite New Supervisor</div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-            <input type="email" id="panel-invite-email" placeholder="email@example.com"
-              style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px 12px;
-                     color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;
-                     outline:none;width:280px;-webkit-user-select:text;user-select:text">
-            <select id="panel-invite-role"
-              style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px 12px;
-                     color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;outline:none">
+            <input type="email" id="panel-invite-email" placeholder="email@example.com" style="width:280px">
+            <select id="panel-invite-role">
               <option value="supervisor">Supervisor</option>
               <option value="owner">Owner</option>
             </select>
@@ -1447,33 +1550,39 @@
           </div>
           <div id="panel-invite-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;margin-top:10px;min-height:16px"></div>
         </div>
-
-        <!-- Active admins list -->
         <div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Active Admins</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Active Admins</div>
           <table class="data-table" id="admins-table">
             <thead><tr><th>Email</th><th>Role</th><th>Added</th><th>Actions</th></tr></thead>
             <tbody id="admins-tbody"><tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
           </table>
         </div>
-
       </div>
     </div>
   </div>
-
 </main>
 
-<!-- ══ INVITE ADMIN MODAL ════════════════════════════════════ -->
+<!-- FLOATING STRIKE POPUP -->
+<div id="strikes-popup">
+  <div class="sp-header">
+    <span class="sp-title" id="sp-callsign">Callsign</span>
+    <span class="sp-count" id="sp-count">0 / 4</span>
+  </div>
+  <div id="sp-entries"></div>
+  <button class="sp-add-btn" id="sp-add-btn">+ ISSUE STRIKE</button>
+</div>
+
+<!-- INVITE ADMIN MODAL -->
 <div class="modal-overlay" id="invite-modal">
   <div class="modal">
     <h2>Invite Admin</h2>
     <div class="modal-sub">SAVE COMMAND · GRANTS FULL EDIT ACCESS</div>
     <div class="modal-error" id="invite-error"></div>
-    <div id="invite-success" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);margin-bottom:14px;min-height:16px;letter-spacing:.5px;display:none"></div>
+    <div id="invite-success" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green-bright);margin-bottom:14px;min-height:16px;letter-spacing:.5px;display:none"></div>
     <label>Email Address</label>
     <input type="email" id="invite-email" placeholder="user@example.com">
     <p style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:-10px;margin-bottom:18px;line-height:1.7">
-      Supabase will email them a setup link. They click it, set a password, and can log in here immediately.
+      Supabase will email them a setup link. They click it, set a password, and can log in immediately.
     </p>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('invite-modal')">CLOSE</button>
@@ -1482,7 +1591,7 @@
   </div>
 </div>
 
-<!-- ══ LOGIN MODAL ══════════════════════════════════════════ -->
+<!-- LOGIN MODAL -->
 <div class="modal-overlay" id="login-modal">
   <div class="modal">
     <h2>Admin Access</h2>
@@ -1499,7 +1608,7 @@
   </div>
 </div>
 
-<!-- ══ PERSONNEL MODAL ═══════════════════════════════════════ -->
+<!-- PERSONNEL MODAL -->
 <div class="modal-overlay" id="personnel-modal">
   <div class="modal wide">
     <h2 id="personnel-modal-title">Add Personnel</h2>
@@ -1508,20 +1617,10 @@
     <input type="hidden" id="pm-id">
     <input type="hidden" id="pm-category">
     <div class="form-grid">
-      <div>
-        <label>Slot #</label>
-        <input type="text" id="pm-slot" placeholder="O">
-      </div>
-      <div>
-        <label>Callsign</label>
-        <input type="text" id="pm-callsign" placeholder="301">
-      </div>
-      <div>
-        <label>Rank</label>
-        <input type="text" id="pm-rank" placeholder="LT.">
-      </div>
-      <div>
-        <label>Status</label>
+      <div><label>Slot #</label><input type="text" id="pm-slot" placeholder="O"></div>
+      <div><label>Callsign</label><input type="text" id="pm-callsign" placeholder="301"></div>
+      <div><label>Rank</label><input type="text" id="pm-rank" placeholder="LT."></div>
+      <div><label>Status</label>
         <select id="pm-status">
           <option value="Active">Active</option>
           <option value="Inactive">Inactive</option>
@@ -1529,25 +1628,13 @@
           <option value="Vacant">Vacant</option>
         </select>
       </div>
-      <div>
-        <label>Roblox Username</label>
-        <input type="text" id="pm-roblox-user" placeholder="username">
-      </div>
-      <div>
-        <label>Roblox ID</label>
-        <input type="text" id="pm-roblox-id" placeholder="1234567890">
-      </div>
-      <div>
-        <label>Discord</label>
-        <input type="text" id="pm-discord" placeholder="handle">
-      </div>
-      <div>
-        <label>Discord ID</label>
-        <input type="text" id="pm-discord-id" placeholder="000000000000000000">
-      </div>
+      <div><label>Roblox Username</label><input type="text" id="pm-roblox-user" placeholder="username"></div>
+      <div><label>Roblox ID</label><input type="text" id="pm-roblox-id" placeholder="1234567890"></div>
+      <div><label>Discord</label><input type="text" id="pm-discord" placeholder="handle"></div>
+      <div><label>Discord ID</label><input type="text" id="pm-discord-id" placeholder="000000000000000000"></div>
     </div>
     <label>Join Date</label>
-    <input type="text" id="pm-join-date" placeholder="Mar 30" style="max-width:160px">
+    <input type="text" id="pm-join-date" placeholder="Mar 30" style="max-width:180px">
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('personnel-modal')">CANCEL</button>
       <button class="btn-primary" onclick="savePersonnel()">SAVE RECORD</button>
@@ -1555,47 +1642,100 @@
   </div>
 </div>
 
+<!-- STRIKE REASON OVERLAY -->
+<div class="strike-reason-overlay" id="strike-reason-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="strike-reason-box">
+    <h3 id="srb-title">Strike #1</h3>
+    <div class="srb-meta" id="srb-meta"></div>
+    <div class="srb-reason" id="srb-reason"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="admin-btn" id="srb-delete-btn" style="display:none;color:var(--red-bright);border-color:rgba(224,80,80,.35)">REMOVE STRIKE</button>
+      <button class="btn-primary" onclick="document.getElementById('strike-reason-overlay').classList.remove('open')" style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;padding:7px 22px;border-radius:3px;cursor:pointer;border:1px solid var(--gold);background:var(--gold);color:var(--bg)">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD STRIKE MODAL -->
+<div class="modal-overlay" id="add-strike-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <h2>Add Strike</h2>
+    <div class="modal-sub">CALLSIGN: <span id="add-strike-callsign" style="color:var(--gold-light)"></span></div>
+    <div class="modal-error" id="add-strike-error"></div>
+    <input type="hidden" id="add-strike-pid">
+    <label>Reason</label>
+    <textarea id="add-strike-reason" placeholder="Describe the violation or reason for this strike..."
+      style="width:100%;background:var(--bg);border:1px solid var(--border-bright);border-radius:3px;
+             padding:10px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;
+             outline:none;resize:vertical;min-height:100px;margin-bottom:18px;
+             transition:border-color .15s;-webkit-user-select:text;user-select:text"
+      onfocus="this.style.borderColor='var(--red-bright)'" onblur="this.style.borderColor='var(--border-bright)'"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('add-strike-modal').classList.remove('open')">CANCEL</button>
+      <button class="btn-primary" onclick="saveStrike()" style="background:var(--red-bright);border-color:var(--red-bright);box-shadow:0 0 16px rgba(224,80,80,.22)">ISSUE STRIKE</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  // ══════════════════════════════════════════════════════════
-  //  CONFIGURATION — fill in your Supabase project details
-  // ══════════════════════════════════════════════════════════
+  // ── Supabase ──────────────────────────────────────────────
   const SUPABASE_URL  = 'https://xnqjdgixcocekzehsote.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucWpkZ2l4Y29jZWt6ZWhzb3RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NTI4OTIsImV4cCI6MjA5MjIyODg5Mn0.U0zMSMRZE91RYnToZgooIel0VHDyLlxKK-Cr-Oh9ves';
-
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      flowType: 'implicit',
-      storageKey: 'save-isp-auth'
-    }
+    auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:'implicit', storageKey:'save-isp-auth' }
   });
-
-  // Suppress non-breaking Supabase broadcast/clone errors
   window.addEventListener('unhandledrejection', e => {
-    if (e.reason && e.reason.message && e.reason.message.includes('postMessage')) {
-      e.preventDefault();
-    }
+    if (e.reason?.message?.includes('postMessage')) e.preventDefault();
   });
 
-  // ── Nav / Clock ────────────────────────────────────────────
+  // ── Last Updated Banner ───────────────────────────────────
+  function setLastUpdated() {
+    // Pull from localStorage if admin has set it, else use a default
+    const stored = localStorage.getItem('sop_last_updated');
+    const storedBy = localStorage.getItem('sop_updated_by');
+    const storedRev = localStorage.getItem('sop_revision') || 'REV 1.3';
+    if (stored) {
+      document.getElementById('sop-last-updated').textContent = stored;
+      document.getElementById('sop-updated-by').textContent = storedBy ? 'By: ' + storedBy : '';
+    } else {
+      document.getElementById('sop-last-updated').textContent = 'April 20, 2026';
+      document.getElementById('sop-updated-by').textContent = 'By: @aurxora';
+    }
+    document.getElementById('sop-version').textContent = storedRev;
+  }
+  setLastUpdated();
+
+  // Auto-stamp "last updated" whenever an admin saves the page
+  function stampLastUpdated(adminEmail) {
+    const now = new Date();
+    const formatted = now.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    localStorage.setItem('sop_last_updated', formatted);
+    localStorage.setItem('sop_updated_by', adminEmail || 'Command');
+    // Increment revision
+    const cur = localStorage.getItem('sop_revision') || 'REV 1.3';
+    const parts = cur.replace('REV ','').split('.');
+    const newRev = 'REV ' + parts[0] + '.' + (parseInt(parts[1]||0)+1);
+    localStorage.setItem('sop_revision', newRev);
+    setLastUpdated();
+  }
+
+  // ── Nav / Clock ───────────────────────────────────────────
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
     const map = { home:0, sop:1, rules:2, tracker:3, conf:4, panel:5 };
-    const navItems = document.querySelectorAll('.nav-item');
-    if (navItems[map[id]]) navItems[map[id]].classList.add('active');
+    const items = document.querySelectorAll('.nav-item');
+    if (items[map[id]]) items[map[id]].classList.add('active');
     document.getElementById('bc').textContent = id.toUpperCase();
     window.scrollTo(0, 0);
+    closeStrikesPopup();
     if (id === 'tracker') loadPersonnel();
     if (id === 'panel')   loadPanel();
   }
 
   function scrollToSection(id) {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   function filterOffenses(cat, btn) {
@@ -1607,62 +1747,21 @@
   }
 
   function updateClock() {
-    const now    = new Date();
-    const time   = now.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const tzAbbr = now.toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop();
-    document.getElementById('clock').textContent = time + ' ' + tzAbbr;
+    const now = new Date();
+    const time = now.toLocaleTimeString([], {hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const tz   = now.toLocaleTimeString('en-US', {timeZoneName:'short'}).split(' ').pop();
+    document.getElementById('clock').textContent = time + ' ' + tz;
   }
-  updateClock();
-  setInterval(updateClock, 1000);
+  updateClock(); setInterval(updateClock, 1000);
 
-  // ── Invite Admin ───────────────────────────────────────────
-  function openInviteModal() {
-    document.getElementById('invite-error').textContent = '';
-    document.getElementById('invite-success').style.display = 'none';
-    document.getElementById('invite-email').value = '';
-    document.getElementById('invite-modal').classList.add('open');
-  }
+  // ── Modals ────────────────────────────────────────────────
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+  });
 
-  async function doInvite() {
-    const email = document.getElementById('invite-email').value.trim();
-    document.getElementById('invite-error').textContent = '';
-    document.getElementById('invite-success').style.display = 'none';
-
-    if (!email || !email.includes('@')) {
-      document.getElementById('invite-error').textContent = 'Enter a valid email address.';
-      return;
-    }
-
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) {
-      document.getElementById('invite-error').textContent = 'You must be logged in to invite admins.';
-      return;
-    }
-
-    const res = await fetch('https://xnqjdgixcocekzehsote.supabase.co/functions/v1/invite-admin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      },
-      body: JSON.stringify({ email })
-    });
-
-    const result = await res.json();
-    if (!res.ok || result.error) {
-      document.getElementById('invite-error').textContent = result.error || 'Invite failed.';
-      return;
-    }
-
-    document.getElementById('invite-email').value = '';
-    const successEl = document.getElementById('invite-success');
-    successEl.textContent = `✓ Invite sent to ${email}`;
-    successEl.style.display = 'block';
-  }
-
-  // ── Auth ───────────────────────────────────────────────────
+  // ── Auth ──────────────────────────────────────────────────
   function openLoginModal() {
-    const session = sb.auth.getSession ? null : null; // checked below
     if (document.body.classList.contains('admin-mode')) {
       if (confirm('Sign out of admin mode?')) doLogout();
       return;
@@ -1677,15 +1776,9 @@
     const email = document.getElementById('login-email').value.trim();
     const pass  = document.getElementById('login-password').value;
     document.getElementById('login-error').textContent = '';
-    if (!email || !pass) {
-      document.getElementById('login-error').textContent = 'Email and password required.';
-      return;
-    }
+    if (!email || !pass) { document.getElementById('login-error').textContent = 'Email and password required.'; return; }
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-    if (error) {
-      document.getElementById('login-error').textContent = 'Authentication failed: ' + error.message;
-      return;
-    }
+    if (error) { document.getElementById('login-error').textContent = 'Authentication failed: ' + error.message; return; }
     const role = await fetchRole(data.user.id);
     closeModal('login-modal');
     setAdminMode(true, data.user.email, role);
@@ -1706,191 +1799,24 @@
     document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
     document.getElementById('nav-panel').style.display = on ? 'flex' : 'none';
     if (on) {
-      btn.textContent = '⬡ SIGN OUT';
-      btn.classList.add('signed-in');
-      const roleLabel = role === 'owner' ? '👑 ' : '';
-      label.textContent = roleLabel + email;
+      btn.textContent = '⬡ SIGN OUT'; btn.classList.add('signed-in');
+      label.textContent = (role === 'owner' ? '👑 ' : '') + email;
       label.style.display = 'inline';
       document.getElementById('invite-admin-btn').style.display = 'inline-block';
-      window._adminRole  = role;
-      window._adminEmail = email;
+      window._adminRole = role; window._adminEmail = email;
     } else {
-      btn.textContent = '⬡ ADMIN LOGIN';
-      btn.classList.remove('signed-in');
+      btn.textContent = '⬡ ADMIN LOGIN'; btn.classList.remove('signed-in');
       label.style.display = 'none';
       document.getElementById('invite-admin-btn').style.display = 'none';
-      window._adminRole  = null;
-      window._adminEmail = null;
+      window._adminRole = null; window._adminEmail = null;
     }
   }
 
-  // ── Tracker ────────────────────────────────────────────────
-  async function loadPersonnel() {
-    const [{ data, error }, { data: strikesData }] = await Promise.all([
-      sb.from('personnel').select('*').order('callsign', { ascending: true }),
-      sb.from('strikes').select('*').order('created_at', { ascending: true })
-    ]);
-
-    if (error) {
-      console.error('Supabase error:', error.message);
-      ['supervisory-tbody','general-tbody'].forEach(id => {
-        document.getElementById(id).innerHTML =
-          `<tr><td colspan="11" style="text-align:center;color:var(--red);padding:20px">Error loading data: ${error.message}</td></tr>`;
-      });
-      return;
-    }
-
-    // Group strikes by personnel_id
-    window._strikesMap = {};
-    (strikesData || []).forEach(s => {
-      if (!window._strikesMap[s.personnel_id]) window._strikesMap[s.personnel_id] = [];
-      window._strikesMap[s.personnel_id].push(s);
-    });
-
-    const supervisory = data.filter(r => r.category === 'supervisory');
-    const general     = data.filter(r => r.category === 'general');
-
-    renderTable('supervisory-tbody', supervisory);
-    renderTable('general-tbody', general);
-
-    const now = new Date();
-    document.getElementById('tracker-updated').textContent =
-      'Last Updated: ' + now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  async function fetchRole(userId) {
+    const { data } = await sb.from('admin_roles').select('role').eq('id', userId).single();
+    return data?.role || 'supervisor';
   }
 
-  function renderTable(tbodyId, rows) {
-    const tbody = document.getElementById(tbodyId);
-    if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-dim);padding:20px">No records found.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = rows.map(r => {
-      const isVacant = r.status === 'Vacant';
-      const statusBadge = isVacant
-        ? `<span class="status-badge status-inactive">Vacant</span>`
-        : `<span class="status-badge status-${r.status === 'Active' ? 'active' : 'inactive'}">
-             ${r.status === 'Active' ? '<span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span> ' : ''}${r.status}
-           </span>`;
-      const dash = v => v && v !== '—' ? v : '—';
-      const strikes = (window._strikesMap || {})[r.id] || [];
-      const pips = [0,1,2,3].map(i =>
-        `<div class="strike-pip${i < strikes.length ? ' active' : ''}"></div>`
-      ).join('');
-      const entries = strikes.length
-        ? strikes.map((s,i) => `
-            <div class="strike-entry" onclick="showStrikeReason('${s.id}')">
-              <span class="strike-num">#${i+1}</span>
-              <span class="strike-label">${s.reason.substring(0,40)}${s.reason.length>40?'…':''}</span>
-              <span class="strike-date">${new Date(s.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
-            </div>`).join('')
-        : '<div class="strikes-empty">NO STRIKES ON RECORD</div>';
-
-      return `<tr>
-        <td style="color:var(--text-dim)">${dash(r.slot_number)}</td>
-        <td><span class="callsign">${dash(r.callsign)}</span></td>
-        <td><span class="rank-tag">${dash(r.rank)}</span></td>
-        <td class="mono">${dash(r.roblox_username)}</td>
-        <td class="mono">${dash(r.roblox_id)}</td>
-        <td class="mono">${dash(r.discord)}</td>
-        <td class="mono">${dash(r.discord_id)}</td>
-        <td>${dash(r.join_date)}</td>
-        <td>${statusBadge}</td>
-        <td class="strikes-cell" onclick="event.stopPropagation()">
-          <div class="strike-pips" onclick="toggleStrikesDropdown(this, '${r.id}', '${(r.callsign||'').replace("'","\'")}')">
-            ${pips}
-          </div>
-          <div class="strikes-dropdown" id="sd-${r.id}">
-            <div class="strikes-dropdown-header">STRIKES · ${strikes.length}/4</div>
-            ${entries}
-            ${strikes.length < 4 ? `<button class="strikes-add-btn" onclick="openAddStrikeModal('${r.id}','${(r.callsign||'').replace("'","\'")}')">+ ADD STRIKE</button>` : ''}
-          </div>
-        </td>
-        <td>
-          <button class="edit-btn"   onclick="openPersonnelModal('${r.id}','${r.category}')">EDIT</button>
-          <button class="delete-btn" onclick="deletePersonnel('${r.id}')">DEL</button>
-        </td>
-      </tr>`;
-    }).join('');
-  }
-
-  // ── Personnel CRUD ─────────────────────────────────────────
-  function openPersonnelModal(id, category) {
-    document.getElementById('personnel-error').textContent = '';
-    document.getElementById('pm-id').value       = id || '';
-    document.getElementById('pm-category').value = category;
-    document.getElementById('personnel-modal-title').textContent = id ? 'Edit Personnel' : 'Add Personnel';
-
-    if (id) {
-      // Fetch existing record and prefill
-      sb.from('personnel').select('*').eq('id', id).single().then(({ data }) => {
-        if (!data) return;
-        document.getElementById('pm-slot').value       = data.slot_number   || '';
-        document.getElementById('pm-callsign').value   = data.callsign      || '';
-        document.getElementById('pm-rank').value       = data.rank          || '';
-        document.getElementById('pm-status').value     = data.status        || 'Active';
-        document.getElementById('pm-roblox-user').value= data.roblox_username|| '';
-        document.getElementById('pm-roblox-id').value  = data.roblox_id     || '';
-        document.getElementById('pm-discord').value    = data.discord       || '';
-        document.getElementById('pm-discord-id').value = data.discord_id    || '';
-        document.getElementById('pm-join-date').value  = data.join_date     || '';
-      });
-    } else {
-      ['pm-slot','pm-callsign','pm-rank','pm-roblox-user','pm-roblox-id',
-       'pm-discord','pm-discord-id','pm-join-date'].forEach(i => document.getElementById(i).value = '');
-      document.getElementById('pm-status').value = 'Active';
-    }
-    document.getElementById('personnel-modal').classList.add('open');
-  }
-
-  async function savePersonnel() {
-    document.getElementById('personnel-error').textContent = '';
-    const id = document.getElementById('pm-id').value;
-    const payload = {
-      slot_number:      document.getElementById('pm-slot').value.trim(),
-      callsign:         document.getElementById('pm-callsign').value.trim(),
-      rank:             document.getElementById('pm-rank').value.trim(),
-      status:           document.getElementById('pm-status').value,
-      roblox_username:  document.getElementById('pm-roblox-user').value.trim(),
-      roblox_id:        document.getElementById('pm-roblox-id').value.trim(),
-      discord:          document.getElementById('pm-discord').value.trim(),
-      discord_id:       document.getElementById('pm-discord-id').value.trim(),
-      join_date:        document.getElementById('pm-join-date').value.trim(),
-      category:         document.getElementById('pm-category').value,
-    };
-
-    let error;
-    if (id) {
-      ({ error } = await sb.from('personnel').update(payload).eq('id', id));
-    } else {
-      ({ error } = await sb.from('personnel').insert(payload));
-    }
-
-    if (error) {
-      document.getElementById('personnel-error').textContent = 'Save failed: ' + error.message;
-      return;
-    }
-    closeModal('personnel-modal');
-    loadPersonnel();
-  }
-
-  async function deletePersonnel(id) {
-    if (!confirm('Delete this personnel record? This cannot be undone.')) return;
-    const { error } = await sb.from('personnel').delete().eq('id', id);
-    if (error) { alert('Delete failed: ' + error.message); return; }
-    loadPersonnel();
-  }
-
-  // ── Modal helpers ──────────────────────────────────────────
-  function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
-  }
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-      if (e.target === overlay) overlay.classList.remove('open');
-    });
-  });
-
-  // ── Check existing session on load ─────────────────────────
   sb.auth.getSession().then(async ({ data: { session } }) => {
     if (session) {
       const role = await fetchRole(session.user.id);
@@ -1898,145 +1824,177 @@
     }
   });
 
-  // ── Role helper ────────────────────────────────────────────
-  async function fetchRole(userId) {
-    const { data } = await sb.from('admin_roles').select('role').eq('id', userId).single();
-    return data?.role || 'supervisor';
+  // ── Invite ────────────────────────────────────────────────
+  function openInviteModal() {
+    document.getElementById('invite-error').textContent = '';
+    document.getElementById('invite-success').style.display = 'none';
+    document.getElementById('invite-email').value = '';
+    document.getElementById('invite-modal').classList.add('open');
   }
 
-  // ── Supervisor Panel ───────────────────────────────────────
-  async function loadPanel() {
-    const role  = window._adminRole;
-    const email = window._adminEmail;
-    document.getElementById('panel-email-display').textContent = email || '';
-    document.getElementById('panel-subtitle').textContent =
-      role === 'owner' ? 'SAVE COMMAND · OWNER ACCESS' : 'SAVE COMMAND · SUPERVISOR ACCESS';
-    document.getElementById('reset-own-msg').style.display = 'none';
-
-    // Owner section
-    const ownerSec = document.getElementById('owner-section');
-    if (role === 'owner') {
-      ownerSec.style.display = 'block';
-      loadAdminsList();
-    } else {
-      ownerSec.style.display = 'none';
-    }
-  }
-
-  async function loadAdminsList() {
-    const { data, error } = await sb.from('admin_roles').select('*').order('created_at');
-    const tbody = document.getElementById('admins-tbody');
-    if (error || !data) {
-      tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);padding:16px">Error loading admins.</td></tr>`;
-      return;
-    }
-    tbody.innerHTML = data.map(r => `
-      <tr>
-        <td class="mono">${r.email}</td>
-        <td><span class="rank-tag">${r.role.toUpperCase()}</span></td>
-        <td class="mono">${new Date(r.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
-        <td>
-          ${r.email !== window._adminEmail ? `
-            <button class="admin-btn" style="font-size:9px;padding:3px 10px;color:var(--blue-bright);border-color:var(--blue-bright)"
-              onclick="sendPasswordReset('${r.email}')">RESET PW</button>
-            <button class="admin-btn" style="font-size:9px;padding:3px 10px;color:var(--red);border-color:var(--red);margin-left:4px"
-              onclick="removeAdmin('${r.id}','${r.email}')">REMOVE</button>
-          ` : '<span style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text-dim)">YOU</span>'}
-        </td>
-      </tr>`).join('');
-  }
-
-  async function doPanelInvite() {
-    const email = document.getElementById('panel-invite-email').value.trim();
-    const role  = document.getElementById('panel-invite-role').value;
-    const msg   = document.getElementById('panel-invite-msg');
-    msg.style.color = 'var(--red)';
-    msg.textContent = '';
-
-    if (!email || !email.includes('@')) { msg.textContent = 'Enter a valid email.'; return; }
-
+  async function doInvite() {
+    const email = document.getElementById('invite-email').value.trim();
+    document.getElementById('invite-error').textContent = '';
+    document.getElementById('invite-success').style.display = 'none';
+    if (!email || !email.includes('@')) { document.getElementById('invite-error').textContent = 'Enter a valid email address.'; return; }
     const { data: { session } } = await sb.auth.getSession();
+    if (!session) { document.getElementById('invite-error').textContent = 'You must be logged in.'; return; }
     const res = await fetch('https://xnqjdgixcocekzehsote.supabase.co/functions/v1/invite-admin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
-      body: JSON.stringify({ email, role })
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
+      body: JSON.stringify({ email })
     });
     const result = await res.json();
-    if (!res.ok || result.error) { msg.textContent = result.error || 'Invite failed.'; return; }
-
-    document.getElementById('panel-invite-email').value = '';
-    msg.style.color = 'var(--green)';
-    msg.textContent = `✓ Invite sent to ${email} as ${role}`;
-    loadAdminsList();
+    if (!res.ok || result.error) { document.getElementById('invite-error').textContent = result.error || 'Invite failed.'; return; }
+    document.getElementById('invite-email').value = '';
+    const el = document.getElementById('invite-success');
+    el.textContent = `✓ Invite sent to ${email}`; el.style.display = 'block';
+    stampLastUpdated(window._adminEmail);
   }
 
-  async function sendOwnPasswordReset() {
-    const email = window._adminEmail;
-    const { error } = await sb.auth.resetPasswordForEmail(email);
-    const el = document.getElementById('reset-own-msg');
-    if (error) { el.style.color = 'var(--red)'; el.textContent = 'Failed: ' + error.message; }
-    else        { el.style.color = 'var(--green)'; el.textContent = '✓ Reset link sent to ' + email; }
-    el.style.display = 'inline';
-  }
-
-  async function sendPasswordReset(email) {
-    const { error } = await sb.auth.resetPasswordForEmail(email);
-    if (error) { alert('Failed: ' + error.message); return; }
-    alert(`✓ Password reset link sent to ${email}`);
-  }
-
-  async function removeAdmin(id, email) {
-    if (!confirm(`Remove ${email} from admins? They will lose all access.`)) return;
-    const { error } = await sb.from('admin_roles').delete().eq('id', id);
-    if (error) { alert('Failed: ' + error.message); return; }
-    loadAdminsList();
-  }
-
-  // ── Strikes ────────────────────────────────────────────────
-  let _activeDropdown = null;
-
-  function toggleStrikesDropdown(pipEl, personnelId, callsign) {
-    const dd = document.getElementById('sd-' + personnelId);
-    if (!dd) return;
-    const isOpen = dd.classList.contains('open');
-    // close any open one
-    if (_activeDropdown && _activeDropdown !== dd) {
-      _activeDropdown.classList.remove('open');
+  // ── Tracker ───────────────────────────────────────────────
+  async function loadPersonnel() {
+    const [{ data, error }, { data: strikesData }] = await Promise.all([
+      sb.from('personnel').select('*').order('callsign', { ascending:true }),
+      sb.from('strikes').select('*').order('created_at', { ascending:true })
+    ]);
+    if (error) {
+      ['supervisory-tbody','general-tbody'].forEach(id => {
+        document.getElementById(id).innerHTML =
+          `<tr><td colspan="11" style="text-align:center;color:var(--red-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px">ERROR: ${error.message}</td></tr>`;
+      });
+      return;
     }
-    dd.classList.toggle('open', !isOpen);
-    _activeDropdown = !isOpen ? dd : null;
+    window._strikesMap = {};
+    (strikesData || []).forEach(s => {
+      if (!window._strikesMap[s.personnel_id]) window._strikesMap[s.personnel_id] = [];
+      window._strikesMap[s.personnel_id].push(s);
+    });
+    renderTable('supervisory-tbody', data.filter(r => r.category === 'supervisory'));
+    renderTable('general-tbody', data.filter(r => r.category === 'general'));
+    const now = new Date();
+    document.getElementById('tracker-updated').textContent =
+      'Updated ' + now.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
   }
 
-  // Close dropdowns when clicking elsewhere
-  document.addEventListener('click', () => {
-    if (_activeDropdown) { _activeDropdown.classList.remove('open'); _activeDropdown = null; }
+  function renderTable(tbodyId, rows) {
+    const tbody = document.getElementById(tbodyId);
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO RECORDS FOUND</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(r => {
+      const d = v => (v && v !== '—') ? v : '—';
+      const strikes = (window._strikesMap || {})[r.id] || [];
+      const pips = [0,1,2,3].map(i =>
+        `<div class="strike-pip${i < strikes.length ? ' active' : ''}"></div>`
+      ).join('');
+      const stClass = strikes.length > 0 ? 'has-strikes' : '';
+      let statusClass = 'status-inactive';
+      if (r.status === 'Active') statusClass = 'status-active';
+      else if (r.status === 'Suspended') statusClass = 'status-suspended';
+      else if (r.status === 'Vacant') statusClass = 'status-vacant';
+      const dotHtml = r.status === 'Active' ? '<span class="status-dot-sm"></span>' : '';
+      return `<tr>
+        <td style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px">${d(r.slot_number)}</td>
+        <td><span class="callsign">${d(r.callsign)}</span></td>
+        <td><span class="rank-tag">${d(r.rank)}</span></td>
+        <td class="mono">${d(r.roblox_username)}</td>
+        <td class="mono">${d(r.roblox_id)}</td>
+        <td class="mono">${d(r.discord)}</td>
+        <td class="mono">${d(r.discord_id)}</td>
+        <td style="font-size:12px;color:var(--text-muted)">${d(r.join_date)}</td>
+        <td><span class="status-badge ${statusClass}">${dotHtml}${r.status || 'Unknown'}</span></td>
+        <td>
+          <div class="strike-pips-wrap" onclick="toggleStrikePopup(event, '${r.id}', '${(r.callsign||'').replace(/'/g,"\\'")}')">
+            ${pips}
+            <span class="strike-count ${stClass}">${strikes.length}/4</span>
+          </div>
+        </td>
+        <td>
+          <button class="edit-btn" onclick="openPersonnelModal('${r.id}','${r.category}')">EDIT</button>
+          <button class="delete-btn" onclick="deletePersonnel('${r.id}')">DEL</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Floating Strike Popup ─────────────────────────────────
+  let _popupPersonnelId = null;
+  let _popupOpen = false;
+
+  function toggleStrikePopup(e, personnelId, callsign) {
+    e.stopPropagation();
+    const popup = document.getElementById('strikes-popup');
+    if (_popupOpen && _popupPersonnelId === personnelId) { closeStrikesPopup(); return; }
+    _popupPersonnelId = personnelId;
+    _popupOpen = true;
+    const strikes = (window._strikesMap || {})[personnelId] || [];
+    document.getElementById('sp-callsign').textContent = callsign || 'Personnel';
+    document.getElementById('sp-count').textContent = strikes.length + ' / 4';
+    const entriesEl = document.getElementById('sp-entries');
+    if (!strikes.length) {
+      entriesEl.innerHTML = '<div class="sp-empty">NO STRIKES ON RECORD</div>';
+    } else {
+      entriesEl.innerHTML = strikes.map((s, i) => `
+        <div class="sp-entry" onclick="showStrikeReason('${s.id}')">
+          <span class="sp-num">#${i + 1}</span>
+          <span class="sp-label">${s.reason.substring(0, 44)}${s.reason.length > 44 ? '…' : ''}</span>
+          <span class="sp-date">${new Date(s.created_at).toLocaleDateString('en-US', {month:'short', day:'numeric'})}</span>
+        </div>`).join('');
+    }
+    const addBtn = document.getElementById('sp-add-btn');
+    addBtn.onclick = () => openAddStrikeModal(personnelId, callsign);
+    addBtn.style.display = (document.body.classList.contains('admin-mode') && strikes.length < 4) ? 'block' : 'none';
+    const rect = e.currentTarget.getBoundingClientRect();
+    popup.style.display = 'block';
+    popup.classList.add('open');
+    const popW = popup.offsetWidth || 320;
+    const popH = popup.offsetHeight || 200;
+    let left = rect.left;
+    let top  = rect.bottom + 6;
+    if (left + popW > window.innerWidth - 12) left = window.innerWidth - popW - 12;
+    if (top + popH > window.innerHeight - 12) top = rect.top - popH - 6;
+    popup.style.left = left + 'px';
+    popup.style.top  = top  + 'px';
+  }
+
+  function closeStrikesPopup() {
+    const popup = document.getElementById('strikes-popup');
+    popup.classList.remove('open');
+    popup.style.display = 'none';
+    _popupOpen = false;
+    _popupPersonnelId = null;
+  }
+
+  document.addEventListener('click', e => {
+    const popup = document.getElementById('strikes-popup');
+    if (_popupOpen && !popup.contains(e.target)) closeStrikesPopup();
   });
 
   function showStrikeReason(strikeId) {
-    // Find strike across all personnel
     let found = null;
     for (const list of Object.values(window._strikesMap || {})) {
       found = list.find(s => s.id === strikeId);
       if (found) break;
     }
     if (!found) return;
-    document.getElementById('srb-title').textContent = 'Strike #' + (
-      (window._strikesMap[found.personnel_id] || []).indexOf(found) + 1
-    );
+    const idx = (window._strikesMap[found.personnel_id] || []).indexOf(found);
+    document.getElementById('srb-title').textContent = 'Strike #' + (idx + 1);
     document.getElementById('srb-meta').textContent =
-      'Issued: ' + new Date(found.created_at).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'}) +
+      'Issued: ' + new Date(found.created_at).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'}) +
       (found.issued_by ? '  ·  By: ' + found.issued_by : '');
     document.getElementById('srb-reason').textContent = found.reason;
     document.getElementById('srb-delete-btn').onclick = () => deleteStrike(found.id, found.personnel_id);
+    closeStrikesPopup();
     document.getElementById('strike-reason-overlay').classList.add('open');
   }
 
   function openAddStrikeModal(personnelId, callsign) {
-    document.getElementById('add-strike-pid').value      = personnelId;
+    document.getElementById('add-strike-pid').value = personnelId;
     document.getElementById('add-strike-callsign').textContent = callsign;
-    document.getElementById('add-strike-reason').value   = '';
+    document.getElementById('add-strike-reason').value = '';
     document.getElementById('add-strike-error').textContent = '';
-    if (_activeDropdown) { _activeDropdown.classList.remove('open'); _activeDropdown = null; }
+    closeStrikesPopup();
     document.getElementById('add-strike-modal').classList.add('open');
   }
 
@@ -2046,73 +2004,161 @@
     const errEl  = document.getElementById('add-strike-error');
     errEl.textContent = '';
     if (!reason) { errEl.textContent = 'Reason is required.'; return; }
-
     const { data: { session } } = await sb.auth.getSession();
     const { error } = await sb.from('strikes').insert({
-      personnel_id: pid,
-      reason:       reason,
-      issued_by:    session?.user?.email || 'Unknown'
+      personnel_id: pid, reason, issued_by: session?.user?.email || 'Unknown'
     });
     if (error) { errEl.textContent = 'Failed: ' + error.message; return; }
     document.getElementById('add-strike-modal').classList.remove('open');
+    stampLastUpdated(window._adminEmail);
     loadPersonnel();
   }
 
-  async function deleteStrike(strikeId, personnelId) {
+  async function deleteStrike(strikeId) {
     if (!confirm('Remove this strike? This cannot be undone.')) return;
     const { error } = await sb.from('strikes').delete().eq('id', strikeId);
     if (error) { alert('Failed: ' + error.message); return; }
     document.getElementById('strike-reason-overlay').classList.remove('open');
+    stampLastUpdated(window._adminEmail);
     loadPersonnel();
   }
 
-  // ── Security: block save/print/source/devtools ─────────────
+  // ── Personnel CRUD ────────────────────────────────────────
+  function openPersonnelModal(id, category) {
+    document.getElementById('personnel-error').textContent = '';
+    document.getElementById('pm-id').value = id || '';
+    document.getElementById('pm-category').value = category;
+    document.getElementById('personnel-modal-title').textContent = id ? 'Edit Personnel' : 'Add Personnel';
+    if (id) {
+      sb.from('personnel').select('*').eq('id', id).single().then(({ data }) => {
+        if (!data) return;
+        document.getElementById('pm-slot').value        = data.slot_number    || '';
+        document.getElementById('pm-callsign').value    = data.callsign       || '';
+        document.getElementById('pm-rank').value        = data.rank           || '';
+        document.getElementById('pm-status').value      = data.status         || 'Active';
+        document.getElementById('pm-roblox-user').value = data.roblox_username|| '';
+        document.getElementById('pm-roblox-id').value   = data.roblox_id      || '';
+        document.getElementById('pm-discord').value     = data.discord        || '';
+        document.getElementById('pm-discord-id').value  = data.discord_id     || '';
+        document.getElementById('pm-join-date').value   = data.join_date      || '';
+      });
+    } else {
+      ['pm-slot','pm-callsign','pm-rank','pm-roblox-user','pm-roblox-id','pm-discord','pm-discord-id','pm-join-date']
+        .forEach(i => document.getElementById(i).value = '');
+      document.getElementById('pm-status').value = 'Active';
+    }
+    document.getElementById('personnel-modal').classList.add('open');
+  }
+
+  async function savePersonnel() {
+    document.getElementById('personnel-error').textContent = '';
+    const id = document.getElementById('pm-id').value;
+    const payload = {
+      slot_number:     document.getElementById('pm-slot').value.trim(),
+      callsign:        document.getElementById('pm-callsign').value.trim(),
+      rank:            document.getElementById('pm-rank').value.trim(),
+      status:          document.getElementById('pm-status').value,
+      roblox_username: document.getElementById('pm-roblox-user').value.trim(),
+      roblox_id:       document.getElementById('pm-roblox-id').value.trim(),
+      discord:         document.getElementById('pm-discord').value.trim(),
+      discord_id:      document.getElementById('pm-discord-id').value.trim(),
+      join_date:       document.getElementById('pm-join-date').value.trim(),
+      category:        document.getElementById('pm-category').value,
+    };
+    let error;
+    if (id) { ({ error } = await sb.from('personnel').update(payload).eq('id', id)); }
+    else    { ({ error } = await sb.from('personnel').insert(payload)); }
+    if (error) { document.getElementById('personnel-error').textContent = 'Save failed: ' + error.message; return; }
+    closeModal('personnel-modal');
+    stampLastUpdated(window._adminEmail);
+    loadPersonnel();
+  }
+
+  async function deletePersonnel(id) {
+    if (!confirm('Delete this personnel record? This cannot be undone.')) return;
+    const { error } = await sb.from('personnel').delete().eq('id', id);
+    if (error) { alert('Delete failed: ' + error.message); return; }
+    stampLastUpdated(window._adminEmail);
+    loadPersonnel();
+  }
+
+  // ── Panel ─────────────────────────────────────────────────
+  async function loadPanel() {
+    const role  = window._adminRole;
+    const email = window._adminEmail;
+    document.getElementById('panel-email-display').textContent = email || '';
+    document.getElementById('panel-subtitle').textContent = role === 'owner' ? 'SAVE COMMAND · OWNER ACCESS' : 'SAVE COMMAND · SUPERVISOR ACCESS';
+    document.getElementById('reset-own-msg').style.display = 'none';
+    const ownerSec = document.getElementById('owner-section');
+    if (role === 'owner') { ownerSec.style.display = 'block'; loadAdminsList(); }
+    else { ownerSec.style.display = 'none'; }
+  }
+
+  async function loadAdminsList() {
+    const { data, error } = await sb.from('admin_roles').select('*').order('created_at');
+    const tbody = document.getElementById('admins-tbody');
+    if (error || !data) { tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red-bright);padding:16px">Error loading admins.</td></tr>`; return; }
+    tbody.innerHTML = data.map(r => `
+      <tr>
+        <td class="mono">${r.email}</td>
+        <td><span class="rank-tag">${r.role.toUpperCase()}</span></td>
+        <td class="mono">${new Date(r.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+        <td>${r.email !== window._adminEmail ? `
+          <button class="admin-btn" style="font-size:9px;padding:3px 10px;color:var(--blue-bright);border-color:var(--blue-bright)" onclick="sendPasswordReset('${r.email}')">RESET PW</button>
+          <button class="admin-btn" style="font-size:9px;padding:3px 10px;color:var(--red-bright);border-color:var(--red-bright);margin-left:4px" onclick="removeAdmin('${r.id}','${r.email}')">REMOVE</button>
+        ` : '<span style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text-dim)">YOU</span>'}</td>
+      </tr>`).join('');
+  }
+
+  async function doPanelInvite() {
+    const email = document.getElementById('panel-invite-email').value.trim();
+    const role  = document.getElementById('panel-invite-role').value;
+    const msg   = document.getElementById('panel-invite-msg');
+    msg.style.color = 'var(--red-bright)'; msg.textContent = '';
+    if (!email || !email.includes('@')) { msg.textContent = 'Enter a valid email.'; return; }
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch('https://xnqjdgixcocekzehsote.supabase.co/functions/v1/invite-admin', {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
+      body: JSON.stringify({ email, role })
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) { msg.textContent = result.error || 'Invite failed.'; return; }
+    document.getElementById('panel-invite-email').value = '';
+    msg.style.color = 'var(--green-bright)';
+    msg.textContent = `✓ Invite sent to ${email} as ${role}`;
+    loadAdminsList();
+  }
+
+  async function sendOwnPasswordReset() {
+    const { error } = await sb.auth.resetPasswordForEmail(window._adminEmail);
+    const el = document.getElementById('reset-own-msg');
+    if (error) { el.style.color = 'var(--red-bright)'; el.textContent = 'Failed: ' + error.message; }
+    else        { el.style.color = 'var(--green-bright)'; el.textContent = '✓ Reset link sent to ' + window._adminEmail; }
+    el.style.display = 'inline';
+  }
+
+  async function sendPasswordReset(email) {
+    const { error } = await sb.auth.resetPasswordForEmail(email);
+    if (error) { alert('Failed: ' + error.message); return; }
+    alert(`✓ Reset link sent to ${email}`);
+  }
+
+  async function removeAdmin(id, email) {
+    if (!confirm(`Remove ${email} from admins?`)) return;
+    const { error } = await sb.from('admin_roles').delete().eq('id', id);
+    if (error) { alert('Failed: ' + error.message); return; }
+    loadAdminsList();
+  }
+
+  // ── Security ──────────────────────────────────────────────
   document.addEventListener('contextmenu', e => { e.preventDefault(); return false; });
   document.addEventListener('keydown', e => {
     const ctrl = e.ctrlKey || e.metaKey;
-    if (ctrl && e.key === 's') { e.preventDefault(); return false; }
-    if (ctrl && e.key === 'u') { e.preventDefault(); return false; }
-    if (ctrl && e.key === 'p') { e.preventDefault(); return false; }
-    if (ctrl && e.key === 'a') { e.preventDefault(); return false; }
+    if (ctrl && ['s','u','p','a'].includes(e.key)) { e.preventDefault(); return false; }
     if (ctrl && e.shiftKey && ['i','I','j','J'].includes(e.key)) { e.preventDefault(); return false; }
     if (e.key === 'F12') { e.preventDefault(); return false; }
   });
   document.addEventListener('dragstart', e => { e.preventDefault(); return false; });
 </script>
-
-<!-- ══ STRIKE REASON OVERLAY ════════════════════════════════ -->
-<div class="strike-reason-overlay" id="strike-reason-overlay" onclick="if(event.target===this)this.classList.remove('open')">
-  <div class="strike-reason-box">
-    <h3 id="srb-title">Strike #1</h3>
-    <div class="srb-meta" id="srb-meta"></div>
-    <div class="srb-reason" id="srb-reason"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end">
-      <button class="admin-btn" id="srb-delete-btn" style="display:none;color:var(--red);border-color:rgba(192,57,43,.4)">REMOVE STRIKE</button>
-      <button class="btn-primary" onclick="document.getElementById('strike-reason-overlay').classList.remove('open')" style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;padding:7px 20px;border-radius:3px;cursor:pointer;border:1px solid var(--gold);background:var(--gold);color:var(--bg)">CLOSE</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ ADD STRIKE MODAL ══════════════════════════════════════ -->
-<div class="modal-overlay" id="add-strike-modal" onclick="if(event.target===this)this.classList.remove('open')">
-  <div class="modal">
-    <h2>Add Strike</h2>
-    <div class="modal-sub">CALLSIGN: <span id="add-strike-callsign" style="color:var(--gold)"></span></div>
-    <div class="modal-error" id="add-strike-error"></div>
-    <input type="hidden" id="add-strike-pid">
-    <label>Reason</label>
-    <textarea id="add-strike-reason" placeholder="Describe the violation or reason for this strike..."
-      style="width:100%;background:var(--bg);border:1px solid var(--border-bright);border-radius:3px;
-             padding:10px 13px;color:var(--text);font-family:'Noto Sans',sans-serif;font-size:13px;
-             outline:none;resize:vertical;min-height:100px;margin-bottom:18px;
-             transition:border-color .15s;-webkit-user-select:text;user-select:text"
-      onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border-bright)'"></textarea>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="document.getElementById('add-strike-modal').classList.remove('open')">CANCEL</button>
-      <button class="btn-primary" onclick="saveStrike()" style="background:var(--red);border-color:var(--red);box-shadow:0 0 16px rgba(192,57,43,.25)">ISSUE STRIKE</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
