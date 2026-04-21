@@ -3102,7 +3102,7 @@
         <div class="patrol-summary-value small" id="patrol-quota-status">Checking...</div>
       </div>
       <div class="patrol-summary-card">
-        <div class="patrol-summary-label">Patrols This Week</div>
+        <div class="patrol-summary-label">Time This Week</div>
         <div class="patrol-summary-value" id="patrol-quota-weekly">0</div>
       </div>
       <div class="patrol-summary-card">
@@ -3439,6 +3439,8 @@
     });
   }
 
+  const QUOTA_WEEKLY_MINUTES = 30; // Minimum patrol time per week to meet quota
+
   function getPatrolQuotaSnapshot(personnel) {
     const logs = getPatrolLogsForPersonnel(personnel).slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
     const cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
@@ -3447,26 +3449,30 @@
       return Number.isFinite(createdAt) && createdAt >= cutoff;
     });
     const totalMinutes = logs.reduce((sum, log) => sum + calculatePatrolDurationMinutes(log.start_time, log.end_time), 0);
+    const weeklyMinutes = weeklyLogs.reduce((sum, log) => sum + calculatePatrolDurationMinutes(log.start_time, log.end_time), 0);
     return {
       logs,
       weeklyLogs,
       totalMinutes,
+      weeklyMinutes,
       totalPatrols: logs.length,
       weeklyPatrols: weeklyLogs.length,
-      metQuota: weeklyLogs.length >= 1
+      metQuota: weeklyMinutes >= QUOTA_WEEKLY_MINUTES
     };
   }
-
-  function getQuotaButtonMarkup(personnel) {
+  
+ function getQuotaButtonMarkup(personnel) {
     if (!window._patrolLogsLoaded) {
       return `<button type="button" class="quota-btn pending" onclick="openPatrolQuotaModal('${escapeHtml(personnel.id)}')">Checking</button><div class="quota-meta">Loading patrol activity</div>`;
     }
     const snapshot = getPatrolQuotaSnapshot(personnel);
     const statusText = snapshot.metQuota ? 'Met Quota' : "Hasn't Met";
     const buttonClass = snapshot.metQuota ? 'met' : 'miss';
-    return `<button type="button" class="quota-btn ${buttonClass}" onclick="openPatrolQuotaModal('${escapeHtml(personnel.id)}')">${escapeHtml(statusText)}</button><div class="quota-meta">${escapeHtml(`${snapshot.weeklyPatrols} this week · ${snapshot.totalPatrols} total`)}</div>`;
+    const weeklyTime = formatDurationMinutes(snapshot.weeklyMinutes);
+    const totalTime  = formatDurationMinutes(snapshot.totalMinutes);
+    return `<button type="button" class="quota-btn ${buttonClass}" onclick="openPatrolQuotaModal('${escapeHtml(personnel.id)}')">${escapeHtml(statusText)}</button><div class="quota-meta">${escapeHtml(`${weeklyTime} this week · ${totalTime} total`)}</div>`;
   }
-
+  
   function openPatrolQuotaModal(personnelId) {
     const personnel = (window._personnelMap || {})[personnelId];
     if (!personnel) return;
@@ -3474,9 +3480,9 @@
     const callsign = personnel.callsign || personnel.roblox_username || personnel.discord || 'Personnel';
     const rank = personnel.rank || 'Unknown Rank';
     document.getElementById('patrol-quota-sub').textContent = `${callsign} · ${rank} · WEEKLY PATROL REVIEW`;
-    document.getElementById('patrol-quota-note').textContent = 'Quota is based on Section 14.03 of the SOP: at least one deployment in the last 7 days.';
+    document.getElementById('patrol-quota-note').textContent = `Quota is based on total patrol time logged. Minimum: ${QUOTA_WEEKLY_MINUTES} minutes in the last 7 days.`;
     document.getElementById('patrol-quota-status').textContent = snapshot.metQuota ? 'MET QUOTA' : "HASN'T MET QUOTA";
-    document.getElementById('patrol-quota-weekly').textContent = String(snapshot.weeklyPatrols);
+    document.getElementById('patrol-quota-weekly').textContent = formatDurationMinutes(snapshot.weeklyMinutes);
     document.getElementById('patrol-quota-total').textContent = String(snapshot.totalPatrols);
     document.getElementById('patrol-quota-time').textContent = formatDurationMinutes(snapshot.totalMinutes);
 
