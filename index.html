@@ -977,6 +977,119 @@
     background: rgba(0,0,0,.1);
     border-radius: 0 0 var(--radius) var(--radius);
   }
+  .patrol-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .patrol-summary-card {
+    padding: 16px 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(74,159,212,.16);
+    background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.9));
+  }
+  .patrol-summary-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.6px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .patrol-summary-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 23px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    color: var(--text-bright);
+    text-transform: uppercase;
+  }
+  .patrol-summary-value.small {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .patrol-helper-copy {
+    margin-bottom: 16px;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    line-height: 1.8;
+  }
+  .patrol-label-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(201,168,76,.2);
+    background: rgba(201,168,76,.08);
+    color: var(--gold-light);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .9px;
+  }
+  .proof-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid rgba(74,159,212,.28);
+    background: rgba(74,159,212,.08);
+    color: var(--blue-bright);
+    text-decoration: none;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .9px;
+    text-transform: uppercase;
+    transition: all .15s ease;
+  }
+  .proof-link-btn:hover {
+    border-color: rgba(74,159,212,.45);
+    background: rgba(74,159,212,.15);
+    color: #9ed7ff;
+  }
+  .shift-preview-shell {
+    margin: 4px 0 16px;
+    padding: 14px 16px;
+    border-radius: 6px;
+    border: 1px solid rgba(201,168,76,.18);
+    background: linear-gradient(135deg, rgba(201,168,76,.06), rgba(11,14,24,.92));
+  }
+  .shift-preview-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.6px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .shift-preview-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    line-height: 1.35;
+  }
+  .shift-field-note {
+    margin-top: -8px;
+    margin-bottom: 14px;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    line-height: 1.7;
+  }
+  .shift-proof-input {
+    margin-bottom: 14px !important;
+  }
+  .shift-delete-btn {
+    display: none;
+    margin-left: 8px;
+  }
+  body.admin-mode .shift-delete-btn {
+    display: inline-block;
+  }
 
   /* RANK STRUCTURE TABLE */
   .rank-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
@@ -1471,6 +1584,7 @@
       grid-template-columns: 1fr;
     }
     .legal-overview-grid,
+    .patrol-summary-grid,
     .reason-preset-grid {
       grid-template-columns: 1fr;
     }
@@ -2146,6 +2260,49 @@
         <button class="add-row-btn" style="margin:0" onclick="openPersonnelModal(null,'general')">+ ADD PERSONNEL</button>
       </div>
     </div>
+
+    <div class="tracker-section">
+      <div class="tracker-header">
+        <h2>Patrol Shift Logs</h2>
+        <span class="section-tag">Proof Link Required · Auto Patrol Numbering</span>
+      </div>
+      <div style="padding:18px 18px 0">
+        <div class="patrol-helper-copy">
+          Patrol labels are generated automatically in the format
+          <span class="patrol-label-pill">RANK, USERNAME - PATROL #</span>
+          based on how many patrols that user has already logged.
+        </div>
+        <div class="patrol-summary-grid">
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Total Patrols</div>
+            <div class="patrol-summary-value" id="patrol-total">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Unique Loggers</div>
+            <div class="patrol-summary-value" id="patrol-unique">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Latest Patrol</div>
+            <div class="patrol-summary-value small" id="patrol-latest">No patrols logged</div>
+          </div>
+        </div>
+      </div>
+      <div class="tracker-table-outer">
+        <table class="tracker-data-table">
+          <thead>
+            <tr>
+              <th>Patrol Label</th><th>Rank</th><th>Username</th><th>Proof</th><th>Logged By</th><th>Logged</th><th id="shift-actions-col" style="display:none"></th>
+            </tr>
+          </thead>
+          <tbody id="shift-logs-tbody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING PATROL LOGS...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tracker-footer">
+        <button class="add-row-btn" style="margin:0" onclick="openShiftLogModal()">+ LOG PATROL</button>
+      </div>
+    </div>
   </div>
 
   <!-- CLASSIFIED -->
@@ -2580,6 +2737,46 @@
   </div>
 </div>
 
+<!-- SHIFT LOG MODAL -->
+<div class="modal-overlay" id="shift-log-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal wide">
+    <h2>Log Patrol</h2>
+    <div class="modal-sub">SAVE SHIFT LOGGER · DISCORD PROOF LINK REQUIRED</div>
+    <div class="modal-error" id="shift-log-error"></div>
+    <div class="form-grid">
+      <div>
+        <label>Personnel</label>
+        <select id="shift-personnel-select" onchange="syncShiftFormFromPersonnel()">
+          <option value="">Select personnel</option>
+        </select>
+      </div>
+      <div>
+        <label>Rank Abbrev</label>
+        <input type="text" id="shift-rank-code" placeholder="T" maxlength="8" oninput="this.value=this.value.toUpperCase();updateShiftLogPreview()">
+      </div>
+      <div>
+        <label>Username</label>
+        <input type="text" id="shift-username" placeholder="username" oninput="updateShiftLogPreview()">
+      </div>
+      <div>
+        <label>Full Rank</label>
+        <input type="text" id="shift-rank-full" placeholder="Trooper" oninput="updateShiftLogPreview()">
+      </div>
+    </div>
+    <div class="shift-field-note">Selecting someone from the roster auto-fills rank and username, but you can still edit them before saving.</div>
+    <label>Proof Link</label>
+    <input type="url" id="shift-proof-url" class="shift-proof-input" placeholder="https://discord.com/channels/.../.../...">
+    <div class="shift-preview-shell">
+      <div class="shift-preview-label">Generated Patrol Label</div>
+      <div class="shift-preview-value" id="shift-log-preview">Awaiting personnel selection</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('shift-log-modal').classList.remove('open')">CANCEL</button>
+      <button class="btn-primary" onclick="saveShiftLog()">SAVE PATROL</button>
+    </div>
+  </div>
+</div>
+
 <!-- STRIKE REASON OVERLAY -->
 <div class="strike-reason-overlay" id="strike-reason-overlay" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="strike-reason-box">
@@ -2770,6 +2967,94 @@
     updateLegalNoticeBanner();
   }
 
+  function normalizePatrolUsername(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  function formatRankCode(rankText) {
+    const cleaned = String(rankText || '').trim();
+    if (!cleaned) return '';
+    const normalized = cleaned.replace(/\./g, '').trim().toUpperCase();
+    const map = {
+      TROOPER: 'T',
+      TPR: 'T',
+      SERGEANT: 'SGT',
+      SGT: 'SGT',
+      LIEUTENANT: 'LT',
+      LT: 'LT',
+      CAPTAIN: 'CPT',
+      CPT: 'CPT',
+      MAJOR: 'MAJ',
+      MAJ: 'MAJ',
+      COMMANDER: 'CDR',
+      CDR: 'CDR',
+      OWNER: 'OWN'
+    };
+    if (map[normalized]) return map[normalized];
+    return normalized.replace(/[^A-Z0-9]/g, '').slice(0, 4) || normalized.slice(0, 1);
+  }
+
+  function getNextPatrolNumber(username) {
+    const key = normalizePatrolUsername(username);
+    if (!key) return 1;
+    return ((window._shiftLogs || []).filter(log => normalizePatrolUsername(log.username) === key).length) + 1;
+  }
+
+  function buildPatrolLabel(rankCode, username, patrolNumber) {
+    const code = String(rankCode || '').trim().toUpperCase() || 'UNIT';
+    const name = String(username || '').trim() || 'UNKNOWN';
+    const num = Number(patrolNumber) > 0 ? patrolNumber : 1;
+    return `${code}, ${name} - PATROL #${num}`;
+  }
+
+  function updateShiftLogSummary(logs) {
+    const list = logs || [];
+    const totalEl = document.getElementById('patrol-total');
+    const uniqueEl = document.getElementById('patrol-unique');
+    const latestEl = document.getElementById('patrol-latest');
+    if (!totalEl || !uniqueEl || !latestEl) return;
+
+    const uniqueUsers = new Set(list.map(log => normalizePatrolUsername(log.username)).filter(Boolean));
+    totalEl.textContent = String(list.length);
+    uniqueEl.textContent = String(uniqueUsers.size);
+    latestEl.textContent = list.length ? (list[0].patrol_label || buildPatrolLabel(list[0].rank_code, list[0].username, list[0].patrol_number)) : 'No patrols logged';
+  }
+
+  function populateShiftPersonnelOptions(rows) {
+    const select = document.getElementById('shift-personnel-select');
+    if (!select) return;
+    const options = (rows || []).slice().sort((a, b) => String(a.callsign || '').localeCompare(String(b.callsign || '')));
+    select.innerHTML = '<option value="">Select personnel</option>' + options.map(row => {
+      const label = [row.callsign || '—', row.rank || 'Unknown Rank', row.roblox_username || row.discord || 'Unknown User'].join(' · ');
+      return `<option value="${escapeHtml(row.id)}">${escapeHtml(label)}</option>`;
+    }).join('');
+  }
+
+  function syncShiftFormFromPersonnel() {
+    const select = document.getElementById('shift-personnel-select');
+    if (!select) return;
+    const personnel = (window._personnelMap || {})[select.value] || null;
+    if (personnel) {
+      document.getElementById('shift-username').value = personnel.roblox_username || personnel.discord || '';
+      document.getElementById('shift-rank-full').value = personnel.rank || '';
+      document.getElementById('shift-rank-code').value = formatRankCode(personnel.rank || '');
+    }
+    updateShiftLogPreview();
+  }
+
+  function updateShiftLogPreview() {
+    const preview = document.getElementById('shift-log-preview');
+    if (!preview) return;
+    const rankCode = document.getElementById('shift-rank-code')?.value || formatRankCode(document.getElementById('shift-rank-full')?.value || '');
+    const username = document.getElementById('shift-username')?.value || '';
+    if (!String(username).trim()) {
+      preview.textContent = 'Awaiting personnel selection';
+      return;
+    }
+    const patrolNumber = getNextPatrolNumber(username);
+    preview.textContent = buildPatrolLabel(rankCode, username, patrolNumber);
+  }
+
   function getStrikeReasonPresetButtons() {
     return Array.from(document.querySelectorAll('#strike-reason-presets .reason-preset-btn'));
   }
@@ -2812,6 +3097,59 @@
     syncStrikeReasonPresetFromText();
   }
 
+  function renderShiftLogs(logs, errorMessage = '') {
+    const tbody = document.getElementById('shift-logs-tbody');
+    if (!tbody) return;
+
+    const list = (logs || []).slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    window._shiftLogs = list;
+    updateShiftLogSummary(list);
+
+    if (errorMessage) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">SHIFT LOGS UNAVAILABLE · ${escapeHtml(errorMessage)}</td></tr>`;
+      return;
+    }
+
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO PATROLS LOGGED YET</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(log => {
+      const patrolLabel = log.patrol_label || buildPatrolLabel(log.rank_code, log.username, log.patrol_number);
+      const loggedAt = log.created_at ? new Date(log.created_at).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' }) : 'Unknown';
+      const proofUrl = String(log.proof_url || '').trim();
+      return `<tr>
+        <td><span class="patrol-label-pill">${escapeHtml(patrolLabel)}</span></td>
+        <td><span class="rank-tag">${escapeHtml(log.rank_code || formatRankCode(log.rank_text || 'UNIT'))}</span></td>
+        <td class="mono">${escapeHtml(log.username || 'Unknown')}</td>
+        <td>${proofUrl ? `<a class="proof-link-btn" href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener noreferrer">Open Proof</a>` : '<span style="color:var(--text-dim)">Missing</span>'}</td>
+        <td class="mono">${escapeHtml(log.logged_by || 'Unknown')}</td>
+        <td style="font-size:12px;color:var(--text-muted)">${escapeHtml(loggedAt)}</td>
+        <td>
+          <button class="delete-btn shift-delete-btn" onclick="deleteShiftLog('${escapeHtml(log.id)}')">DEL</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function openShiftLogModal() {
+    if (!requireVerifiedAdminAccess('log a patrol shift')) return;
+    populateShiftPersonnelOptions(Object.values(window._personnelMap || {}));
+    document.getElementById('shift-personnel-select').value = '';
+    document.getElementById('shift-rank-code').value = '';
+    document.getElementById('shift-rank-full').value = '';
+    document.getElementById('shift-username').value = '';
+    document.getElementById('shift-proof-url').value = '';
+    document.getElementById('shift-log-error').textContent = '';
+    updateShiftLogPreview();
+    document.getElementById('shift-log-modal').classList.add('open');
+  }
+
+  function isDiscordMessageLink(url) {
+    return /^https:\/\/(canary\.|ptb\.)?discord(?:app)?\.com\/channels\/\d+\/\d+\/\d+\/?$/i.test(String(url || '').trim());
+  }
+
   function filterOffenses(cat, btn) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -2848,6 +3186,7 @@
   window._securityLogsLastError = '';
   window._adminVerified = false;
   window._adminUserId = null;
+  window._shiftLogs = window._shiftLogs || [];
 
   function escapeHtml(value) {
     return String(value ?? '')
@@ -3362,6 +3701,7 @@
     const label = document.getElementById('admin-user-label');
     document.getElementById('sup-actions-col').style.display = on ? '' : 'none';
     document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
+    document.getElementById('shift-actions-col').style.display = on ? '' : 'none';
     document.getElementById('nav-panel').style.display = 'none';
     if (on) {
       btn.textContent = '⬡ SIGN OUT'; btn.classList.add('signed-in');
@@ -3460,14 +3800,15 @@
 
   // ── Tracker ───────────────────────────────────────────────
   async function loadPersonnel() {
-    const [{ data, error }, { data: strikesData }] = await Promise.all([
+    const [{ data, error }, { data: strikesData }, { data: shiftData, error: shiftError }] = await Promise.all([
       sb.from('personnel').select('*').order('callsign', { ascending:true }),
-      sb.from('strikes').select('*').order('created_at', { ascending:true })
+      sb.from('strikes').select('*').order('created_at', { ascending:true }),
+      sb.from('shift_logs').select('*').order('created_at', { ascending:false })
     ]);
     if (error) {
-      ['supervisory-tbody','general-tbody'].forEach(id => {
+      ['supervisory-tbody','general-tbody','shift-logs-tbody'].forEach(id => {
         document.getElementById(id).innerHTML =
-          `<tr><td colspan="11" style="text-align:center;color:var(--red-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px">ERROR: ${error.message}</td></tr>`;
+          `<tr><td colspan="${id === 'shift-logs-tbody' ? '7' : '11'}" style="text-align:center;color:var(--red-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px">ERROR: ${error.message}</td></tr>`;
       });
       return;
     }
@@ -3479,6 +3820,12 @@
     });
     renderTable('supervisory-tbody', data.filter(r => r.category === 'supervisory'));
     renderTable('general-tbody', data.filter(r => r.category === 'general'));
+    populateShiftPersonnelOptions(data || []);
+    if (shiftError) {
+      renderShiftLogs([], `Create the shift_logs table in Supabase to enable patrol logging. (${shiftError.message})`);
+    } else {
+      renderShiftLogs(shiftData || []);
+    }
     const now = new Date();
     document.getElementById('tracker-updated').textContent =
       'Updated ' + now.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
@@ -3676,6 +4023,76 @@
   }
 
   // ── Personnel CRUD ────────────────────────────────────────
+  async function saveShiftLog() {
+    if (!requireVerifiedAdminAccess('save a patrol log')) return;
+    const personnelId = document.getElementById('shift-personnel-select').value || null;
+    const username = document.getElementById('shift-username').value.trim();
+    const rankFull = document.getElementById('shift-rank-full').value.trim();
+    const rankCode = (document.getElementById('shift-rank-code').value.trim() || formatRankCode(rankFull)).toUpperCase();
+    const proofUrl = document.getElementById('shift-proof-url').value.trim();
+    const errEl = document.getElementById('shift-log-error');
+    errEl.textContent = '';
+
+    if (!username) { errEl.textContent = 'Username is required.'; return; }
+    if (!rankCode) { errEl.textContent = 'Rank abbreviation is required.'; return; }
+    if (!proofUrl) { errEl.textContent = 'Proof link is required.'; return; }
+    if (!isDiscordMessageLink(proofUrl)) { errEl.textContent = 'Proof must be a full Discord message link.'; return; }
+
+    const patrolNumber = getNextPatrolNumber(username);
+    const patrolLabel = buildPatrolLabel(rankCode, username, patrolNumber);
+    const { data: { session } } = await sb.auth.getSession();
+    const loggedBy = session?.user?.email || window._adminEmail || 'Unknown';
+    const payload = {
+      personnel_id: personnelId,
+      rank_text: rankFull || rankCode,
+      rank_code: rankCode,
+      username,
+      patrol_number: patrolNumber,
+      patrol_label: patrolLabel,
+      proof_url: proofUrl,
+      logged_by: loggedBy
+    };
+
+    const { error } = await sb.from('shift_logs').insert(payload);
+    if (error) {
+      await logSecurityEvent('shift_log_failed', 'medium', 'Failed to save patrol log', {
+        source: 'tracker',
+        details: { username, patrolLabel, message: error.message }
+      });
+      errEl.textContent = 'Failed: ' + error.message;
+      return;
+    }
+
+    await logSecurityEvent('shift_logged', 'low', 'Saved patrol shift log', {
+      source: 'tracker',
+      details: { username, patrolLabel, proofUrl }
+    });
+    document.getElementById('shift-log-modal').classList.remove('open');
+    stampLastUpdated(window._adminEmail);
+    loadPersonnel();
+  }
+
+  async function deleteShiftLog(logId) {
+    if (!requireVerifiedAdminAccess('delete a patrol log')) return;
+    if (!confirm('Delete this patrol log? This cannot be undone.')) return;
+    const { error } = await sb.from('shift_logs').delete().eq('id', logId);
+    if (error) {
+      await logSecurityEvent('shift_log_delete_failed', 'medium', 'Failed to delete patrol log', {
+        source: 'tracker',
+        details: { logId, message: error.message }
+      });
+      alert('Failed: ' + error.message);
+      return;
+    }
+
+    await logSecurityEvent('shift_log_deleted', 'low', 'Deleted patrol shift log', {
+      source: 'tracker',
+      details: { logId }
+    });
+    stampLastUpdated(window._adminEmail);
+    loadPersonnel();
+  }
+
   function openPersonnelModal(id, category) {
     document.getElementById('personnel-error').textContent = '';
     document.getElementById('pm-id').value = id || '';
