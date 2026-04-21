@@ -1,2 +1,7 @@
 # wjs-isp-save-website
-This is the website I created for the WJS, ISP - SAVE. This contains everything from a personnel tracker, to a quota tracker. You can take this file, and try to de-construct it. But for now, any usage of the website is prohibited, you may download these files - but I assure you any tampering of the website itself ( the actively deployed website, not just these files that are free domain ) will be prosecuted.
+* These files are provided for public domain use and may be freely accessed, shared, and referenced.
+* They are intended solely for informational and lawful purposes.
+* Any attempt to access, probe, or interfere with the actively deployed website or its underlying systems is a separate matter entirely.
+* These files must not be used to attempt to gain unauthorized access to live infrastructure.
+* Unauthorized access attempts are outside the scope of what these materials permit.
+* Such attempts will not succeed and are strictly prohibited.
