@@ -4843,7 +4843,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     if (!rankCode) { errEl.textContent = 'Rank abbreviation is required.'; return; }
     if (!startTime) { errEl.textContent = 'Start time is required.'; return; }
     if (!endTime) { errEl.textContent = 'End time is required.'; return; }
-    if (!prooftext) { errEl.textContent = 'Proof link is required.'; return; }
+    if (!proofUrl) { errEl.textContent = 'Proof link is required.'; return; }
 
     const patrolNumber = getNextPatrolNumber(username);
     const patrolLabel = buildPatrolLabel(rankCode, username, patrolNumber);
