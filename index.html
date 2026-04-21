@@ -979,7 +979,7 @@
   }
   .patrol-summary-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 12px;
     margin-bottom: 16px;
   }
@@ -1014,6 +1014,164 @@
     color: var(--text-muted);
     font-size: 12.5px;
     line-height: 1.8;
+  }
+  .patrol-analytics-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .patrol-analytics-card {
+    position: relative;
+    overflow: hidden;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(74,159,212,.16);
+    background:
+      radial-gradient(circle at top right, rgba(74,159,212,.18), transparent 42%),
+      linear-gradient(180deg, rgba(13,18,31,.98), rgba(7,10,18,.92));
+  }
+  .patrol-analytics-card::after {
+    content: '';
+    position: absolute;
+    inset: auto 18px 0 18px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,.24), transparent);
+  }
+  .patrol-analytics-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .patrol-analytics-kicker {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(201,168,76,.18);
+    background: rgba(201,168,76,.08);
+    color: var(--gold-light);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+  .patrol-analytics-head h3 {
+    margin: 0;
+    color: var(--text-bright);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 19px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .patrol-analytics-empty {
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .patrol-pulse-list {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 10px;
+    align-items: end;
+    min-height: 152px;
+  }
+  .patrol-pulse-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .patrol-pulse-count {
+    color: var(--text-bright);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .patrol-pulse-bar-track {
+    width: 100%;
+    min-height: 88px;
+    padding: 0 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.05);
+    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    display: flex;
+    align-items: flex-end;
+  }
+  .patrol-pulse-bar {
+    width: 100%;
+    min-height: 8px;
+    border-radius: 6px 6px 2px 2px;
+    background: linear-gradient(180deg, rgba(201,168,76,.96), rgba(74,159,212,.78));
+    box-shadow: 0 0 16px rgba(74,159,212,.18);
+  }
+  .patrol-pulse-label {
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+  }
+  .patrol-metric-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .patrol-metric-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+  }
+  .patrol-metric-rank {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(201,168,76,.22);
+    background: rgba(201,168,76,.08);
+    color: var(--gold-light);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .patrol-metric-main {
+    min-width: 0;
+  }
+  .patrol-metric-title {
+    color: var(--text-bright);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .patrol-mini-bar-track {
+    height: 6px;
+    margin-top: 6px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255,255,255,.08);
+  }
+  .patrol-mini-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(201,168,76,.95), rgba(74,159,212,.88));
+  }
+  .patrol-metric-value {
+    color: var(--text-bright);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
   }
   .patrol-label-pill {
     display: inline-flex;
@@ -1580,7 +1738,8 @@
     }
     .legal-hero-shell,
     .legal-grid,
-    .legal-citation-list {
+    .legal-citation-list,
+    .patrol-analytics-shell {
       grid-template-columns: 1fr;
     }
     .legal-overview-grid,
@@ -1620,6 +1779,7 @@
     <div class="nav-item" onclick="showPage('sop')"><span class="nav-icon">◈</span> SAVE-SOP</div>
     <div class="nav-item" onclick="showPage('rules')"><span class="nav-icon">◈</span> SAVE-RULES</div>
     <div class="nav-item" onclick="showPage('tracker')"><span class="nav-icon">◈</span> SAVE-TRACKER</div>
+    <div class="nav-item" onclick="showPage('patrols')"><span class="nav-icon">◈</span> Patrol Logs</div>
     <div class="nav-item" onclick="showPage('conf')"><span class="nav-icon">◈</span> Classified</div>
     <div class="nav-item admin-only" id="nav-panel" onclick="showPage('panel')" style="display:none;border-left-color:var(--gold)"><span class="nav-icon">⬡</span> Supervisor Panel</div>
   </nav>
@@ -2263,14 +2423,100 @@
 
     <div class="tracker-section">
       <div class="tracker-header">
+        <h2>Patrol Activity Snapshot</h2>
+        <span class="section-tag">Patrol Logs Have Their Own Tab</span>
+      </div>
+      <div style="padding:18px 18px 0">
+        <div class="patrol-helper-copy">
+          Patrol logs can now be submitted from the dedicated
+          <span class="patrol-label-pill">Patrol Logs</span>
+          tab. This tracker keeps a quick snapshot of recent activity while the full submission flow lives on its own page.
+        </div>
+        <div class="patrol-helper-copy" style="margin-top:-4px">
+          Patrol labels are still generated automatically in the format
+          <span class="patrol-label-pill">RANK, USERNAME - PATROL #</span>
+          based on how many patrols that user has already logged.
+        </div>
+        <div class="patrol-summary-grid">
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Total Patrols</div>
+            <div class="patrol-summary-value" id="tracker-patrol-total">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Unique Loggers</div>
+            <div class="patrol-summary-value" id="tracker-patrol-unique">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Latest Patrol</div>
+            <div class="patrol-summary-value small" id="tracker-patrol-latest">No patrols logged</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Last 24 Hours</div>
+            <div class="patrol-summary-value" id="tracker-patrol-burst">0</div>
+          </div>
+        </div>
+        <div class="patrol-analytics-shell">
+          <div class="patrol-analytics-card">
+            <div class="patrol-analytics-head">
+              <span class="patrol-analytics-kicker">Velocity</span>
+              <h3>7 Day Activity Pulse</h3>
+            </div>
+            <div class="patrol-analytics-empty" id="tracker-patrol-pulse-empty">No recent patrol activity yet.</div>
+            <div class="patrol-pulse-list" id="tracker-patrol-pulse"></div>
+          </div>
+          <div class="patrol-analytics-card">
+            <div class="patrol-analytics-head">
+              <span class="patrol-analytics-kicker">Leaderboard</span>
+              <h3>Top Loggers</h3>
+            </div>
+            <div class="patrol-metric-list" id="tracker-patrol-leaderboard"></div>
+          </div>
+          <div class="patrol-analytics-card">
+            <div class="patrol-analytics-head">
+              <span class="patrol-analytics-kicker">Distribution</span>
+              <h3>Rank Mix</h3>
+            </div>
+            <div class="patrol-metric-list" id="tracker-patrol-ranks"></div>
+          </div>
+        </div>
+      </div>
+      <div class="tracker-table-outer">
+        <table class="tracker-data-table">
+          <thead>
+            <tr>
+              <th>Patrol Label</th><th>Username</th><th>Proof</th><th>Logged</th>
+            </tr>
+          </thead>
+          <tbody id="tracker-patrol-tbody">
+            <tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING PATROL LOGS...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tracker-footer">
+        <button class="admin-btn" style="margin:0;display:inline-block" onclick="showPage('patrols')">OPEN PATROL LOGS</button>
+        <button class="admin-btn" style="margin:0;display:inline-block" onclick="openShiftLogModal()">LOG PATROL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATROLS -->
+  <div class="page" id="page-patrols">
+    <div class="page-title">Patrol Logs</div>
+    <div class="page-subtitle">SAVE PATROL LOGGER · Public Patrol Submission · Discord Proof Link Required</div>
+
+    <div class="tracker-section">
+      <div class="tracker-header">
         <h2>Patrol Shift Logs</h2>
         <span class="section-tag">Proof Link Required · Auto Patrol Numbering</span>
       </div>
       <div style="padding:18px 18px 0">
         <div class="patrol-helper-copy">
-          Patrol labels are generated automatically in the format
+          Anyone can log a patrol here. Paste the Discord message link as proof, and the system will generate the patrol label automatically in the format
           <span class="patrol-label-pill">RANK, USERNAME - PATROL #</span>
-          based on how many patrols that user has already logged.
+          based on how many patrols that username already has on file.
+        </div>
+        <div class="patrol-helper-copy" style="margin-top:-4px">
+          Patrol entries stay public to submit, but only verified supervisors or owners can remove an existing patrol log.
         </div>
         <div class="patrol-summary-grid">
           <div class="patrol-summary-card">
@@ -2300,7 +2546,7 @@
         </table>
       </div>
       <div class="tracker-footer">
-        <button class="add-row-btn" style="margin:0" onclick="openShiftLogModal()">+ LOG PATROL</button>
+        <button class="admin-btn" style="margin:0;display:inline-block" onclick="openShiftLogModal()">LOG PATROL</button>
       </div>
     </div>
   </div>
@@ -2763,7 +3009,7 @@
         <input type="text" id="shift-rank-full" placeholder="Trooper" oninput="updateShiftLogPreview()">
       </div>
     </div>
-    <div class="shift-field-note">Selecting someone from the roster auto-fills rank and username, but you can still edit them before saving.</div>
+    <div class="shift-field-note" id="shift-access-note">Roster autofill is optional. If the personnel list is unavailable, enter rank and username manually before saving.</div>
     <label>Proof Link</label>
     <input type="url" id="shift-proof-url" class="shift-proof-input" placeholder="https://discord.com/channels/.../.../...">
     <div class="shift-preview-shell">
@@ -2910,13 +3156,15 @@
       sop: 'SAVE-SOP',
       rules: 'SAVE-RULES',
       tracker: 'SAVE-TRACKER',
+      patrols: 'PATROL LOGS',
       conf: 'CLASSIFIED',
       legal: 'LEGAL'
     };
     document.getElementById('bc').textContent = breadcrumbLabels[id] || id.toUpperCase();
     window.scrollTo(0, 0);
     closeStrikesPopup();
-    if (id === 'tracker') loadPersonnel();
+    if (id === 'tracker') loadTrackerPage();
+    if (id === 'patrols') loadPatrolLogs();
     if (id === 'conf')    loadClassifiedConsole();
   }
 
@@ -3020,14 +3268,156 @@
     latestEl.textContent = list.length ? (list[0].patrol_label || buildPatrolLabel(list[0].rank_code, list[0].username, list[0].patrol_number)) : 'No patrols logged';
   }
 
-  function populateShiftPersonnelOptions(rows) {
+  function patrolDayKey(value) {
+    const date = new Date(value || 0);
+    if (Number.isNaN(date.getTime())) return '';
+    return [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0')
+    ].join('-');
+  }
+
+  function renderPatrolPulse(logs) {
+    const wrap = document.getElementById('tracker-patrol-pulse');
+    const empty = document.getElementById('tracker-patrol-pulse-empty');
+    if (!wrap || !empty) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const buckets = [];
+    for (let offset = 6; offset >= 0; offset -= 1) {
+      const day = new Date(today);
+      day.setDate(today.getDate() - offset);
+      buckets.push({
+        key: patrolDayKey(day),
+        label: day.toLocaleDateString('en-US', { weekday: 'short' }),
+        count: 0
+      });
+    }
+
+    const bucketMap = Object.fromEntries(buckets.map(bucket => [bucket.key, bucket]));
+    (logs || []).forEach(log => {
+      const key = patrolDayKey(log.created_at);
+      if (key && bucketMap[key]) bucketMap[key].count += 1;
+    });
+
+    const max = Math.max(...buckets.map(bucket => bucket.count), 1);
+    const hasActivity = buckets.some(bucket => bucket.count > 0);
+    empty.style.display = hasActivity ? 'none' : 'block';
+    wrap.innerHTML = buckets.map(bucket => {
+      const height = bucket.count ? Math.max(12, Math.round((bucket.count / max) * 88)) : 8;
+      return `<div class="patrol-pulse-day">
+        <div class="patrol-pulse-count">${escapeHtml(String(bucket.count))}</div>
+        <div class="patrol-pulse-bar-track">
+          <div class="patrol-pulse-bar" style="height:${height}px"></div>
+        </div>
+        <div class="patrol-pulse-label">${escapeHtml(bucket.label)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderPatrolMetricList(containerId, items, emptyMessage) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (!items.length) {
+      container.innerHTML = `<div class="patrol-analytics-empty">${escapeHtml(emptyMessage)}</div>`;
+      return;
+    }
+
+    const max = Math.max(...items.map(item => Number(item.count) || 0), 1);
+    container.innerHTML = items.map((item, index) => {
+      const width = Math.max(14, Math.round(((Number(item.count) || 0) / max) * 100));
+      return `<div class="patrol-metric-row">
+        <div class="patrol-metric-rank">#${index + 1}</div>
+        <div class="patrol-metric-main">
+          <div class="patrol-metric-title">${escapeHtml(item.label || 'Unknown')}</div>
+          <div class="patrol-mini-bar-track"><div class="patrol-mini-bar-fill" style="width:${width}%"></div></div>
+        </div>
+        <div class="patrol-metric-value">${escapeHtml(String(item.count || 0))}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function updateTrackerPatrolOverview(logs, errorMessage = '') {
+    const list = logs || [];
+    const totalEl = document.getElementById('tracker-patrol-total');
+    const uniqueEl = document.getElementById('tracker-patrol-unique');
+    const latestEl = document.getElementById('tracker-patrol-latest');
+    const burstEl = document.getElementById('tracker-patrol-burst');
+    const tbody = document.getElementById('tracker-patrol-tbody');
+    if (!totalEl || !uniqueEl || !latestEl || !burstEl || !tbody) return;
+
+    const uniqueUsers = new Set(list.map(log => normalizePatrolUsername(log.username)).filter(Boolean));
+    const last24Hours = list.filter(log => {
+      const createdAt = new Date(log.created_at || 0).getTime();
+      return Number.isFinite(createdAt) && (Date.now() - createdAt) <= 86400000;
+    }).length;
+    const loggerMap = new Map();
+    const rankMap = new Map();
+    list.forEach(log => {
+      const usernameKey = normalizePatrolUsername(log.username);
+      if (usernameKey) {
+        if (!loggerMap.has(usernameKey)) {
+          loggerMap.set(usernameKey, { label: String(log.username || 'Unknown').trim() || 'Unknown', count: 0 });
+        }
+        loggerMap.get(usernameKey).count += 1;
+      }
+      const rankLabel = String(log.rank_code || formatRankCode(log.rank_text || 'UNIT') || 'UNIT').trim().toUpperCase() || 'UNIT';
+      rankMap.set(rankLabel, (rankMap.get(rankLabel) || 0) + 1);
+    });
+    const leaderboard = Array.from(loggerMap.values()).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label)).slice(0, 5);
+    const rankMix = Array.from(rankMap.entries())
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+      .slice(0, 5);
+
+    totalEl.textContent = String(list.length);
+    uniqueEl.textContent = String(uniqueUsers.size);
+    latestEl.textContent = list.length ? (list[0].patrol_label || buildPatrolLabel(list[0].rank_code, list[0].username, list[0].patrol_number)) : 'No patrols logged';
+    burstEl.textContent = String(last24Hours);
+    renderPatrolPulse(list);
+    renderPatrolMetricList('tracker-patrol-leaderboard', leaderboard, 'No patrol leaders yet.');
+    renderPatrolMetricList('tracker-patrol-ranks', rankMix, 'No rank mix available yet.');
+
+    if (errorMessage) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">${escapeHtml(errorMessage)}</td></tr>`;
+      return;
+    }
+
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO PATROL SNAPSHOT AVAILABLE YET</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.slice(0, 5).map(log => {
+      const patrolLabel = log.patrol_label || buildPatrolLabel(log.rank_code, log.username, log.patrol_number);
+      const proofUrl = String(log.proof_url || '').trim();
+      const loggedAt = log.created_at ? new Date(log.created_at).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : 'Unknown';
+      return `<tr>
+        <td><span class="patrol-label-pill">${escapeHtml(patrolLabel)}</span></td>
+        <td class="mono">${escapeHtml(log.username || 'Unknown')}</td>
+        <td>${proofUrl ? `<a class="proof-link-btn" href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener noreferrer">Open Proof</a>` : '<span style="color:var(--text-dim)">Missing</span>'}</td>
+        <td style="font-size:12px;color:var(--text-muted)">${escapeHtml(loggedAt)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function populateShiftPersonnelOptions(rows, statusMessage = '') {
     const select = document.getElementById('shift-personnel-select');
+    const note = document.getElementById('shift-access-note');
     if (!select) return;
     const options = (rows || []).slice().sort((a, b) => String(a.callsign || '').localeCompare(String(b.callsign || '')));
-    select.innerHTML = '<option value="">Select personnel</option>' + options.map(row => {
+    if (!options.length) {
+      select.innerHTML = '<option value="">Roster autofill unavailable - enter manually</option>';
+      if (note) note.textContent = statusMessage || 'Roster autofill is optional. If the personnel list is unavailable, enter rank and username manually before saving.';
+      return;
+    }
+    select.innerHTML = '<option value="">Select personnel (optional)</option>' + options.map(row => {
       const label = [row.callsign || '—', row.rank || 'Unknown Rank', row.roblox_username || row.discord || 'Unknown User'].join(' · ');
       return `<option value="${escapeHtml(row.id)}">${escapeHtml(label)}</option>`;
     }).join('');
+    if (note) note.textContent = 'Selecting someone from the roster auto-fills rank and username, but you can still edit them before saving.';
   }
 
   function syncShiftFormFromPersonnel() {
@@ -3099,19 +3489,22 @@
 
   function renderShiftLogs(logs, errorMessage = '') {
     const tbody = document.getElementById('shift-logs-tbody');
-    if (!tbody) return;
 
     const list = (logs || []).slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    const canDelete = hasSupervisorPatrolDeleteAccess();
     window._shiftLogs = list;
     updateShiftLogSummary(list);
+    updateTrackerPatrolOverview(list, errorMessage);
+
+    if (!tbody) return;
 
     if (errorMessage) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">SHIFT LOGS UNAVAILABLE · ${escapeHtml(errorMessage)}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${canDelete ? '7' : '6'}" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">SHIFT LOGS UNAVAILABLE · ${escapeHtml(errorMessage)}</td></tr>`;
       return;
     }
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO PATROLS LOGGED YET</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="${canDelete ? '7' : '6'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO PATROLS LOGGED YET</td></tr>`;
       return;
     }
 
@@ -3119,6 +3512,7 @@
       const patrolLabel = log.patrol_label || buildPatrolLabel(log.rank_code, log.username, log.patrol_number);
       const loggedAt = log.created_at ? new Date(log.created_at).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' }) : 'Unknown';
       const proofUrl = String(log.proof_url || '').trim();
+      const deleteCell = canDelete ? `<td><button class="delete-btn shift-delete-btn" onclick="deleteShiftLog('${escapeHtml(log.id)}')">DEL</button></td>` : '';
       return `<tr>
         <td><span class="patrol-label-pill">${escapeHtml(patrolLabel)}</span></td>
         <td><span class="rank-tag">${escapeHtml(log.rank_code || formatRankCode(log.rank_text || 'UNIT'))}</span></td>
@@ -3126,15 +3520,15 @@
         <td>${proofUrl ? `<a class="proof-link-btn" href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener noreferrer">Open Proof</a>` : '<span style="color:var(--text-dim)">Missing</span>'}</td>
         <td class="mono">${escapeHtml(log.logged_by || 'Unknown')}</td>
         <td style="font-size:12px;color:var(--text-muted)">${escapeHtml(loggedAt)}</td>
-        <td>
-          <button class="delete-btn shift-delete-btn" onclick="deleteShiftLog('${escapeHtml(log.id)}')">DEL</button>
-        </td>
+        ${deleteCell}
       </tr>`;
     }).join('');
   }
 
-  function openShiftLogModal() {
-    if (!requireVerifiedAdminAccess('log a patrol shift')) return;
+  async function openShiftLogModal() {
+    if (hasVerifiedAdminAccess() && !Object.keys(window._personnelMap || {}).length) {
+      await loadPersonnel({ suppressErrors: true });
+    }
     populateShiftPersonnelOptions(Object.values(window._personnelMap || {}));
     document.getElementById('shift-personnel-select').value = '';
     document.getElementById('shift-rank-code').value = '';
@@ -3214,6 +3608,12 @@
     return !!(document.body.classList.contains('admin-mode') && window._adminVerified && window._adminEmail);
   }
 
+  function hasSupervisorPatrolDeleteAccess() {
+    if (!hasVerifiedAdminAccess()) return false;
+    const role = String(window._adminRole || '').toLowerCase();
+    return role === 'supervisor' || role === 'owner';
+  }
+
   function requireVerifiedAdminAccess(action) {
     if (hasVerifiedAdminAccess()) return true;
     logSecurityEvent('unauthorized_action', 'high', `Blocked unauthorized attempt to ${action}`, {
@@ -3221,6 +3621,17 @@
       details: { action }
     });
     alert('Verified supervisor access required.');
+    return false;
+  }
+
+  function requireSupervisorPatrolDeleteAccess(action) {
+    if (hasSupervisorPatrolDeleteAccess()) return true;
+    logSecurityEvent('patrol_delete_blocked', 'high', `Blocked unauthorized attempt to ${action}`, {
+      source: 'access-guard',
+      actorRole: window._adminRole || 'public',
+      details: { action }
+    });
+    alert('Supervisor or owner access required to delete patrol logs.');
     return false;
   }
 
@@ -3677,7 +4088,8 @@
       actorRole: adminProfile.role,
       details: { userId: user.id }
     });
-    if (document.getElementById('page-tracker').classList.contains('active')) loadPersonnel();
+    if (document.getElementById('page-tracker').classList.contains('active')) loadTrackerPage();
+    if (document.getElementById('page-patrols').classList.contains('active')) loadPatrolLogs();
     if (document.getElementById('page-conf').classList.contains('active')) loadClassifiedConsole();
   }
 
@@ -3691,7 +4103,8 @@
     }
     await sb.auth.signOut();
     setAdminMode(false, '');
-    if (document.getElementById('page-tracker').classList.contains('active')) loadPersonnel();
+    if (document.getElementById('page-tracker').classList.contains('active')) loadTrackerPage();
+    if (document.getElementById('page-patrols').classList.contains('active')) loadPatrolLogs();
     updateClassifiedAccess();
   }
 
@@ -3699,9 +4112,10 @@
     document.body.classList.toggle('admin-mode', on);
     const btn   = document.getElementById('admin-toggle-btn');
     const label = document.getElementById('admin-user-label');
+    const patrolDeleteAllowed = on && ['supervisor', 'owner'].includes(String(role || '').toLowerCase());
     document.getElementById('sup-actions-col').style.display = on ? '' : 'none';
     document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
-    document.getElementById('shift-actions-col').style.display = on ? '' : 'none';
+    document.getElementById('shift-actions-col').style.display = patrolDeleteAllowed ? '' : 'none';
     document.getElementById('nav-panel').style.display = 'none';
     if (on) {
       btn.textContent = '⬡ SIGN OUT'; btn.classList.add('signed-in');
@@ -3720,6 +4134,9 @@
       window._adminEmail = null;
       window._adminVerified = false;
       window._adminUserId = null;
+      window._personnelMap = {};
+      window._strikesMap = {};
+      populateShiftPersonnelOptions([]);
     }
     updateClassifiedAccess();
   }
@@ -3799,42 +4216,83 @@
   }
 
   // ── Tracker ───────────────────────────────────────────────
-  async function loadPersonnel() {
-    const [{ data, error }, { data: strikesData }, { data: shiftData, error: shiftError }] = await Promise.all([
+  function updateTrackerTimestamp() {
+    const el = document.getElementById('tracker-updated');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = 'Updated ' + now.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function isRosterAccessError(message) {
+    return /permission|policy|row level security|forbidden|denied|not allowed/i.test(String(message || ''));
+  }
+
+  function renderPersonnelAccessState(message) {
+    const colspan = hasVerifiedAdminAccess() ? '11' : '10';
+    ['supervisory-tbody','general-tbody'].forEach(id => {
+      const tbody = document.getElementById(id);
+      if (!tbody) return;
+      tbody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">${escapeHtml(message)}</td></tr>`;
+    });
+  }
+
+  async function loadPatrolLogs() {
+    const { data, error } = await sb.from('shift_logs').select('*').order('created_at', { ascending:false });
+    if (error) {
+      renderShiftLogs([], `Create the shift_logs table in Supabase to enable patrol logging. (${error.message})`);
+      updateTrackerTimestamp();
+      return;
+    }
+    renderShiftLogs(data || []);
+    updateTrackerTimestamp();
+  }
+
+  async function loadTrackerPage() {
+    await Promise.all([
+      loadPersonnel(),
+      loadPatrolLogs()
+    ]);
+  }
+
+  async function loadPersonnel(options = {}) {
+    const { suppressErrors = false } = options;
+    const [{ data, error }, { data: strikesData, error: strikesError }] = await Promise.all([
       sb.from('personnel').select('*').order('callsign', { ascending:true }),
-      sb.from('strikes').select('*').order('created_at', { ascending:true }),
-      sb.from('shift_logs').select('*').order('created_at', { ascending:false })
+      sb.from('strikes').select('*').order('created_at', { ascending:true })
     ]);
     if (error) {
-      ['supervisory-tbody','general-tbody','shift-logs-tbody'].forEach(id => {
-        document.getElementById(id).innerHTML =
-          `<tr><td colspan="${id === 'shift-logs-tbody' ? '7' : '11'}" style="text-align:center;color:var(--red-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px">ERROR: ${error.message}</td></tr>`;
-      });
+      window._personnelMap = {};
+      window._strikesMap = {};
+      populateShiftPersonnelOptions([], isRosterAccessError(error.message)
+        ? 'Roster autofill is optional. Personnel records stay supervisor-only, so public patrol logging still works with manual rank and username.'
+        : 'Roster autofill is temporarily unavailable. Enter rank and username manually before saving.');
+      if (!suppressErrors) {
+        renderPersonnelAccessState(isRosterAccessError(error.message)
+          ? 'PERSONNEL ROSTER REQUIRES VERIFIED SUPERVISOR ACCESS'
+          : `ERROR: ${error.message}`);
+      }
+      updateTrackerTimestamp();
       return;
     }
     window._personnelMap = Object.fromEntries((data || []).map(row => [row.id, row]));
     window._strikesMap = {};
-    (strikesData || []).forEach(s => {
-      if (!window._strikesMap[s.personnel_id]) window._strikesMap[s.personnel_id] = [];
-      window._strikesMap[s.personnel_id].push(s);
-    });
+    if (!strikesError) {
+      (strikesData || []).forEach(s => {
+        if (!window._strikesMap[s.personnel_id]) window._strikesMap[s.personnel_id] = [];
+        window._strikesMap[s.personnel_id].push(s);
+      });
+    }
     renderTable('supervisory-tbody', data.filter(r => r.category === 'supervisory'));
     renderTable('general-tbody', data.filter(r => r.category === 'general'));
     populateShiftPersonnelOptions(data || []);
-    if (shiftError) {
-      renderShiftLogs([], `Create the shift_logs table in Supabase to enable patrol logging. (${shiftError.message})`);
-    } else {
-      renderShiftLogs(shiftData || []);
-    }
-    const now = new Date();
-    document.getElementById('tracker-updated').textContent =
-      'Updated ' + now.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    updateTrackerTimestamp();
   }
 
   function renderTable(tbodyId, rows) {
     const tbody = document.getElementById(tbodyId);
+    const canManage = hasVerifiedAdminAccess();
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO RECORDS FOUND</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="${canManage ? '11' : '10'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO RECORDS FOUND</td></tr>`;
       return;
     }
     tbody.innerHTML = rows.map(r => {
@@ -3849,6 +4307,10 @@
       else if (r.status === 'Suspended') statusClass = 'status-suspended';
       else if (r.status === 'Vacant') statusClass = 'status-vacant';
       const dotHtml = r.status === 'Active' ? '<span class="status-dot-sm"></span>' : '';
+      const actionsCell = canManage ? `<td>
+          <button class="edit-btn" onclick="openPersonnelModal('${r.id}','${r.category}')">EDIT</button>
+          <button class="delete-btn" onclick="deletePersonnel('${r.id}')">DEL</button>
+        </td>` : '';
       return `<tr>
         <td style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px">${d(r.slot_number)}</td>
         <td><span class="callsign">${d(r.callsign)}</span></td>
@@ -3865,10 +4327,7 @@
             <span class="strike-count ${stClass}">${strikes.length}/4</span>
           </div>
         </td>
-        <td>
-          <button class="edit-btn" onclick="openPersonnelModal('${r.id}','${r.category}')">EDIT</button>
-          <button class="delete-btn" onclick="deletePersonnel('${r.id}')">DEL</button>
-        </td>
+        ${actionsCell}
       </tr>`;
     }).join('');
   }
@@ -4024,7 +4483,6 @@
 
   // ── Personnel CRUD ────────────────────────────────────────
   async function saveShiftLog() {
-    if (!requireVerifiedAdminAccess('save a patrol log')) return;
     const personnelId = document.getElementById('shift-personnel-select').value || null;
     const username = document.getElementById('shift-username').value.trim();
     const rankFull = document.getElementById('shift-rank-full').value.trim();
@@ -4041,7 +4499,7 @@
     const patrolNumber = getNextPatrolNumber(username);
     const patrolLabel = buildPatrolLabel(rankCode, username, patrolNumber);
     const { data: { session } } = await sb.auth.getSession();
-    const loggedBy = session?.user?.email || window._adminEmail || 'Unknown';
+    const loggedBy = session?.user?.email || window._adminEmail || username || 'Public submission';
     const payload = {
       personnel_id: personnelId,
       rank_text: rankFull || rankCode,
@@ -4069,11 +4527,11 @@
     });
     document.getElementById('shift-log-modal').classList.remove('open');
     stampLastUpdated(window._adminEmail);
-    loadPersonnel();
+    loadPatrolLogs();
   }
 
   async function deleteShiftLog(logId) {
-    if (!requireVerifiedAdminAccess('delete a patrol log')) return;
+    if (!requireSupervisorPatrolDeleteAccess('delete a patrol log')) return;
     if (!confirm('Delete this patrol log? This cannot be undone.')) return;
     const { error } = await sb.from('shift_logs').delete().eq('id', logId);
     if (error) {
@@ -4090,7 +4548,7 @@
       details: { logId }
     });
     stampLastUpdated(window._adminEmail);
-    loadPersonnel();
+    loadPatrolLogs();
   }
 
   function openPersonnelModal(id, category) {
