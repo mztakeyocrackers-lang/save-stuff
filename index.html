@@ -532,6 +532,62 @@
   .status-inactive { background: rgba(72,80,98,.1); color: var(--text-dim); border: 1px solid var(--border); }
   .status-suspended { background: rgba(212,115,30,.1); color: var(--amber-bright); border: 1px solid rgba(212,115,30,.25); }
   .status-vacant   { background: rgba(30,37,54,.5); color: var(--text-dim); border: 1px solid var(--border); }
+  .quota-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-bright);
+    background: rgba(255,255,255,.03);
+    color: var(--text-bright);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .9px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .quota-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(201,168,76,.35);
+  }
+  .quota-btn.met {
+    border-color: rgba(42,186,101,.35);
+    background: rgba(42,186,101,.08);
+    color: var(--green-bright);
+  }
+  .quota-btn.miss {
+    border-color: rgba(224,80,80,.35);
+    background: rgba(224,80,80,.08);
+    color: var(--red-bright);
+  }
+  .quota-btn.pending {
+    border-color: var(--border);
+    background: rgba(255,255,255,.03);
+    color: var(--text-dim);
+  }
+  .quota-meta {
+    margin-top: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: .7px;
+    white-space: nowrap;
+  }
+  .quota-modal-note {
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(201,168,76,.18);
+    background: rgba(201,168,76,.06);
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .quota-table-shell {
+    margin-top: 16px;
+  }
 
   .strike-pips-wrap { display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 4px; border-radius: 4px; transition: background .12s; }
   .strike-pips-wrap:hover { background: rgba(224,80,80,.07); }
@@ -2383,12 +2439,12 @@
           <thead>
             <tr>
               <th>#</th><th>Callsign</th><th>Rank</th><th>Roblox</th><th>Roblox ID</th>
-              <th>Discord</th><th>Discord ID</th><th>Joined</th><th>Status</th><th>Strikes</th>
+              <th>Discord</th><th>Discord ID</th><th>Joined</th><th>Status</th><th>Quota</th><th>Strikes</th>
               <th id="sup-actions-col" style="display:none"></th>
             </tr>
           </thead>
           <tbody id="supervisory-tbody">
-            <tr><td colspan="11" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING RECORDS...</td></tr>
+            <tr><td colspan="12" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING RECORDS...</td></tr>
           </tbody>
         </table>
       </div>
@@ -2407,12 +2463,12 @@
           <thead>
             <tr>
               <th>#</th><th>Callsign</th><th>Rank</th><th>Roblox</th><th>Roblox ID</th>
-              <th>Discord</th><th>Discord ID</th><th>Joined</th><th>Status</th><th>Strikes</th>
+              <th>Discord</th><th>Discord ID</th><th>Joined</th><th>Status</th><th>Quota</th><th>Strikes</th>
               <th id="gen-actions-col" style="display:none"></th>
             </tr>
           </thead>
           <tbody id="general-tbody">
-            <tr><td colspan="11" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING RECORDS...</td></tr>
+            <tr><td colspan="12" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING RECORDS...</td></tr>
           </tbody>
         </table>
       </div>
@@ -2484,11 +2540,11 @@
         <table class="tracker-data-table">
           <thead>
             <tr>
-              <th>Patrol Label</th><th>Username</th><th>Proof</th><th>Logged</th>
+              <th>Patrol Label</th><th>Username</th><th>Window</th><th>Proof</th><th>Logged</th>
             </tr>
           </thead>
           <tbody id="tracker-patrol-tbody">
-            <tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING PATROL LOGS...</td></tr>
+            <tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING PATROL LOGS...</td></tr>
           </tbody>
         </table>
       </div>
@@ -2516,6 +2572,9 @@
           based on how many patrols that username already has on file.
         </div>
         <div class="patrol-helper-copy" style="margin-top:-4px">
+          Each patrol log now requires a start time and end time, and the completed entry is pushed to the patrol Discord webhook automatically.
+        </div>
+        <div class="patrol-helper-copy" style="margin-top:-4px">
           Patrol entries stay public to submit, but only verified supervisors or owners can remove an existing patrol log.
         </div>
         <div class="patrol-summary-grid">
@@ -2537,11 +2596,11 @@
         <table class="tracker-data-table">
           <thead>
             <tr>
-              <th>Patrol Label</th><th>Rank</th><th>Username</th><th>Proof</th><th>Logged By</th><th>Logged</th><th id="shift-actions-col" style="display:none"></th>
+              <th>Patrol Label</th><th>Rank</th><th>Username</th><th>Start</th><th>End</th><th>Proof</th><th>Logged By</th><th>Logged</th><th id="shift-actions-col" style="display:none"></th>
             </tr>
           </thead>
           <tbody id="shift-logs-tbody">
-            <tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING PATROL LOGS...</td></tr>
+            <tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING PATROL LOGS...</td></tr>
           </tbody>
         </table>
       </div>
@@ -3008,6 +3067,14 @@
         <label>Full Rank</label>
         <input type="text" id="shift-rank-full" placeholder="Trooper" oninput="updateShiftLogPreview()">
       </div>
+      <div>
+        <label>Start Time</label>
+        <input type="time" id="shift-start-time">
+      </div>
+      <div>
+        <label>End Time</label>
+        <input type="time" id="shift-end-time">
+      </div>
     </div>
     <div class="shift-field-note" id="shift-access-note">Roster autofill is optional. If the personnel list is unavailable, enter rank and username manually before saving.</div>
     <label>Proof Link</label>
@@ -3019,6 +3086,48 @@
     <div class="modal-actions">
       <button class="btn-cancel" onclick="document.getElementById('shift-log-modal').classList.remove('open')">CANCEL</button>
       <button class="btn-primary" onclick="saveShiftLog()">SAVE PATROL</button>
+    </div>
+</div>
+</div>
+
+<!-- PATROL QUOTA MODAL -->
+<div class="modal-overlay" id="patrol-quota-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal wide">
+    <h2>Patrol Quota</h2>
+    <div class="modal-sub" id="patrol-quota-sub">SAVE TRACKER · WEEKLY PATROL REVIEW</div>
+    <div class="quota-modal-note" id="patrol-quota-note">Quota is based on the SOP minimum of one deployment in the last 7 days.</div>
+    <div class="patrol-summary-grid" style="margin-top:18px">
+      <div class="patrol-summary-card">
+        <div class="patrol-summary-label">Quota Status</div>
+        <div class="patrol-summary-value small" id="patrol-quota-status">Checking...</div>
+      </div>
+      <div class="patrol-summary-card">
+        <div class="patrol-summary-label">Patrols This Week</div>
+        <div class="patrol-summary-value" id="patrol-quota-weekly">0</div>
+      </div>
+      <div class="patrol-summary-card">
+        <div class="patrol-summary-label">Total Patrols</div>
+        <div class="patrol-summary-value" id="patrol-quota-total">0</div>
+      </div>
+      <div class="patrol-summary-card">
+        <div class="patrol-summary-label">Tracked Time</div>
+        <div class="patrol-summary-value small" id="patrol-quota-time">0m</div>
+      </div>
+    </div>
+    <div class="tracker-table-outer quota-table-shell">
+      <table class="tracker-data-table">
+        <thead>
+          <tr>
+            <th>Patrol #</th><th>Patrol Label</th><th>Window</th><th>Duration</th><th>Logged</th><th>Log</th>
+          </tr>
+        </thead>
+        <tbody id="patrol-quota-tbody">
+          <tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO PATROL DATA YET</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="closeModal('patrol-quota-modal')">CLOSE</button>
     </div>
   </div>
 </div>
@@ -3255,6 +3364,146 @@
     return `${code}, ${name} - PATROL #${num}`;
   }
 
+  function timeStringToMinutes(value) {
+    const match = String(value || '').trim().match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) return null;
+    const hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+    return (hours * 60) + minutes;
+  }
+
+  function formatTimeValue(value) {
+    const raw = String(value || '').trim();
+    const minutes = timeStringToMinutes(raw);
+    if (minutes === null) return raw || 'Unknown';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    const date = new Date();
+    date.setHours(hours, mins, 0, 0);
+    return date.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+  }
+
+  function formatPatrolWindow(startTime, endTime) {
+    const start = formatTimeValue(startTime);
+    const end = formatTimeValue(endTime);
+    if (!String(startTime || '').trim() && !String(endTime || '').trim()) return 'Unknown';
+    return `${start} - ${end}`;
+  }
+
+  function calculatePatrolDuration(startTime, endTime) {
+    const startMinutes = timeStringToMinutes(startTime);
+    const endMinutes = timeStringToMinutes(endTime);
+    if (startMinutes === null || endMinutes === null) return '';
+    let duration = endMinutes - startMinutes;
+    if (duration < 0) duration += 24 * 60;
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+    if (hours && minutes) return `${hours}h ${minutes}m`;
+    if (hours) return `${hours}h`;
+    return `${minutes}m`;
+  }
+
+  function calculatePatrolDurationMinutes(startTime, endTime) {
+    const startMinutes = timeStringToMinutes(startTime);
+    const endMinutes = timeStringToMinutes(endTime);
+    if (startMinutes === null || endMinutes === null) return 0;
+    let duration = endMinutes - startMinutes;
+    if (duration < 0) duration += 24 * 60;
+    return duration;
+  }
+
+  function formatDurationMinutes(totalMinutes) {
+    const safeMinutes = Math.max(0, Number(totalMinutes) || 0);
+    const hours = Math.floor(safeMinutes / 60);
+    const minutes = safeMinutes % 60;
+    if (hours && minutes) return `${hours}h ${minutes}m`;
+    if (hours) return `${hours}h`;
+    return `${minutes}m`;
+  }
+
+  function getPersonnelPatrolUsernameKeys(personnel) {
+    return Array.from(new Set([
+      personnel?.roblox_username,
+      personnel?.discord,
+      personnel?.callsign
+    ].map(normalizePatrolUsername).filter(Boolean)));
+  }
+
+  function getPatrolLogsForPersonnel(personnel) {
+    if (!personnel) return [];
+    const keys = new Set(getPersonnelPatrolUsernameKeys(personnel));
+    return (window._shiftLogs || []).filter(log => {
+      if (personnel.id && log.personnel_id === personnel.id) return true;
+      return keys.has(normalizePatrolUsername(log.username));
+    });
+  }
+
+  function getPatrolQuotaSnapshot(personnel) {
+    const logs = getPatrolLogsForPersonnel(personnel).slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    const cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    const weeklyLogs = logs.filter(log => {
+      const createdAt = new Date(log.created_at || 0).getTime();
+      return Number.isFinite(createdAt) && createdAt >= cutoff;
+    });
+    const totalMinutes = logs.reduce((sum, log) => sum + calculatePatrolDurationMinutes(log.start_time, log.end_time), 0);
+    return {
+      logs,
+      weeklyLogs,
+      totalMinutes,
+      totalPatrols: logs.length,
+      weeklyPatrols: weeklyLogs.length,
+      metQuota: weeklyLogs.length >= 1
+    };
+  }
+
+  function getQuotaButtonMarkup(personnel) {
+    if (!window._patrolLogsLoaded) {
+      return `<button type="button" class="quota-btn pending" onclick="openPatrolQuotaModal('${escapeHtml(personnel.id)}')">Checking</button><div class="quota-meta">Loading patrol activity</div>`;
+    }
+    const snapshot = getPatrolQuotaSnapshot(personnel);
+    const statusText = snapshot.metQuota ? 'Met Quota' : "Hasn't Met";
+    const buttonClass = snapshot.metQuota ? 'met' : 'miss';
+    return `<button type="button" class="quota-btn ${buttonClass}" onclick="openPatrolQuotaModal('${escapeHtml(personnel.id)}')">${escapeHtml(statusText)}</button><div class="quota-meta">${escapeHtml(`${snapshot.weeklyPatrols} this week · ${snapshot.totalPatrols} total`)}</div>`;
+  }
+
+  function openPatrolQuotaModal(personnelId) {
+    const personnel = (window._personnelMap || {})[personnelId];
+    if (!personnel) return;
+    const snapshot = getPatrolQuotaSnapshot(personnel);
+    const callsign = personnel.callsign || personnel.roblox_username || personnel.discord || 'Personnel';
+    const rank = personnel.rank || 'Unknown Rank';
+    document.getElementById('patrol-quota-sub').textContent = `${callsign} · ${rank} · WEEKLY PATROL REVIEW`;
+    document.getElementById('patrol-quota-note').textContent = 'Quota is based on Section 14.03 of the SOP: at least one deployment in the last 7 days.';
+    document.getElementById('patrol-quota-status').textContent = snapshot.metQuota ? 'MET QUOTA' : "HASN'T MET QUOTA";
+    document.getElementById('patrol-quota-weekly').textContent = String(snapshot.weeklyPatrols);
+    document.getElementById('patrol-quota-total').textContent = String(snapshot.totalPatrols);
+    document.getElementById('patrol-quota-time').textContent = formatDurationMinutes(snapshot.totalMinutes);
+
+    const tbody = document.getElementById('patrol-quota-tbody');
+    if (!snapshot.logs.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO PATROL HISTORY FOUND FOR THIS PERSONNEL RECORD</td></tr>';
+    } else {
+      tbody.innerHTML = snapshot.logs.map(log => {
+        const patrolLabel = log.patrol_label || buildPatrolLabel(log.rank_code, log.username, log.patrol_number);
+        const patrolNumber = Number(log.patrol_number) > 0 ? `#${log.patrol_number}` : 'Unnumbered';
+        const duration = calculatePatrolDuration(log.start_time, log.end_time) || 'Unavailable';
+        const proofUrl = String(log.proof_url || '').trim();
+        const loggedAt = log.created_at ? new Date(log.created_at).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' }) : 'Unknown';
+        return `<tr>
+          <td class="mono">${escapeHtml(patrolNumber)}</td>
+          <td><span class="patrol-label-pill">${escapeHtml(patrolLabel)}</span></td>
+          <td class="mono">${escapeHtml(formatPatrolWindow(log.start_time, log.end_time))}</td>
+          <td class="mono">${escapeHtml(duration)}</td>
+          <td style="font-size:12px;color:var(--text-muted)">${escapeHtml(loggedAt)}</td>
+          <td>${proofUrl ? `<a class="proof-link-btn" href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener noreferrer">Open Log</a>` : '<span style="color:var(--text-dim)">Missing</span>'}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    document.getElementById('patrol-quota-modal').classList.add('open');
+  }
+
   function updateShiftLogSummary(logs) {
     const list = logs || [];
     const totalEl = document.getElementById('patrol-total');
@@ -3381,22 +3630,24 @@
     renderPatrolMetricList('tracker-patrol-ranks', rankMix, 'No rank mix available yet.');
 
     if (errorMessage) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">${escapeHtml(errorMessage)}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">${escapeHtml(errorMessage)}</td></tr>`;
       return;
     }
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO PATROL SNAPSHOT AVAILABLE YET</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO PATROL SNAPSHOT AVAILABLE YET</td></tr>';
       return;
     }
 
     tbody.innerHTML = list.slice(0, 5).map(log => {
       const patrolLabel = log.patrol_label || buildPatrolLabel(log.rank_code, log.username, log.patrol_number);
+      const patrolWindow = formatPatrolWindow(log.start_time, log.end_time);
       const proofUrl = String(log.proof_url || '').trim();
       const loggedAt = log.created_at ? new Date(log.created_at).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : 'Unknown';
       return `<tr>
         <td><span class="patrol-label-pill">${escapeHtml(patrolLabel)}</span></td>
         <td class="mono">${escapeHtml(log.username || 'Unknown')}</td>
+        <td class="mono">${escapeHtml(patrolWindow)}</td>
         <td>${proofUrl ? `<a class="proof-link-btn" href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener noreferrer">Open Proof</a>` : '<span style="color:var(--text-dim)">Missing</span>'}</td>
         <td style="font-size:12px;color:var(--text-muted)">${escapeHtml(loggedAt)}</td>
       </tr>`;
@@ -3517,6 +3768,8 @@
         <td><span class="patrol-label-pill">${escapeHtml(patrolLabel)}</span></td>
         <td><span class="rank-tag">${escapeHtml(log.rank_code || formatRankCode(log.rank_text || 'UNIT'))}</span></td>
         <td class="mono">${escapeHtml(log.username || 'Unknown')}</td>
+        <td class="mono">${escapeHtml(formatTimeValue(log.start_time))}</td>
+        <td class="mono">${escapeHtml(formatTimeValue(log.end_time))}</td>
         <td>${proofUrl ? `<a class="proof-link-btn" href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener noreferrer">Open Proof</a>` : '<span style="color:var(--text-dim)">Missing</span>'}</td>
         <td class="mono">${escapeHtml(log.logged_by || 'Unknown')}</td>
         <td style="font-size:12px;color:var(--text-muted)">${escapeHtml(loggedAt)}</td>
@@ -3534,6 +3787,8 @@
     document.getElementById('shift-rank-code').value = '';
     document.getElementById('shift-rank-full').value = '';
     document.getElementById('shift-username').value = '';
+    document.getElementById('shift-start-time').value = '';
+    document.getElementById('shift-end-time').value = '';
     document.getElementById('shift-proof-url').value = '';
     document.getElementById('shift-log-error').textContent = '';
     updateShiftLogPreview();
@@ -3565,6 +3820,7 @@
   const LEGAL_NOTICE_STORAGE_KEY = 'save_legal_notice_ack_v1';
   const MAX_SECURITY_LOGS = 250;
   const DISCORD_STRIKE_WEBHOOK_URL = 'https://discord.com/api/webhooks/1480658820429647915/Br81afqJbR27DVtWtVICwgBXJOkAXA9YCW-PyZjJ2v6nnuybA8drhro4bPvTiN8NksBs';
+  const DISCORD_PATROL_WEBHOOK_URL = 'https://discord.com/api/webhooks/1495995376107524127/eSh2U8sGHdm-Sj3bNP0OPKQIYZJ7lFt_aXk129lUtOUqSyUO8Cn-bpvD_aom2qUJjqri';
   updateLegalNoticeBanner();
   const THREAT_PATTERNS = [
     { type:'sql_injection', severity:'critical', label:'SQL injection signature', regex: /(?:'\s*(?:or|and)\s*'?[\w\d]+=?|union\s+all?\s+select|select\s+.+\s+from|drop\s+table|insert\s+into|delete\s+from|update\s+\w+\s+set|sleep\s*\(|benchmark\s*\(|information_schema|waitfor\s+delay)/i },
@@ -3581,6 +3837,8 @@
   window._adminVerified = false;
   window._adminUserId = null;
   window._shiftLogs = window._shiftLogs || [];
+  window._patrolLogsLoaded = false;
+  window._personnelRows = window._personnelRows || [];
 
   function escapeHtml(value) {
     return String(value ?? '')
@@ -4022,6 +4280,58 @@
   }
 
   // ── Modals ────────────────────────────────────────────────
+  async function sendPatrolDiscordWebhook({ personnelId, patrolLabel, rankCode, rankText, username, startTime, endTime, proofUrl, loggedBy, createdAt }) {
+    if (!DISCORD_PATROL_WEBHOOK_URL) return;
+
+    const safePatrolLabel = sanitizeLogValue(patrolLabel || 'Unknown patrol', 120);
+    const safeRankCode = sanitizeLogValue(rankCode || formatRankCode(rankText || 'UNIT') || 'UNIT', 24);
+    const safeRankText = sanitizeLogValue(rankText || rankCode || 'Unknown', 80);
+    const safeUsername = sanitizeLogValue(username || 'Unknown', 80);
+    const safeProofUrl = sanitizeLogValue(proofUrl || 'No proof provided', 900);
+    const safeLoggedBy = sanitizeLogValue(loggedBy || window._adminEmail || 'Unknown', 120);
+    const safeWindow = formatPatrolWindow(startTime, endTime);
+    const safeDuration = calculatePatrolDuration(startTime, endTime) || 'Unavailable';
+    const discordTime = toDiscordTimestamp(createdAt);
+    const payload = {
+      username: 'SAVE Patrol Logger',
+      embeds: [
+        {
+          title: `Patrol Logged · ${safePatrolLabel}`,
+          color: 3447003,
+          description: 'A patrol log has been submitted through the SAVE patrol logger.',
+          fields: [
+            { name: 'Patrol Label', value: safePatrolLabel, inline: false },
+            { name: 'Rank', value: `${safeRankText} (${safeRankCode})`, inline: true },
+            { name: 'Username', value: safeUsername, inline: true },
+            { name: 'Shift Window', value: safeWindow, inline: true },
+            { name: 'Duration', value: safeDuration, inline: true },
+            { name: 'Logged By', value: safeLoggedBy, inline: true },
+            { name: 'Proof Link', value: safeProofUrl, inline: false },
+            { name: 'Logged At', value: discordTime, inline: false }
+          ],
+          footer: { text: `SAVE Patrol Logs · Internal ID ${sanitizeLogValue(personnelId || 'Manual entry', 120)}` },
+          timestamp: new Date(createdAt || Date.now()).toISOString()
+        }
+      ]
+    };
+
+    const formData = new FormData();
+    formData.append('payload_json', JSON.stringify(payload));
+
+    try {
+      await fetch(DISCORD_PATROL_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      });
+    } catch (error) {
+      await logSecurityEvent('patrol_webhook_failed', 'medium', 'Discord patrol webhook request failed', {
+        source: 'tracker',
+        details: { personnelId, patrolLabel: safePatrolLabel, message: error?.message || 'Unknown error' }
+      });
+    }
+  }
+
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
   document.querySelectorAll('.modal-overlay').forEach(o => {
     o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
@@ -4135,6 +4445,7 @@
       window._adminVerified = false;
       window._adminUserId = null;
       window._personnelMap = {};
+      window._personnelRows = [];
       window._strikesMap = {};
       populateShiftPersonnelOptions([]);
     }
@@ -4228,7 +4539,7 @@
   }
 
   function renderPersonnelAccessState(message) {
-    const colspan = hasVerifiedAdminAccess() ? '11' : '10';
+    const colspan = hasVerifiedAdminAccess() ? '12' : '11';
     ['supervisory-tbody','general-tbody'].forEach(id => {
       const tbody = document.getElementById(id);
       if (!tbody) return;
@@ -4238,12 +4549,15 @@
 
   async function loadPatrolLogs() {
     const { data, error } = await sb.from('shift_logs').select('*').order('created_at', { ascending:false });
+    window._patrolLogsLoaded = !error;
     if (error) {
       renderShiftLogs([], `Create the shift_logs table in Supabase to enable patrol logging. (${error.message})`);
+      refreshPersonnelTables();
       updateTrackerTimestamp();
       return;
     }
     renderShiftLogs(data || []);
+    refreshPersonnelTables();
     updateTrackerTimestamp();
   }
 
@@ -4262,6 +4576,7 @@
     ]);
     if (error) {
       window._personnelMap = {};
+      window._personnelRows = [];
       window._strikesMap = {};
       populateShiftPersonnelOptions([], isRosterAccessError(error.message)
         ? 'Roster autofill is optional. Personnel records stay supervisor-only, so public patrol logging still works with manual rank and username.'
@@ -4275,6 +4590,7 @@
       return;
     }
     window._personnelMap = Object.fromEntries((data || []).map(row => [row.id, row]));
+    window._personnelRows = data || [];
     window._strikesMap = {};
     if (!strikesError) {
       (strikesData || []).forEach(s => {
@@ -4282,17 +4598,22 @@
         window._strikesMap[s.personnel_id].push(s);
       });
     }
-    renderTable('supervisory-tbody', data.filter(r => r.category === 'supervisory'));
-    renderTable('general-tbody', data.filter(r => r.category === 'general'));
+    refreshPersonnelTables();
     populateShiftPersonnelOptions(data || []);
     updateTrackerTimestamp();
+  }
+
+  function refreshPersonnelTables() {
+    const rows = window._personnelRows || [];
+    renderTable('supervisory-tbody', rows.filter(r => r.category === 'supervisory'));
+    renderTable('general-tbody', rows.filter(r => r.category === 'general'));
   }
 
   function renderTable(tbodyId, rows) {
     const tbody = document.getElementById(tbodyId);
     const canManage = hasVerifiedAdminAccess();
     if (!rows.length) {
-      tbody.innerHTML = `<tr><td colspan="${canManage ? '11' : '10'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO RECORDS FOUND</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${canManage ? '12' : '11'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO RECORDS FOUND</td></tr>`;
       return;
     }
     tbody.innerHTML = rows.map(r => {
@@ -4307,6 +4628,7 @@
       else if (r.status === 'Suspended') statusClass = 'status-suspended';
       else if (r.status === 'Vacant') statusClass = 'status-vacant';
       const dotHtml = r.status === 'Active' ? '<span class="status-dot-sm"></span>' : '';
+      const quotaCell = getQuotaButtonMarkup(r);
       const actionsCell = canManage ? `<td>
           <button class="edit-btn" onclick="openPersonnelModal('${r.id}','${r.category}')">EDIT</button>
           <button class="delete-btn" onclick="deletePersonnel('${r.id}')">DEL</button>
@@ -4321,6 +4643,7 @@
         <td class="mono">${d(r.discord_id)}</td>
         <td style="font-size:12px;color:var(--text-muted)">${d(r.join_date)}</td>
         <td><span class="status-badge ${statusClass}">${dotHtml}${r.status || 'Unknown'}</span></td>
+        <td>${quotaCell}</td>
         <td>
           <div class="strike-pips-wrap" onclick="toggleStrikePopup(event, '${r.id}', '${(r.callsign||'').replace(/'/g,"\\'")}')">
             ${pips}
@@ -4487,17 +4810,22 @@
     const username = document.getElementById('shift-username').value.trim();
     const rankFull = document.getElementById('shift-rank-full').value.trim();
     const rankCode = (document.getElementById('shift-rank-code').value.trim() || formatRankCode(rankFull)).toUpperCase();
+    const startTime = document.getElementById('shift-start-time').value.trim();
+    const endTime = document.getElementById('shift-end-time').value.trim();
     const proofUrl = document.getElementById('shift-proof-url').value.trim();
     const errEl = document.getElementById('shift-log-error');
     errEl.textContent = '';
 
     if (!username) { errEl.textContent = 'Username is required.'; return; }
     if (!rankCode) { errEl.textContent = 'Rank abbreviation is required.'; return; }
+    if (!startTime) { errEl.textContent = 'Start time is required.'; return; }
+    if (!endTime) { errEl.textContent = 'End time is required.'; return; }
     if (!proofUrl) { errEl.textContent = 'Proof link is required.'; return; }
     if (!isDiscordMessageLink(proofUrl)) { errEl.textContent = 'Proof must be a full Discord message link.'; return; }
 
     const patrolNumber = getNextPatrolNumber(username);
     const patrolLabel = buildPatrolLabel(rankCode, username, patrolNumber);
+    const createdAt = new Date().toISOString();
     const { data: { session } } = await sb.auth.getSession();
     const loggedBy = session?.user?.email || window._adminEmail || username || 'Public submission';
     const payload = {
@@ -4507,15 +4835,17 @@
       username,
       patrol_number: patrolNumber,
       patrol_label: patrolLabel,
+      start_time: startTime,
+      end_time: endTime,
       proof_url: proofUrl,
       logged_by: loggedBy
     };
 
-    const { error } = await sb.from('shift_logs').insert(payload);
+    const { data: insertedLog, error } = await sb.from('shift_logs').insert(payload).select().single();
     if (error) {
       await logSecurityEvent('shift_log_failed', 'medium', 'Failed to save patrol log', {
         source: 'tracker',
-        details: { username, patrolLabel, message: error.message }
+        details: { username, patrolLabel, startTime, endTime, message: error.message }
       });
       errEl.textContent = 'Failed: ' + error.message;
       return;
@@ -4523,7 +4853,19 @@
 
     await logSecurityEvent('shift_logged', 'low', 'Saved patrol shift log', {
       source: 'tracker',
-      details: { username, patrolLabel, proofUrl }
+      details: { username, patrolLabel, startTime, endTime, proofUrl }
+    });
+    await sendPatrolDiscordWebhook({
+      personnelId,
+      patrolLabel,
+      rankCode,
+      rankText: rankFull || rankCode,
+      username,
+      startTime,
+      endTime,
+      proofUrl,
+      loggedBy,
+      createdAt: insertedLog?.created_at || createdAt
     });
     document.getElementById('shift-log-modal').classList.remove('open');
     stampLastUpdated(window._adminEmail);
