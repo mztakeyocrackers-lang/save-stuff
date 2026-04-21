@@ -734,6 +734,130 @@
     text-align: center;
   }
 
+
+  /* ── STRIKES ── */
+  .strikes-cell { position: relative; cursor: pointer; }
+
+  .strike-pips {
+    display: flex; gap: 4px; align-items: center;
+    padding: 4px 6px; border-radius: 3px;
+    transition: background .15s;
+    min-width: 72px;
+  }
+  .strike-pips:hover { background: rgba(192,57,43,.08); }
+
+  .strike-pip {
+    width: 5px; height: 20px; border-radius: 2px;
+    background: var(--border-bright);
+    transition: background .15s, box-shadow .15s;
+    flex-shrink: 0;
+  }
+  .strike-pip.active {
+    background: var(--red);
+    box-shadow: 0 0 6px rgba(192,57,43,.5);
+  }
+  .strike-pip.active:nth-child(1) { animation: strikeIn .2s .0s both; }
+  .strike-pip.active:nth-child(2) { animation: strikeIn .2s .05s both; }
+  .strike-pip.active:nth-child(3) { animation: strikeIn .2s .10s both; }
+  .strike-pip.active:nth-child(4) { animation: strikeIn .2s .15s both; }
+  @keyframes strikeIn { from { transform: scaleY(0); opacity:0; } to { transform: scaleY(1); opacity:1; } }
+
+  /* Dropdown menu */
+  .strikes-dropdown {
+    display: none;
+    position: absolute; top: 100%; left: 0;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-top: 2px solid var(--red);
+    border-radius: 3px;
+    min-width: 280px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    z-index: 200;
+    animation: fadeIn .15s ease;
+  }
+  .strikes-dropdown.open { display: block; }
+
+  .strikes-dropdown-header {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px;
+    letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase;
+    padding: 8px 14px 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .strike-entry {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background .12s;
+  }
+  .strike-entry:last-child { border-bottom: none; }
+  .strike-entry:hover { background: rgba(192,57,43,.06); }
+
+  .strike-num {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--red); min-width: 22px; font-weight: 700;
+  }
+  .strike-label {
+    font-family: 'Rajdhani', sans-serif; font-size: 13px;
+    font-weight: 600; color: var(--text); flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .strike-date {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px;
+    color: var(--text-dim); white-space: nowrap;
+  }
+
+  .strikes-empty {
+    padding: 12px 14px;
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--text-dim); text-align: center; letter-spacing: 1px;
+  }
+
+  .strikes-add-btn {
+    display: none;
+    width: 100%; padding: 8px 14px;
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--red); background: transparent;
+    border: none; border-top: 1px solid var(--border);
+    cursor: pointer; letter-spacing: 1px; text-align: left;
+    transition: background .12s;
+  }
+  .strikes-add-btn:hover { background: rgba(192,57,43,.08); }
+  body.admin-mode .strikes-add-btn { display: block; }
+  body.admin-mode #srb-delete-btn { display: inline-block !important; }
+
+  /* Strike reason modal */
+  .strike-reason-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+    z-index: 1100; align-items: center; justify-content: center;
+  }
+  .strike-reason-overlay.open { display: flex; }
+  .strike-reason-box {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-top: 2px solid var(--red);
+    border-radius: 4px;
+    padding: 28px 32px; width: 100%; max-width: 400px;
+    box-shadow: 0 30px 60px rgba(0,0,0,.6);
+    animation: fadeIn .2s ease;
+  }
+  .strike-reason-box h3 {
+    font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700;
+    color: var(--red); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .strike-reason-box .srb-meta {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--text-dim); letter-spacing: 1px; margin-bottom: 18px;
+  }
+  .strike-reason-box .srb-reason {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    padding: 14px 16px; border-radius: 3px;
+    font-size: 13.5px; color: var(--text); line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -1229,7 +1353,7 @@
       <div class="section-block-header"><h2>Supervisory Personnel</h2><span class="section-tag">Command &amp; Supervisory Ranks</span></div>
       <div class="section-block-body" style="padding:0">
         <table class="data-table">
-          <thead><tr><th>#</th><th>Callsign</th><th>Rank</th><th>Roblox Username</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Join Date</th><th>Status</th><th id="sup-actions-col" style="display:none"></th></tr></thead>
+          <thead><tr><th>#</th><th>Callsign</th><th>Rank</th><th>Roblox Username</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Join Date</th><th>Status</th><th>Strikes</th><th id="sup-actions-col" style="display:none"></th></tr></thead>
           <tbody id="supervisory-tbody"><tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
         </table>
         <button class="add-row-btn" onclick="openPersonnelModal(null,'supervisory')">+ ADD PERSONNEL</button>
@@ -1240,7 +1364,7 @@
       <div class="section-block-header"><h2>General Personnel</h2><span class="section-tag">Assigned SAVE Personnel</span></div>
       <div class="section-block-body" style="padding:0">
         <table class="data-table">
-          <thead><tr><th>#</th><th>Callsign</th><th>Rank</th><th>Roblox Username</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Join Date</th><th>Status</th><th id="gen-actions-col" style="display:none"></th></tr></thead>
+          <thead><tr><th>#</th><th>Callsign</th><th>Rank</th><th>Roblox Username</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Join Date</th><th>Status</th><th>Strikes</th><th id="gen-actions-col" style="display:none"></th></tr></thead>
           <tbody id="general-tbody"><tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
         </table>
         <button class="add-row-btn" onclick="openPersonnelModal(null,'general')">+ ADD PERSONNEL</button>
@@ -1602,19 +1726,26 @@
 
   // ── Tracker ────────────────────────────────────────────────
   async function loadPersonnel() {
-    const { data, error } = await sb
-      .from('personnel')
-      .select('*')
-      .order('callsign', { ascending: true });
+    const [{ data, error }, { data: strikesData }] = await Promise.all([
+      sb.from('personnel').select('*').order('callsign', { ascending: true }),
+      sb.from('strikes').select('*').order('created_at', { ascending: true })
+    ]);
 
     if (error) {
       console.error('Supabase error:', error.message);
       ['supervisory-tbody','general-tbody'].forEach(id => {
         document.getElementById(id).innerHTML =
-          `<tr><td colspan="10" style="text-align:center;color:var(--red);padding:20px">Error loading data: ${error.message}</td></tr>`;
+          `<tr><td colspan="11" style="text-align:center;color:var(--red);padding:20px">Error loading data: ${error.message}</td></tr>`;
       });
       return;
     }
+
+    // Group strikes by personnel_id
+    window._strikesMap = {};
+    (strikesData || []).forEach(s => {
+      if (!window._strikesMap[s.personnel_id]) window._strikesMap[s.personnel_id] = [];
+      window._strikesMap[s.personnel_id].push(s);
+    });
 
     const supervisory = data.filter(r => r.category === 'supervisory');
     const general     = data.filter(r => r.category === 'general');
@@ -1630,7 +1761,7 @@
   function renderTable(tbodyId, rows) {
     const tbody = document.getElementById(tbodyId);
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text-dim);padding:20px">No records found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-dim);padding:20px">No records found.</td></tr>';
       return;
     }
     tbody.innerHTML = rows.map(r => {
@@ -1641,6 +1772,19 @@
              ${r.status === 'Active' ? '<span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span> ' : ''}${r.status}
            </span>`;
       const dash = v => v && v !== '—' ? v : '—';
+      const strikes = (window._strikesMap || {})[r.id] || [];
+      const pips = [0,1,2,3].map(i =>
+        `<div class="strike-pip${i < strikes.length ? ' active' : ''}"></div>`
+      ).join('');
+      const entries = strikes.length
+        ? strikes.map((s,i) => `
+            <div class="strike-entry" onclick="showStrikeReason('${s.id}')">
+              <span class="strike-num">#${i+1}</span>
+              <span class="strike-label">${s.reason.substring(0,40)}${s.reason.length>40?'…':''}</span>
+              <span class="strike-date">${new Date(s.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+            </div>`).join('')
+        : '<div class="strikes-empty">NO STRIKES ON RECORD</div>';
+
       return `<tr>
         <td style="color:var(--text-dim)">${dash(r.slot_number)}</td>
         <td><span class="callsign">${dash(r.callsign)}</span></td>
@@ -1651,6 +1795,16 @@
         <td class="mono">${dash(r.discord_id)}</td>
         <td>${dash(r.join_date)}</td>
         <td>${statusBadge}</td>
+        <td class="strikes-cell" onclick="event.stopPropagation()">
+          <div class="strike-pips" onclick="toggleStrikesDropdown(this, '${r.id}', '${(r.callsign||'').replace("'","\'")}')">
+            ${pips}
+          </div>
+          <div class="strikes-dropdown" id="sd-${r.id}">
+            <div class="strikes-dropdown-header">STRIKES · ${strikes.length}/4</div>
+            ${entries}
+            ${strikes.length < 4 ? `<button class="strikes-add-btn" onclick="openAddStrikeModal('${r.id}','${(r.callsign||'').replace("'","\'")}')">+ ADD STRIKE</button>` : ''}
+          </div>
+        </td>
         <td>
           <button class="edit-btn"   onclick="openPersonnelModal('${r.id}','${r.category}')">EDIT</button>
           <button class="delete-btn" onclick="deletePersonnel('${r.id}')">DEL</button>
@@ -1838,6 +1992,80 @@
     loadAdminsList();
   }
 
+  // ── Strikes ────────────────────────────────────────────────
+  let _activeDropdown = null;
+
+  function toggleStrikesDropdown(pipEl, personnelId, callsign) {
+    const dd = document.getElementById('sd-' + personnelId);
+    if (!dd) return;
+    const isOpen = dd.classList.contains('open');
+    // close any open one
+    if (_activeDropdown && _activeDropdown !== dd) {
+      _activeDropdown.classList.remove('open');
+    }
+    dd.classList.toggle('open', !isOpen);
+    _activeDropdown = !isOpen ? dd : null;
+  }
+
+  // Close dropdowns when clicking elsewhere
+  document.addEventListener('click', () => {
+    if (_activeDropdown) { _activeDropdown.classList.remove('open'); _activeDropdown = null; }
+  });
+
+  function showStrikeReason(strikeId) {
+    // Find strike across all personnel
+    let found = null;
+    for (const list of Object.values(window._strikesMap || {})) {
+      found = list.find(s => s.id === strikeId);
+      if (found) break;
+    }
+    if (!found) return;
+    document.getElementById('srb-title').textContent = 'Strike #' + (
+      (window._strikesMap[found.personnel_id] || []).indexOf(found) + 1
+    );
+    document.getElementById('srb-meta').textContent =
+      'Issued: ' + new Date(found.created_at).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'}) +
+      (found.issued_by ? '  ·  By: ' + found.issued_by : '');
+    document.getElementById('srb-reason').textContent = found.reason;
+    document.getElementById('srb-delete-btn').onclick = () => deleteStrike(found.id, found.personnel_id);
+    document.getElementById('strike-reason-overlay').classList.add('open');
+  }
+
+  function openAddStrikeModal(personnelId, callsign) {
+    document.getElementById('add-strike-pid').value      = personnelId;
+    document.getElementById('add-strike-callsign').textContent = callsign;
+    document.getElementById('add-strike-reason').value   = '';
+    document.getElementById('add-strike-error').textContent = '';
+    if (_activeDropdown) { _activeDropdown.classList.remove('open'); _activeDropdown = null; }
+    document.getElementById('add-strike-modal').classList.add('open');
+  }
+
+  async function saveStrike() {
+    const pid    = document.getElementById('add-strike-pid').value;
+    const reason = document.getElementById('add-strike-reason').value.trim();
+    const errEl  = document.getElementById('add-strike-error');
+    errEl.textContent = '';
+    if (!reason) { errEl.textContent = 'Reason is required.'; return; }
+
+    const { data: { session } } = await sb.auth.getSession();
+    const { error } = await sb.from('strikes').insert({
+      personnel_id: pid,
+      reason:       reason,
+      issued_by:    session?.user?.email || 'Unknown'
+    });
+    if (error) { errEl.textContent = 'Failed: ' + error.message; return; }
+    document.getElementById('add-strike-modal').classList.remove('open');
+    loadPersonnel();
+  }
+
+  async function deleteStrike(strikeId, personnelId) {
+    if (!confirm('Remove this strike? This cannot be undone.')) return;
+    const { error } = await sb.from('strikes').delete().eq('id', strikeId);
+    if (error) { alert('Failed: ' + error.message); return; }
+    document.getElementById('strike-reason-overlay').classList.remove('open');
+    loadPersonnel();
+  }
+
   // ── Security: block save/print/source/devtools ─────────────
   document.addEventListener('contextmenu', e => { e.preventDefault(); return false; });
   document.addEventListener('keydown', e => {
@@ -1851,5 +2079,40 @@
   });
   document.addEventListener('dragstart', e => { e.preventDefault(); return false; });
 </script>
+
+<!-- ══ STRIKE REASON OVERLAY ════════════════════════════════ -->
+<div class="strike-reason-overlay" id="strike-reason-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="strike-reason-box">
+    <h3 id="srb-title">Strike #1</h3>
+    <div class="srb-meta" id="srb-meta"></div>
+    <div class="srb-reason" id="srb-reason"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="admin-btn" id="srb-delete-btn" style="display:none;color:var(--red);border-color:rgba(192,57,43,.4)">REMOVE STRIKE</button>
+      <button class="btn-primary" onclick="document.getElementById('strike-reason-overlay').classList.remove('open')" style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;padding:7px 20px;border-radius:3px;cursor:pointer;border:1px solid var(--gold);background:var(--gold);color:var(--bg)">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD STRIKE MODAL ══════════════════════════════════════ -->
+<div class="modal-overlay" id="add-strike-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <h2>Add Strike</h2>
+    <div class="modal-sub">CALLSIGN: <span id="add-strike-callsign" style="color:var(--gold)"></span></div>
+    <div class="modal-error" id="add-strike-error"></div>
+    <input type="hidden" id="add-strike-pid">
+    <label>Reason</label>
+    <textarea id="add-strike-reason" placeholder="Describe the violation or reason for this strike..."
+      style="width:100%;background:var(--bg);border:1px solid var(--border-bright);border-radius:3px;
+             padding:10px 13px;color:var(--text);font-family:'Noto Sans',sans-serif;font-size:13px;
+             outline:none;resize:vertical;min-height:100px;margin-bottom:18px;
+             transition:border-color .15s;-webkit-user-select:text;user-select:text"
+      onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border-bright)'"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('add-strike-modal').classList.remove('open')">CANCEL</button>
+      <button class="btn-primary" onclick="saveStrike()" style="background:var(--red);border-color:var(--red);box-shadow:0 0 16px rgba(192,57,43,.25)">ISSUE STRIKE</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
