@@ -3087,6 +3087,8 @@
     <div class="shift-field-note" id="shift-access-note">Roster autofill is optional. If the personnel list is unavailable, enter rank and username manually before saving.</div>
     <label>Proof Link</label>
     <input type="url" id="shift-proof-url" class="shift-proof-input" placeholder="https://discord.com/channels/.../.../...">
+    <label>Notes (optional)</label>
+<input type="text" id="shift-notes" placeholder="e.g. traffic stop on main, partnered with...">
     <div class="shift-preview-shell">
       <div class="shift-preview-label">Generated Patrol Label</div>
       <div class="shift-preview-value" id="shift-log-preview">Awaiting personnel selection</div>
@@ -3810,6 +3812,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     document.getElementById('shift-start-time').value = '';
     document.getElementById('shift-end-time').value = '';
     document.getElementById('shift-proof-url').value = '';
+    document.getElementById('shift-notes').value = '';
     document.getElementById('shift-log-error').textContent = '';
     updateShiftLogPreview();
     document.getElementById('shift-log-modal').classList.add('open');
@@ -4840,8 +4843,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     if (!rankCode) { errEl.textContent = 'Rank abbreviation is required.'; return; }
     if (!startTime) { errEl.textContent = 'Start time is required.'; return; }
     if (!endTime) { errEl.textContent = 'End time is required.'; return; }
-    if (!proofUrl) { errEl.textContent = 'Proof link is required.'; return; }
-    if (!isDiscordMessageLink(proofUrl)) { errEl.textContent = 'Proof must be a full Discord message link.'; return; }
+    if (!prooftext) { errEl.textContent = 'Proof link is required.'; return; }
 
     const patrolNumber = getNextPatrolNumber(username);
     const patrolLabel = buildPatrolLabel(rankCode, username, patrolNumber);
@@ -4858,6 +4860,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
       start_time: startTime,
       end_time: endTime,
       proof_url: proofUrl,
+      notes: document.getElementById('shift-notes').value.trim(),
       logged_by: loggedBy
     };
 
