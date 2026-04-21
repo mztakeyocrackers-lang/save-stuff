@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrest Logs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.js"></script>
+</head>
+<body>
+    <h1>Arrest Log System</h1>
+    <form id="arrest-form">
+        <label for="suspect-name">Suspect Name:</label>
+        <input type="text" id="suspect-name" required>
+        <br>
+        <label for="officer-name">Officer Name:</label>
+        <input type="text" id="officer-name" required>
+        <br>
+        <label for="charge">Charge:</label>
+        <input type="text" id="charge" required>
+        <br>
+        <button type="submit">Log Arrest</button>
+    </form>
+
+    <script>
+        // Initialize Supabase client
+        const supabaseUrl = 'https://your-supabase-url.supabase.co';
+        const supabaseKey = 'your-public-anon-key';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('arrest-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const suspectName = document.getElementById('suspect-name').value;
+            const officerName = document.getElementById('officer-name').value;
+            const charge = document.getElementById('charge').value;
+
+            // Log arrest
+            const { data, error } = await supabase
+                .from('arrests')
+                .insert([{ suspect_name: suspectName, officer_name: officerName, charge: charge, created_at: new Date() }]);
+
+            if (error) {
+                console.error('Error logging arrest:', error);
+                return;
+            }
+
+            // Send Discord webhook notification
+            const webhookUrl = 'your-discord-webhook-url';
+            const embed = {
+                title: 'New Arrest Logged',
+                fields: [
+                    { name: 'Suspect Name', value: suspectName },
+                    { name: 'Officer Name', value: officerName },
+                    { name: 'Charge', value: charge },
+                ],
+                timestamp: new Date().toISOString(),
+            };
+
+            await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ embeds: [embed] })
+            });
+
+            alert('Arrest logged successfully!');
+            document.getElementById('arrest-form').reset();
+        });
+    </script>
+</body>
+</html>
