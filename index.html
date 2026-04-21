@@ -531,6 +531,8 @@
   .status-active   { background: rgba(42,186,101,.1); color: var(--green-bright); border: 1px solid rgba(42,186,101,.25); }
   .status-inactive { background: rgba(72,80,98,.1); color: var(--text-dim); border: 1px solid var(--border); }
   .status-suspended { background: rgba(212,115,30,.1); color: var(--amber-bright); border: 1px solid rgba(212,115,30,.25); }
+  .status-open     { background: rgba(224,80,80,.1); color: var(--red-bright); border: 1px solid rgba(224,80,80,.25); }
+  .status-closed   { background: rgba(72,80,98,.1); color: var(--text-dim); border: 1px solid var(--border); }
   .status-vacant   { background: rgba(30,37,54,.5); color: var(--text-dim); border: 1px solid var(--border); }
   .quota-btn {
     display: inline-flex;
@@ -973,15 +975,16 @@
   .modal h2 { font-size: 20px; font-weight: 700; color: var(--gold-light); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 3px; }
   .modal .modal-sub { font-family: 'Share Tech Mono', monospace; font-size: 9.5px; color: var(--text-dim); letter-spacing: 1.5px; margin-bottom: 24px; }
   .modal label { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; }
-  .modal input, .modal select {
+  .modal input, .modal select, .modal textarea {
     width: 100%; background: var(--bg); border: 1px solid var(--border-bright);
     border-radius: 3px; padding: 10px 13px; color: var(--text);
     font-family: 'Share Tech Mono', monospace; font-size: 12px;
     margin-bottom: 16px; outline: none; transition: border-color .15s, box-shadow .15s;
     -webkit-user-select: text; user-select: text;
   }
-  .modal input:focus, .modal select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.08); }
+  .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.08); }
   .modal select option { background: var(--surface2); }
+  .modal textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
   .modal-actions { display: flex; gap: 10px; margin-top: 8px; justify-content: flex-end; }
   .modal-actions button {
     font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
@@ -994,6 +997,44 @@
   .modal-error { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--red-bright); margin-bottom: 12px; min-height: 16px; letter-spacing: .5px; }
   .modal.wide { max-width: 640px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .case-preview {
+    margin-bottom: 18px; padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(201,168,76,.05), rgba(201,168,76,.02));
+    border: 1px solid rgba(201,168,76,.12); border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+  }
+  .case-preview-label {
+    font-family: 'Share Tech Mono', monospace; font-size: 9.5px;
+    letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .case-preview-value {
+    font-family: 'Share Tech Mono', monospace; font-size: 13px;
+    color: var(--gold-light); letter-spacing: 1px;
+  }
+  .arrest-helper-copy {
+    font-family: 'Share Tech Mono', monospace; font-size: 10.5px;
+    line-height: 1.8; color: var(--text-dim); margin-bottom: 12px;
+  }
+  .arrest-case-number {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    color: var(--gold-light); letter-spacing: .5px;
+    background: rgba(201,168,76,.07); padding: 4px 10px;
+    border: 1px solid rgba(201,168,76,.15); border-radius: 3px;
+    white-space: nowrap; display: inline-block;
+  }
+  .arrest-suspect-name {
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 16px; color: var(--text-bright); letter-spacing: .5px;
+  }
+  .arrest-officer-tag {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    background: rgba(74,159,212,.08); color: var(--blue-bright);
+    padding: 3px 9px; border-radius: 3px; display: inline-block;
+    border: 1px solid rgba(74,159,212,.2); letter-spacing: .5px;
+  }
+  .arrest-charge-text { font-size: 12px; color: var(--text); line-height: 1.5; }
 
   .strike-reason-overlay {
     display: none; position: fixed; inset: 0;
@@ -1835,6 +1876,7 @@
     <div class="nav-item" onclick="showPage('sop')"><span class="nav-icon">◈</span> SAVE-SOP</div>
     <div class="nav-item" onclick="showPage('rules')"><span class="nav-icon">◈</span> SAVE-RULES</div>
     <div class="nav-item" onclick="showPage('tracker')"><span class="nav-icon">◈</span> SAVE-TRACKER</div>
+    <div class="nav-item" onclick="showPage('arrests')"><span class="nav-icon">◈</span> Arrest Logs</div>
     <div class="nav-item" onclick="showPage('patrols')"><span class="nav-icon">◈</span> Patrol Logs</div>
     <div class="nav-item" onclick="showPage('conf')"><span class="nav-icon">◈</span> Classified</div>
     <div class="nav-item admin-only" id="nav-panel" onclick="showPage('panel')" style="display:none;border-left-color:var(--gold)"><span class="nav-icon">⬡</span> Supervisor Panel</div>
@@ -2618,6 +2660,62 @@
     </div>
   </div>
 
+  <!-- ARRESTS -->
+  <div class="page" id="page-arrests">
+    <div class="page-title">Arrest Logs</div>
+    <div class="page-subtitle">SAVE ARREST LOGGER · Public Arrest Submission · Discord Webhook Enabled</div>
+
+    <div class="tracker-section">
+      <div class="tracker-header">
+        <h2>Arrest Records</h2>
+        <span class="section-tag">Auto Case Numbers · Newest First</span>
+      </div>
+      <div style="padding:18px 18px 0">
+        <div class="arrest-helper-copy">
+          Anyone can log an arrest here. Case numbers are generated automatically in the format
+          <span class="patrol-label-pill">ISP-YYYYMMDD-OFFICER-NNN</span>
+          based on how many arrests that officer has already logged today.
+        </div>
+        <div class="arrest-helper-copy" style="margin-top:-4px">
+          Completed arrest logs are pushed to the arrest Discord webhook automatically after they save.
+        </div>
+        <div class="patrol-summary-grid">
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Total Arrests</div>
+            <div class="patrol-summary-value" id="arrest-total">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Today</div>
+            <div class="patrol-summary-value" id="arrest-today">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Unique Officers</div>
+            <div class="patrol-summary-value" id="arrest-officers">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Open Cases</div>
+            <div class="patrol-summary-value" id="arrest-open">0</div>
+          </div>
+        </div>
+      </div>
+      <div class="tracker-table-outer">
+        <table class="tracker-data-table">
+          <thead>
+            <tr>
+              <th>Case #</th><th>Suspect</th><th>Officer</th><th>Charge(s)</th><th>Location</th><th>Status</th><th>Logged</th><th id="arrest-actions-col" style="display:none"></th>
+            </tr>
+          </thead>
+          <tbody id="arrest-logs-tbody">
+            <tr><td colspan="8" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING ARREST LOGS...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tracker-footer">
+        <button class="admin-btn" style="margin:0;display:inline-block" onclick="openArrestLogModal()">LOG ARREST</button>
+      </div>
+    </div>
+  </div>
+
   <!-- CLASSIFIED -->
   <div class="page" id="page-conf">
     <div class="conf-wrapper" id="conf-public-shell">
@@ -3096,7 +3194,53 @@
       <button class="btn-cancel" onclick="document.getElementById('shift-log-modal').classList.remove('open')">CANCEL</button>
       <button class="btn-primary" onclick="saveShiftLog()">SAVE PATROL</button>
     </div>
+  </div>
 </div>
+
+<!-- ARREST LOG MODAL -->
+<div class="modal-overlay" id="arrest-log-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal wide">
+    <h2>Log Arrest</h2>
+    <div class="modal-sub">SAVE ARREST LOGGER · CASE NUMBER GENERATED AUTOMATICALLY</div>
+    <div class="case-preview">
+      <div class="case-preview-label">Generated Case Number</div>
+      <div class="case-preview-value" id="arrest-case-preview">Enter arresting officer to preview</div>
+    </div>
+    <div class="modal-error" id="arrest-log-error"></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Suspect Name</label>
+        <input type="text" id="arrest-suspect" placeholder="Roblox username" oninput="updateArrestCasePreview()">
+      </div>
+      <div class="form-group">
+        <label>Arresting Officer</label>
+        <input type="text" id="arrest-officer" placeholder="Your username" oninput="updateArrestCasePreview()">
+      </div>
+      <div class="form-group full">
+        <label>Charge(s)</label>
+        <input type="text" id="arrest-charge" placeholder="e.g. POSS. ILLEGAL FIREARM · AGGRAVATED BATTERY">
+      </div>
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" id="arrest-location" placeholder="e.g. Journey Auto Sale">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="arrest-status">
+          <option value="Open">Open</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Notes</label>
+        <textarea id="arrest-notes" placeholder="Firearm recovered, assisting officers, or arrest circumstances..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('arrest-log-modal')">CANCEL</button>
+      <button class="btn-primary" onclick="saveArrestLog()">SAVE ARREST</button>
+    </div>
+  </div>
 </div>
 
 <!-- PATROL QUOTA MODAL -->
@@ -3274,6 +3418,7 @@
       sop: 'SAVE-SOP',
       rules: 'SAVE-RULES',
       tracker: 'SAVE-TRACKER',
+      arrests: 'ARREST LOGS',
       patrols: 'PATROL LOGS',
       conf: 'CLASSIFIED',
       legal: 'LEGAL'
@@ -3282,6 +3427,7 @@
     window.scrollTo(0, 0);
     closeStrikesPopup();
     if (id === 'tracker') loadTrackerPage();
+    if (id === 'arrests') loadArrestLogs();
     if (id === 'patrols') loadPatrolLogs();
     if (id === 'conf')    loadClassifiedConsole();
   }
@@ -3843,6 +3989,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   const MAX_SECURITY_LOGS = 250;
   const DISCORD_STRIKE_WEBHOOK_URL = 'https://discord.com/api/webhooks/1480658820429647915/Br81afqJbR27DVtWtVICwgBXJOkAXA9YCW-PyZjJ2v6nnuybA8drhro4bPvTiN8NksBs';
   const DISCORD_PATROL_WEBHOOK_URL = 'https://discord.com/api/webhooks/1495995376107524127/eSh2U8sGHdm-Sj3bNP0OPKQIYZJ7lFt_aXk129lUtOUqSyUO8Cn-bpvD_aom2qUJjqri';
+  const DISCORD_ARREST_WEBHOOK_URL = 'https://discord.com/api/webhooks/1496275141997494433/gdUw8d64O1t7Vbxh-ARnv17WC9M_mTjLa6wJNM0bIPdZhoOsa9GW1bBxYQRHW1MkKvj0';
   updateLegalNoticeBanner();
   const THREAT_PATTERNS = [
     { type:'sql_injection', severity:'critical', label:'SQL injection signature', regex: /(?:'\s*(?:or|and)\s*'?[\w\d]+=?|union\s+all?\s+select|select\s+.+\s+from|drop\s+table|insert\s+into|delete\s+from|update\s+\w+\s+set|sleep\s*\(|benchmark\s*\(|information_schema|waitfor\s+delay)/i },
@@ -3858,6 +4005,8 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   window._securityLogsLastError = '';
   window._adminVerified = false;
   window._adminUserId = null;
+  window._arrests = window._arrests || [];
+  window._arrestLogsLoaded = false;
   window._shiftLogs = window._shiftLogs || [];
   window._patrolLogsLoaded = false;
   window._personnelRows = window._personnelRows || [];
@@ -4354,6 +4503,257 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     }
   }
 
+  function arrestDayKey(value) {
+    const dt = value ? new Date(value) : new Date();
+    if (Number.isNaN(dt.getTime())) return '';
+    return dt.getFullYear().toString()
+      + String(dt.getMonth() + 1).padStart(2, '0')
+      + String(dt.getDate()).padStart(2, '0');
+  }
+
+  function normalizeArrestOfficerUsername(value) {
+    return String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+  }
+
+  function buildArrestCaseNumber(officerUsername, existingLogsForOfficerToday) {
+    const officerKey = normalizeArrestOfficerUsername(officerUsername) || 'UNKNOWN';
+    const sequence = String((existingLogsForOfficerToday || 0) + 1).padStart(3, '0');
+    return `ISP-${arrestDayKey()}-${officerKey}-${sequence}`;
+  }
+
+  function countOfficerArrestLogsToday(officerUsername) {
+    const officerKey = normalizeArrestOfficerUsername(officerUsername);
+    if (!officerKey) return 0;
+    const today = arrestDayKey();
+    return (window._arrests || []).filter(log =>
+      normalizeArrestOfficerUsername(log.officer_name) === officerKey && arrestDayKey(log.created_at) === today
+    ).length;
+  }
+
+  function updateArrestCasePreview() {
+    const officer = document.getElementById('arrest-officer').value.trim();
+    const preview = document.getElementById('arrest-case-preview');
+    if (!officer) {
+      preview.textContent = 'Enter arresting officer to preview';
+      preview.style.opacity = '.45';
+      return;
+    }
+    preview.style.opacity = '1';
+    preview.textContent = buildArrestCaseNumber(officer, countOfficerArrestLogsToday(officer));
+  }
+
+  async function openArrestLogModal() {
+    if (!window._arrestLogsLoaded) await loadArrestLogs();
+    document.getElementById('arrest-log-error').textContent = '';
+    ['arrest-suspect', 'arrest-officer', 'arrest-charge', 'arrest-location', 'arrest-notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('arrest-status').value = 'Open';
+    updateArrestCasePreview();
+    document.getElementById('arrest-log-modal').classList.add('open');
+  }
+
+  function updateArrestOverview(logs) {
+    const list = logs || [];
+    const today = arrestDayKey();
+    const todayLogs = list.filter(log => arrestDayKey(log.created_at) === today);
+    const uniqueOfficers = new Set(list.map(log => normalizeArrestOfficerUsername(log.officer_name)).filter(Boolean));
+    const openCases = list.filter(log => String(log.status || '').toLowerCase() === 'open').length;
+
+    document.getElementById('arrest-total').textContent = String(list.length);
+    document.getElementById('arrest-today').textContent = String(todayLogs.length);
+    document.getElementById('arrest-officers').textContent = String(uniqueOfficers.size);
+    document.getElementById('arrest-open').textContent = String(openCases);
+  }
+
+  function renderArrestLogs(logs, errorMessage = '') {
+    const tbody = document.getElementById('arrest-logs-tbody');
+    if (!tbody) return;
+
+    const list = logs || [];
+    const canDelete = hasVerifiedAdminAccess();
+    const actionCol = document.getElementById('arrest-actions-col');
+    if (actionCol) actionCol.style.display = canDelete ? '' : 'none';
+
+    if (errorMessage) {
+      tbody.innerHTML = `<tr><td colspan="${canDelete ? '8' : '7'}" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">ARREST LOGS UNAVAILABLE · ${escapeHtml(errorMessage)}</td></tr>`;
+      return;
+    }
+
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="${canDelete ? '8' : '7'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO ARREST RECORDS YET</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(log => {
+      const status = String(log.status || 'Open');
+      const statusClass = status.toLowerCase() === 'open' ? 'status-open' : 'status-closed';
+      const statusDot = status.toLowerCase() === 'open' ? '<span class="status-dot-sm"></span>' : '';
+      const notesHtml = log.notes
+        ? `<br><span class="mono" style="font-size:10px;color:var(--text-dim)">${escapeHtml(log.notes)}</span>`
+        : '';
+      const deleteCell = canDelete
+        ? `<td><button class="delete-btn" onclick="deleteArrestLog('${escapeHtml(log.id)}')">DEL</button></td>`
+        : '';
+      return `
+        <tr>
+          <td><span class="arrest-case-number">${escapeHtml(log.case_number || '—')}</span></td>
+          <td><span class="arrest-suspect-name">${escapeHtml(log.suspect_name || '—')}</span></td>
+          <td><span class="arrest-officer-tag">${escapeHtml(log.officer_name || '—')}</span></td>
+          <td><span class="arrest-charge-text">${escapeHtml(log.charge || '—')}</span>${notesHtml}</td>
+          <td class="mono">${escapeHtml(log.location || '—')}</td>
+          <td><span class="status-badge ${statusClass}">${statusDot}${escapeHtml(status)}</span></td>
+          <td class="mono" style="font-size:11px;white-space:nowrap">${escapeHtml(formatSecurityLogTime(log.created_at))}</td>
+          ${deleteCell}
+        </tr>`;
+    }).join('');
+  }
+
+  async function loadArrestLogs() {
+    const { data, error } = await sb.from('arrests').select('*').order('created_at', { ascending: false });
+    window._arrests = data || [];
+    window._arrestLogsLoaded = !error;
+    updateArrestOverview(window._arrests);
+
+    if (error) {
+      renderArrestLogs([], `Create the arrests table in Supabase to enable arrest logging. (${error.message})`);
+      return;
+    }
+
+    renderArrestLogs(window._arrests);
+  }
+
+  async function sendArrestDiscordWebhook({ caseNumber, suspectName, officerName, charge, location, status, notes, loggedBy, createdAt }) {
+    if (!DISCORD_ARREST_WEBHOOK_URL) return;
+
+    const safeCaseNumber = sanitizeLogValue(caseNumber || 'Unknown case', 120);
+    const safeSuspect = sanitizeLogValue(suspectName || 'Unknown', 120);
+    const safeOfficer = sanitizeLogValue(officerName || 'Unknown', 120);
+    const safeCharge = sanitizeLogValue(charge || 'No charge provided', 900);
+    const safeLocation = sanitizeLogValue(location || '', 240);
+    const safeStatus = sanitizeLogValue(status || 'Open', 40);
+    const safeNotes = sanitizeLogValue(notes || '', 900);
+    const safeLoggedBy = sanitizeLogValue(loggedBy || window._adminEmail || officerName || 'Public submission', 120);
+    const discordTime = toDiscordTimestamp(createdAt);
+    const payload = {
+      username: 'SAVE Arrest Logger',
+      embeds: [
+        {
+          title: `Arrest Logged · ${safeCaseNumber}`,
+          color: 15158332,
+          description: 'An arrest log has been submitted through the SAVE arrest logger.',
+          fields: [
+            { name: 'Case #', value: safeCaseNumber, inline: true },
+            { name: 'Suspect', value: safeSuspect, inline: true },
+            { name: 'Officer', value: safeOfficer, inline: true },
+            { name: 'Status', value: safeStatus, inline: true },
+            ...(safeLocation ? [{ name: 'Location', value: safeLocation, inline: true }] : []),
+            { name: 'Charge(s)', value: safeCharge, inline: false },
+            ...(safeNotes ? [{ name: 'Notes', value: safeNotes, inline: false }] : []),
+            { name: 'Logged By', value: safeLoggedBy, inline: true },
+            { name: 'Logged At', value: discordTime, inline: false }
+          ],
+          footer: { text: 'SAVE Arrest Logs · Illinois State Police' },
+          timestamp: new Date(createdAt || Date.now()).toISOString()
+        }
+      ]
+    };
+
+    const formData = new FormData();
+    formData.append('payload_json', JSON.stringify(payload));
+
+    try {
+      await fetch(DISCORD_ARREST_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      });
+    } catch (error) {
+      await logSecurityEvent('arrest_webhook_failed', 'medium', 'Discord arrest webhook request failed', {
+        source: 'tracker',
+        details: { caseNumber: safeCaseNumber, message: error?.message || 'Unknown error' }
+      });
+    }
+  }
+
+  async function saveArrestLog() {
+    const suspect = document.getElementById('arrest-suspect').value.trim();
+    const officer = document.getElementById('arrest-officer').value.trim();
+    const charge = document.getElementById('arrest-charge').value.trim();
+    const location = document.getElementById('arrest-location').value.trim();
+    const status = document.getElementById('arrest-status').value;
+    const notes = document.getElementById('arrest-notes').value.trim();
+    const errEl = document.getElementById('arrest-log-error');
+    errEl.textContent = '';
+
+    if (!suspect) { errEl.textContent = 'Suspect name is required.'; return; }
+    if (!officer) { errEl.textContent = 'Arresting officer is required.'; return; }
+    if (!charge) { errEl.textContent = 'At least one charge is required.'; return; }
+
+    const caseNumber = buildArrestCaseNumber(officer, countOfficerArrestLogsToday(officer));
+    const createdAt = new Date().toISOString();
+    const { data: { session } } = await sb.auth.getSession();
+    const loggedBy = session?.user?.email || window._adminEmail || officer || 'Public submission';
+    const payload = {
+      case_number: caseNumber,
+      suspect_name: suspect,
+      officer_name: officer,
+      charge,
+      location: location || null,
+      status,
+      notes: notes || null
+    };
+
+    const { data: insertedLog, error } = await sb.from('arrests').insert(payload).select().single();
+    if (error) {
+      await logSecurityEvent('arrest_log_failed', 'medium', 'Failed to save arrest log', {
+        source: 'tracker',
+        details: { caseNumber, suspect, officer, message: error.message }
+      });
+      errEl.textContent = 'Failed: ' + error.message;
+      return;
+    }
+
+    await logSecurityEvent('arrest_logged', 'low', 'Saved arrest log', {
+      source: 'tracker',
+      details: { caseNumber, suspect, officer, status }
+    });
+    await sendArrestDiscordWebhook({
+      caseNumber,
+      suspectName: suspect,
+      officerName: officer,
+      charge,
+      location,
+      status,
+      notes,
+      loggedBy,
+      createdAt: insertedLog?.created_at || createdAt
+    });
+    closeModal('arrest-log-modal');
+    loadArrestLogs();
+  }
+
+  async function deleteArrestLog(logId) {
+    if (!requireVerifiedAdminAccess('delete an arrest log')) return;
+    if (!confirm('Delete this arrest log? This cannot be undone.')) return;
+
+    const { error } = await sb.from('arrests').delete().eq('id', logId);
+    if (error) {
+      await logSecurityEvent('arrest_log_delete_failed', 'medium', 'Failed to delete arrest log', {
+        source: 'tracker',
+        details: { logId, message: error.message }
+      });
+      alert('Failed: ' + error.message);
+      return;
+    }
+
+    await logSecurityEvent('arrest_log_deleted', 'low', 'Deleted arrest log', {
+      source: 'tracker',
+      details: { logId }
+    });
+    loadArrestLogs();
+  }
+
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
   document.querySelectorAll('.modal-overlay').forEach(o => {
     o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
@@ -4421,6 +4821,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
       details: { userId: user.id }
     });
     if (document.getElementById('page-tracker').classList.contains('active')) loadTrackerPage();
+    if (document.getElementById('page-arrests').classList.contains('active')) loadArrestLogs();
     if (document.getElementById('page-patrols').classList.contains('active')) loadPatrolLogs();
     if (document.getElementById('page-conf').classList.contains('active')) loadClassifiedConsole();
   }
@@ -4436,6 +4837,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     await sb.auth.signOut();
     setAdminMode(false, '');
     if (document.getElementById('page-tracker').classList.contains('active')) loadTrackerPage();
+    if (document.getElementById('page-arrests').classList.contains('active')) loadArrestLogs();
     if (document.getElementById('page-patrols').classList.contains('active')) loadPatrolLogs();
     updateClassifiedAccess();
   }
@@ -4447,6 +4849,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     const patrolDeleteAllowed = on && ['supervisor', 'owner'].includes(String(role || '').toLowerCase());
     document.getElementById('sup-actions-col').style.display = on ? '' : 'none';
     document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
+    document.getElementById('arrest-actions-col').style.display = on ? '' : 'none';
     document.getElementById('shift-actions-col').style.display = patrolDeleteAllowed ? '' : 'none';
     document.getElementById('nav-panel').style.display = 'none';
     if (on) {
