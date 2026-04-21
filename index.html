@@ -47,6 +47,10 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     background: var(--bg);
     background-image:
@@ -60,6 +64,9 @@
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   body::after {
@@ -70,6 +77,12 @@
       rgba(0,0,0,.06) 3px, rgba(0,0,0,.06) 4px
     );
     pointer-events: none; z-index: 9999;
+  }
+
+  input, textarea, select, [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
   }
 
   /* SIDEBAR */
@@ -534,6 +547,7 @@
   .status-open     { background: rgba(224,80,80,.1); color: var(--red-bright); border: 1px solid rgba(224,80,80,.25); }
   .status-closed   { background: rgba(72,80,98,.1); color: var(--text-dim); border: 1px solid var(--border); }
   .status-vacant   { background: rgba(30,37,54,.5); color: var(--text-dim); border: 1px solid var(--border); }
+  .status-loa      { background: rgba(201,168,76,.1); color: var(--gold-light); border: 1px solid rgba(201,168,76,.25); }
   .quota-btn {
     display: inline-flex;
     align-items: center;
@@ -569,6 +583,11 @@
     border-color: var(--border);
     background: rgba(255,255,255,.03);
     color: var(--text-dim);
+  }
+  .quota-btn.loa {
+    border-color: rgba(201,168,76,.35);
+    background: rgba(201,168,76,.08);
+    color: var(--gold-light);
   }
   .quota-meta {
     margin-top: 6px;
@@ -996,6 +1015,100 @@
   .btn-cancel:hover { border-color: var(--text-muted); color: var(--text); }
   .modal-error { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--red-bright); margin-bottom: 12px; min-height: 16px; letter-spacing: .5px; }
   .modal.wide { max-width: 640px; }
+  .portal-search-modal { max-width: 780px; padding: 28px 30px; }
+  .portal-search-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    margin-bottom: 18px;
+  }
+  .portal-search-head .modal-sub { margin-bottom: 0; }
+  .portal-search-shell { display: flex; flex-direction: column; gap: 12px; }
+  .portal-search-input {
+    width: 100%;
+    background:
+      linear-gradient(135deg, rgba(201,168,76,.06), rgba(11,14,24,.94));
+    border: 1px solid rgba(201,168,76,.18);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: var(--text-bright);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: .5px;
+    outline: none;
+    box-shadow: inset 0 0 0 1px rgba(201,168,76,.04);
+  }
+  .portal-search-input:focus {
+    border-color: rgba(201,168,76,.38);
+    box-shadow: 0 0 0 4px rgba(201,168,76,.08), inset 0 0 0 1px rgba(201,168,76,.08);
+  }
+  .portal-search-meta {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    font-family: 'Share Tech Mono', monospace; font-size: 9.5px; letter-spacing: 1px;
+    color: var(--text-dim); text-transform: uppercase;
+  }
+  .portal-search-hint { color: var(--text-muted); }
+  .portal-search-results {
+    max-height: 360px; overflow: auto;
+    display: flex; flex-direction: column; gap: 10px; padding-right: 2px;
+  }
+  .portal-search-empty {
+    padding: 28px 18px;
+    border: 1px dashed rgba(201,168,76,.16);
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(201,168,76,.03), rgba(11,14,24,.9));
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace; font-size: 11px; line-height: 1.8;
+    letter-spacing: .7px;
+  }
+  .portal-search-result {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(15,19,32,.95), rgba(11,14,24,.98));
+    padding: 14px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .portal-search-result:hover,
+  .portal-search-result.active {
+    transform: translateY(-1px);
+    border-color: rgba(201,168,76,.22);
+    border-left-color: var(--gold);
+    box-shadow: 0 12px 24px rgba(0,0,0,.22);
+    background: linear-gradient(135deg, rgba(201,168,76,.06), rgba(15,19,32,.98));
+  }
+  .portal-search-result-page {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 7px;
+  }
+  .portal-search-result-title {
+    font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700;
+    color: var(--text-bright); letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .portal-search-result-snippet {
+    color: var(--text); font-size: 12px; line-height: 1.7;
+  }
+  .portal-search-mark {
+    background: rgba(201,168,76,.18);
+    color: var(--gold-light);
+    padding: 0 3px; border-radius: 3px;
+    box-shadow: 0 0 10px rgba(201,168,76,.08);
+  }
+  .portal-search-focus {
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 4px rgba(201,168,76,.08), 0 0 32px rgba(201,168,76,.18);
+    outline: 1px solid rgba(201,168,76,.34);
+    animation: portalSearchFocusPulse 1.7s ease;
+    scroll-margin-top: 92px;
+  }
+  @keyframes portalSearchFocusPulse {
+    0% { box-shadow: 0 0 0 0 rgba(201,168,76,.28), 0 0 0 rgba(201,168,76,0); }
+    45% { box-shadow: 0 0 0 6px rgba(201,168,76,.12), 0 0 32px rgba(201,168,76,.18); }
+    100% { box-shadow: 0 0 0 4px rgba(201,168,76,.08), 0 0 32px rgba(201,168,76,.18); }
+  }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
   .form-group.full { grid-column: 1 / -1; }
   .case-preview {
@@ -1826,6 +1939,44 @@
     font-size: 10px;
     line-height: 1.7;
   }
+  body.touch-mode .nav-item:not(.active):hover {
+    background: transparent;
+    color: var(--text-dim);
+    border-left-color: transparent;
+    text-shadow: none;
+  }
+  body.touch-mode .nav-item:not(.active):hover .nav-icon { opacity: .5; }
+  body.touch-mode .data-table tbody tr:hover td,
+  body.touch-mode .tracker-data-table tbody tr:hover td,
+  body.touch-mode .rank-table tbody tr:hover td {
+    background: transparent;
+  }
+  body.touch-mode .offense-card:hover,
+  body.touch-mode .stat-card:hover,
+  body.touch-mode .info-card:hover,
+  body.touch-mode .tracker-section:hover,
+  body.touch-mode .quota-btn:hover,
+  body.touch-mode .strike-pips-wrap:hover,
+  body.touch-mode .sp-entry:hover,
+  body.touch-mode .toc-item:hover,
+  body.touch-mode .rights-card:hover,
+  body.touch-mode .filter-btn:hover,
+  body.touch-mode .admin-btn:hover,
+  body.touch-mode .edit-btn:hover,
+  body.touch-mode .delete-btn:hover,
+  body.touch-mode .add-row-btn:hover,
+  body.touch-mode .legal-link-btn:hover,
+  body.touch-mode .legal-hero-btn:hover,
+  body.touch-mode .legal-card:hover,
+  body.touch-mode .legal-citation:hover,
+  body.touch-mode .footer-link:hover,
+  body.touch-mode .legal-ack-btn.review:hover,
+  body.touch-mode .legal-ack-btn.accept:hover,
+  body.touch-mode .reason-preset-btn:hover,
+  body.touch-mode .proof-link-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
   @media (max-width: 960px) {
     .legal-banner,
     .legal-footer,
@@ -1843,6 +1994,11 @@
     .patrol-summary-grid,
     .reason-preset-grid {
       grid-template-columns: 1fr;
+    }
+    .portal-search-head,
+    .portal-search-meta {
+      flex-direction: column;
+      align-items: flex-start;
     }
     .legal-ack {
       left: 16px;
@@ -3075,6 +3231,37 @@
   <button class="sp-add-btn" id="sp-add-btn">+ ISSUE STRIKE</button>
 </div>
 
+<!-- PORTAL SEARCH MODAL -->
+<div class="modal-overlay" id="portal-search-modal" onclick="if(event.target===this)closePortalSearch()">
+  <div class="modal wide portal-search-modal">
+    <div class="portal-search-head">
+      <div>
+        <h2>Portal Search</h2>
+        <div class="modal-sub">SAVE COMMAND PALETTE · CUSTOM CTRL+F SEARCH</div>
+      </div>
+      <button class="btn-cancel" type="button" onclick="closePortalSearch()">CLOSE</button>
+    </div>
+    <div class="portal-search-shell">
+      <input
+        type="search"
+        id="portal-search-input"
+        class="portal-search-input"
+        placeholder="Search SOP, tracker, patrol logs, arrests, legal, or classified content..."
+        autocomplete="off"
+        spellcheck="false">
+      <div class="portal-search-meta">
+        <span id="portal-search-count">Type to search across the portal.</span>
+        <span class="portal-search-hint">Enter to open · ↑↓ to move · Esc to close</span>
+      </div>
+      <div class="portal-search-results" id="portal-search-results">
+        <div class="portal-search-empty">
+          Search across page titles, SOP sections, rules, tracker records, patrol logs, arrest logs, legal notices, and classified headings from one place.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- INVITE ADMIN MODAL -->
 <div class="modal-overlay" id="invite-modal">
   <div class="modal">
@@ -3128,6 +3315,7 @@
       <div><label>Status</label>
         <select id="pm-status">
           <option value="Active">Active</option>
+          <option value="LOA">LOA</option>
           <option value="Inactive">Inactive</option>
           <option value="Suspended">Suspended</option>
           <option value="Vacant">Vacant</option>
@@ -3596,6 +3784,18 @@
 
   const QUOTA_WEEKLY_MINUTES = 30; // Minimum patrol time per week to meet quota
 
+  function normalizePersonnelStatus(value) {
+    const raw = String(value || '').trim();
+    const normalized = raw.toLowerCase();
+    if (!raw) return 'Active';
+    if (normalized === 'active') return 'Active';
+    if (normalized === 'loa' || normalized === 'leave of absence') return 'LOA';
+    if (normalized === 'inactive') return 'Inactive';
+    if (normalized === 'suspended') return 'Suspended';
+    if (normalized === 'vacant') return 'Vacant';
+    return raw;
+  }
+
   function getPatrolQuotaSnapshot(personnel) {
     const logs = getPatrolLogsForPersonnel(personnel).slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
     const cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
@@ -3605,6 +3805,8 @@
     });
     const totalMinutes = logs.reduce((sum, log) => sum + calculatePatrolDurationMinutes(log.start_time, log.end_time), 0);
     const weeklyMinutes = weeklyLogs.reduce((sum, log) => sum + calculatePatrolDurationMinutes(log.start_time, log.end_time), 0);
+    const normalizedStatus = normalizePersonnelStatus(personnel?.status);
+    const isOnLeave = normalizedStatus === 'LOA';
     return {
       logs,
       weeklyLogs,
@@ -3612,7 +3814,9 @@
       weeklyMinutes,
       totalPatrols: logs.length,
       weeklyPatrols: weeklyLogs.length,
-      metQuota: weeklyMinutes >= QUOTA_WEEKLY_MINUTES
+      isOnLeave,
+      normalizedStatus,
+      metQuota: isOnLeave ? true : weeklyMinutes >= QUOTA_WEEKLY_MINUTES
     };
   }
   
@@ -3621,10 +3825,13 @@
       return `<button type="button" class="quota-btn pending" onclick="openPatrolQuotaModal('${escapeHtml(personnel.id)}')">Checking</button><div class="quota-meta">Loading patrol activity</div>`;
     }
     const snapshot = getPatrolQuotaSnapshot(personnel);
-    const statusText = snapshot.metQuota ? 'Met Quota' : "Hasn't Met";
-    const buttonClass = snapshot.metQuota ? 'met' : 'miss';
     const weeklyTime = formatDurationMinutes(snapshot.weeklyMinutes);
     const totalTime  = formatDurationMinutes(snapshot.totalMinutes);
+    if (snapshot.isOnLeave) {
+      return `<button type="button" class="quota-btn loa" onclick="openPatrolQuotaModal('${escapeHtml(personnel.id)}')">On LOA</button><div class="quota-meta">${escapeHtml(`Quota paused · ${totalTime} total`)}</div>`;
+    }
+    const statusText = snapshot.metQuota ? 'Met Quota' : "Hasn't Met";
+    const buttonClass = snapshot.metQuota ? 'met' : 'miss';
     return `<button type="button" class="quota-btn ${buttonClass}" onclick="openPatrolQuotaModal('${escapeHtml(personnel.id)}')">${escapeHtml(statusText)}</button><div class="quota-meta">${escapeHtml(`${weeklyTime} this week · ${totalTime} total`)}</div>`;
   }
   
@@ -3635,8 +3842,10 @@
     const callsign = personnel.callsign || personnel.roblox_username || personnel.discord || 'Personnel';
     const rank = personnel.rank || 'Unknown Rank';
     document.getElementById('patrol-quota-sub').textContent = `${callsign} · ${rank} · WEEKLY PATROL REVIEW`;
-    document.getElementById('patrol-quota-note').textContent = `Quota is based on total patrol time logged. Minimum: ${QUOTA_WEEKLY_MINUTES} minutes in the last 7 days.`;
-    document.getElementById('patrol-quota-status').textContent = snapshot.metQuota ? 'MET QUOTA' : "HASN'T MET QUOTA";
+    document.getElementById('patrol-quota-note').textContent = snapshot.isOnLeave
+      ? 'This member is currently marked LOA, so weekly patrol quota is paused until they return to Active status.'
+      : `Quota is based on total patrol time logged. Minimum: ${QUOTA_WEEKLY_MINUTES} minutes in the last 7 days.`;
+    document.getElementById('patrol-quota-status').textContent = snapshot.isOnLeave ? 'ON APPROVED LOA' : (snapshot.metQuota ? 'MET QUOTA' : "HASN'T MET QUOTA");
     document.getElementById('patrol-quota-weekly').textContent = formatDurationMinutes(snapshot.weeklyMinutes);
     document.getElementById('patrol-quota-total').textContent = String(snapshot.totalPatrols);
     document.getElementById('patrol-quota-time').textContent = formatDurationMinutes(snapshot.totalMinutes);
@@ -4754,6 +4963,306 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     loadArrestLogs();
   }
 
+  const PORTAL_SEARCHABLE_SELECTORS = [
+    '.page-title',
+    '.page-subtitle',
+    '.section-block-header h2',
+    '.tracker-header h2',
+    '.section-header h2',
+    '.rule-label',
+    '.rule-text',
+    '.rule-note',
+    '.offense-name',
+    '.offense-desc',
+    '.rights-card h3',
+    '.rights-card p',
+    '.legal-card h3',
+    '.legal-card p',
+    '.legal-citation strong',
+    '.legal-citation span',
+    '.classified-brief h3',
+    '.classified-brief p',
+    '.classified-meta-label',
+    '.classified-meta-value',
+    '.patrol-helper-copy',
+    '.arrest-helper-copy',
+    '.toc-item',
+    '.tracker-data-table td',
+    '.data-table td',
+    '.page li',
+    '.legal-footer-copy',
+    '.legal-ack-copy',
+    '.org-label'
+  ].join(',');
+
+  window._portalSearchState = window._portalSearchState || {
+    query: '',
+    results: [],
+    selectedIndex: -1,
+    focusTimer: null
+  };
+
+  function normalizePortalSearchText(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function escapeRegex(value) {
+    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function getPortalPageLabel(pageId) {
+    const labels = {
+      home: 'Home',
+      sop: 'SAVE-SOP',
+      rules: 'SAVE-RULES',
+      tracker: 'SAVE-TRACKER',
+      arrests: 'Arrest Logs',
+      patrols: 'Patrol Logs',
+      conf: 'Classified',
+      legal: 'Legal'
+    };
+    return labels[pageId] || String(pageId || 'Portal').toUpperCase();
+  }
+
+  function getPortalSearchState() {
+    return window._portalSearchState;
+  }
+
+  function isPortalSearchOpen() {
+    return document.getElementById('portal-search-modal')?.classList.contains('open');
+  }
+
+  function getPortalSearchableElements(root = document) {
+    return Array.from(root.querySelectorAll(PORTAL_SEARCHABLE_SELECTORS)).filter(element => {
+      if (!(element instanceof HTMLElement)) return false;
+      const page = element.closest('.page');
+      if (!page) return false;
+      if (element.closest('.modal-overlay') || element.closest('#strikes-popup')) return false;
+      if (element.tagName === 'BUTTON') return false;
+      for (let node = element; node && node !== page; node = node.parentElement) {
+        const style = window.getComputedStyle(node);
+        if (style.display === 'none' || style.visibility === 'hidden') return false;
+      }
+      const text = normalizePortalSearchText(element.textContent);
+      if (!text || text === '—' || text === 'Unknown') return false;
+      if (/^(EDIT|DEL|EDIT DEL|DEL EDIT|CANCEL|CLOSE|SAVE RECORD|SAVE PATROL|SAVE ARREST)$/i.test(text)) return false;
+      return true;
+    });
+  }
+
+  function getPortalSearchResultTitle(element, page) {
+    const ownText = normalizePortalSearchText(element.textContent);
+    if (element.matches('.page-title, .section-block-header h2, .tracker-header h2, .section-header h2, .rule-label, .offense-name, .rights-card h3, .legal-card h3, .classified-brief h3, .legal-citation strong, .toc-item')) {
+      return ownText;
+    }
+    const block = element.closest('.section-block, .tracker-section, .section, .legal-card, .rights-card, .classified-meta-card, .patrol-analytics-card');
+    const heading = block?.querySelector('.section-block-header h2, .tracker-header h2, .section-header h2, h3');
+    const headingText = normalizePortalSearchText(heading?.textContent || '');
+    if (headingText) return headingText;
+    return normalizePortalSearchText(page?.querySelector('.page-title')?.textContent || '') || 'Portal';
+  }
+
+  function buildPortalSearchSnippet(text, terms) {
+    const normalizedText = normalizePortalSearchText(text);
+    const lower = normalizedText.toLowerCase();
+    const matchIndex = terms.reduce((best, term) => {
+      const idx = lower.indexOf(term);
+      if (idx === -1) return best;
+      if (best === -1) return idx;
+      return Math.min(best, idx);
+    }, -1);
+    const start = Math.max(0, (matchIndex === -1 ? 0 : matchIndex) - 48);
+    const end = Math.min(normalizedText.length, (matchIndex === -1 ? 0 : matchIndex) + 132);
+    const prefix = start > 0 ? '... ' : '';
+    const suffix = end < normalizedText.length ? ' ...' : '';
+    return prefix + normalizedText.slice(start, end) + suffix;
+  }
+
+  function highlightPortalSearchText(text, terms) {
+    const safeText = escapeHtml(text);
+    const uniqueTerms = Array.from(new Set((terms || []).filter(Boolean))).sort((a, b) => b.length - a.length);
+    if (!uniqueTerms.length) return safeText;
+    const pattern = new RegExp(`(${uniqueTerms.map(escapeRegex).join('|')})`, 'ig');
+    return safeText.replace(pattern, '<mark class="portal-search-mark">$1</mark>');
+  }
+
+  function buildPortalSearchResults(query) {
+    const normalizedQuery = normalizePortalSearchText(query).toLowerCase();
+    const terms = normalizedQuery.split(' ').filter(Boolean);
+    if (!terms.length) return [];
+
+    return getPortalSearchableElements().reduce((results, element) => {
+      const text = normalizePortalSearchText(element.textContent);
+      const lower = text.toLowerCase();
+      if (!terms.every(term => lower.includes(term))) return results;
+
+      const page = element.closest('.page');
+      const pageId = (page?.id || '').replace(/^page-/, '');
+      if (!pageId) return results;
+
+      results.push({
+        pageId,
+        pageLabel: getPortalPageLabel(pageId),
+        title: getPortalSearchResultTitle(element, page),
+        text,
+        snippet: buildPortalSearchSnippet(text, terms)
+      });
+      return results;
+    }, []).slice(0, 60);
+  }
+
+  function renderPortalSearchResults() {
+    const state = getPortalSearchState();
+    const resultsEl = document.getElementById('portal-search-results');
+    const countEl = document.getElementById('portal-search-count');
+    if (!resultsEl || !countEl) return;
+
+    const query = normalizePortalSearchText(state.query);
+    if (!query) {
+      countEl.textContent = 'Type to search across the portal.';
+      resultsEl.innerHTML = `
+        <div class="portal-search-empty">
+          Search across page titles, SOP sections, rules, tracker records, patrol logs, arrest logs, legal notices, and classified headings from one place.
+        </div>`;
+      return;
+    }
+
+    if (!state.results.length) {
+      countEl.textContent = `No results for "${query}".`;
+      resultsEl.innerHTML = `
+        <div class="portal-search-empty">
+          No matches were found for <span class="code-badge">${escapeHtml(query)}</span>. Try a callsign, case number, charge, SOP section, status, or keyword from the page text.
+        </div>`;
+      return;
+    }
+
+    countEl.textContent = `${state.results.length} result${state.results.length === 1 ? '' : 's'} for "${query}".`;
+    const terms = query.toLowerCase().split(' ').filter(Boolean);
+    resultsEl.innerHTML = state.results.map((result, index) => `
+      <button
+        type="button"
+        class="portal-search-result${index === state.selectedIndex ? ' active' : ''}"
+        onclick="openPortalSearchResult(${index})">
+        <span class="portal-search-result-page">${escapeHtml(result.pageLabel)}</span>
+        <div class="portal-search-result-title">${highlightPortalSearchText(result.title, terms)}</div>
+        <div class="portal-search-result-snippet">${highlightPortalSearchText(result.snippet, terms)}</div>
+      </button>`).join('');
+
+    const activeResult = resultsEl.querySelector('.portal-search-result.active');
+    activeResult?.scrollIntoView({ block: 'nearest' });
+  }
+
+  function updatePortalSearch(query) {
+    const state = getPortalSearchState();
+    state.query = query;
+    state.results = buildPortalSearchResults(query);
+    state.selectedIndex = state.results.length ? 0 : -1;
+    renderPortalSearchResults();
+  }
+
+  function setPortalSearchSelection(index) {
+    const state = getPortalSearchState();
+    if (!state.results.length) {
+      state.selectedIndex = -1;
+      renderPortalSearchResults();
+      return;
+    }
+    const lastIndex = state.results.length - 1;
+    state.selectedIndex = Math.max(0, Math.min(lastIndex, index));
+    renderPortalSearchResults();
+  }
+
+  function movePortalSearchSelection(direction) {
+    const state = getPortalSearchState();
+    if (!state.results.length) return;
+    const nextIndex = state.selectedIndex < 0
+      ? 0
+      : (state.selectedIndex + direction + state.results.length) % state.results.length;
+    setPortalSearchSelection(nextIndex);
+  }
+
+  function getPortalSearchFocusTarget(element) {
+    return element?.closest?.(
+      'tr, .section-block, .tracker-section, .section, .offense-card, .rights-card, .legal-card, .legal-citation, .classified-meta-card, .patrol-analytics-card, .toc-item, .page-title'
+    ) || element;
+  }
+
+  function clearPortalSearchFocus() {
+    document.querySelectorAll('.portal-search-focus').forEach(element => {
+      element.classList.remove('portal-search-focus');
+    });
+  }
+
+  function findPortalSearchTarget(result) {
+    const page = document.getElementById(`page-${result.pageId}`);
+    if (!page) return null;
+    const resultText = normalizePortalSearchText(result.text).toLowerCase();
+    const resultTitle = normalizePortalSearchText(result.title).toLowerCase();
+    const candidates = getPortalSearchableElements(page);
+
+    return candidates.find(element => {
+      const candidateText = normalizePortalSearchText(element.textContent).toLowerCase();
+      const candidateTitle = normalizePortalSearchText(getPortalSearchResultTitle(element, page)).toLowerCase();
+      return candidateText === resultText && candidateTitle === resultTitle;
+    }) || candidates.find(element => normalizePortalSearchText(element.textContent).toLowerCase() === resultText) || null;
+  }
+
+  function focusPortalSearchResult(result, attempt = 0) {
+    const target = findPortalSearchTarget(result);
+    if (target) {
+      const focusTarget = getPortalSearchFocusTarget(target);
+      const state = getPortalSearchState();
+      if (state.focusTimer) clearTimeout(state.focusTimer);
+      clearPortalSearchFocus();
+      focusTarget.classList.add('portal-search-focus');
+      focusTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      state.focusTimer = window.setTimeout(() => {
+        focusTarget.classList.remove('portal-search-focus');
+      }, 2200);
+      return;
+    }
+
+    if (attempt < 12) {
+      window.setTimeout(() => focusPortalSearchResult(result, attempt + 1), 140);
+    }
+  }
+
+  function closePortalSearch() {
+    closeModal('portal-search-modal');
+  }
+
+  function openPortalSearch() {
+    const modal = document.getElementById('portal-search-modal');
+    const input = document.getElementById('portal-search-input');
+    if (!modal || !input) return;
+    modal.classList.add('open');
+    input.focus();
+    input.select();
+    renderPortalSearchResults();
+  }
+
+  function openPortalSearchResult(index) {
+    const state = getPortalSearchState();
+    const result = state.results[index];
+    if (!result) return;
+    state.selectedIndex = index;
+    closePortalSearch();
+    showPage(result.pageId);
+    window.requestAnimationFrame(() => {
+      window.setTimeout(() => focusPortalSearchResult(result), 80);
+    });
+  }
+
+  function openSelectedPortalSearchResult() {
+    const state = getPortalSearchState();
+    if (state.selectedIndex < 0 || !state.results.length) return;
+    openPortalSearchResult(state.selectedIndex);
+  }
+
+  document.getElementById('portal-search-input')?.addEventListener('input', e => {
+    updatePortalSearch(e.target.value);
+  });
+
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
   document.querySelectorAll('.modal-overlay').forEach(o => {
     o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
@@ -5048,11 +5557,13 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
         `<div class="strike-pip${i < strikes.length ? ' active' : ''}"></div>`
       ).join('');
       const stClass = strikes.length > 0 ? 'has-strikes' : '';
+      const normalizedStatus = normalizePersonnelStatus(r.status);
       let statusClass = 'status-inactive';
-      if (r.status === 'Active') statusClass = 'status-active';
-      else if (r.status === 'Suspended') statusClass = 'status-suspended';
-      else if (r.status === 'Vacant') statusClass = 'status-vacant';
-      const dotHtml = r.status === 'Active' ? '<span class="status-dot-sm"></span>' : '';
+      if (normalizedStatus === 'Active') statusClass = 'status-active';
+      else if (normalizedStatus === 'LOA') statusClass = 'status-loa';
+      else if (normalizedStatus === 'Suspended') statusClass = 'status-suspended';
+      else if (normalizedStatus === 'Vacant') statusClass = 'status-vacant';
+      const dotHtml = normalizedStatus === 'Active' ? '<span class="status-dot-sm"></span>' : '';
       const quotaCell = getQuotaButtonMarkup(r);
       const actionsCell = canManage ? `<td>
           <button class="edit-btn" onclick="openPersonnelModal('${r.id}','${r.category}')">EDIT</button>
@@ -5067,7 +5578,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
         <td class="mono">${d(r.discord)}</td>
         <td class="mono">${d(r.discord_id)}</td>
         <td style="font-size:12px;color:var(--text-muted)">${d(r.join_date)}</td>
-        <td><span class="status-badge ${statusClass}">${dotHtml}${r.status || 'Unknown'}</span></td>
+        <td><span class="status-badge ${statusClass}">${dotHtml}${escapeHtml(normalizedStatus || 'Unknown')}</span></td>
         <td>${quotaCell}</td>
         <td>
           <div class="strike-pips-wrap" onclick="toggleStrikePopup(event, '${r.id}', '${(r.callsign||'').replace(/'/g,"\\'")}')">
@@ -5318,29 +5829,49 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     loadPatrolLogs();
   }
 
-  function openPersonnelModal(id, category) {
-    document.getElementById('personnel-error').textContent = '';
+  function resetPersonnelModalFields() {
+    ['pm-slot','pm-callsign','pm-rank','pm-roblox-user','pm-roblox-id','pm-discord','pm-discord-id','pm-join-date']
+      .forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('pm-status').value = 'Active';
+  }
+
+  function fillPersonnelModalFields(data = {}, category = '') {
+    document.getElementById('pm-slot').value        = data.slot_number     || '';
+    document.getElementById('pm-callsign').value    = data.callsign        || '';
+    document.getElementById('pm-rank').value        = data.rank            || '';
+    document.getElementById('pm-status').value      = normalizePersonnelStatus(data.status);
+    document.getElementById('pm-roblox-user').value = data.roblox_username || '';
+    document.getElementById('pm-roblox-id').value   = data.roblox_id       || '';
+    document.getElementById('pm-discord').value     = data.discord         || '';
+    document.getElementById('pm-discord-id').value  = data.discord_id      || '';
+    document.getElementById('pm-join-date').value   = data.join_date       || '';
+    document.getElementById('pm-category').value    = category || data.category || 'general';
+  }
+
+  async function openPersonnelModal(id, category) {
+    if (!requireVerifiedAdminAccess(id ? 'edit personnel records' : 'create personnel records')) return;
+    const errorEl = document.getElementById('personnel-error');
+    errorEl.textContent = '';
     document.getElementById('pm-id').value = id || '';
-    document.getElementById('pm-category').value = category;
     document.getElementById('personnel-modal-title').textContent = id ? 'Edit Personnel' : 'Add Personnel';
+    resetPersonnelModalFields();
+
     if (id) {
-      sb.from('personnel').select('*').eq('id', id).single().then(({ data }) => {
-        if (!data) return;
-        document.getElementById('pm-slot').value        = data.slot_number    || '';
-        document.getElementById('pm-callsign').value    = data.callsign       || '';
-        document.getElementById('pm-rank').value        = data.rank           || '';
-        document.getElementById('pm-status').value      = data.status         || 'Active';
-        document.getElementById('pm-roblox-user').value = data.roblox_username|| '';
-        document.getElementById('pm-roblox-id').value   = data.roblox_id      || '';
-        document.getElementById('pm-discord').value     = data.discord        || '';
-        document.getElementById('pm-discord-id').value  = data.discord_id     || '';
-        document.getElementById('pm-join-date').value   = data.join_date      || '';
-      });
+      const cached = (window._personnelMap || {})[id];
+      if (cached) {
+        fillPersonnelModalFields(cached, category || cached.category);
+      } else {
+        const { data, error } = await sb.from('personnel').select('*').eq('id', id).single();
+        if (error || !data) {
+          errorEl.textContent = 'Unable to load that personnel record right now.';
+          return;
+        }
+        fillPersonnelModalFields(data, category || data.category);
+      }
     } else {
-      ['pm-slot','pm-callsign','pm-rank','pm-roblox-user','pm-roblox-id','pm-discord','pm-discord-id','pm-join-date']
-        .forEach(i => document.getElementById(i).value = '');
-      document.getElementById('pm-status').value = 'Active';
+      fillPersonnelModalFields({ status: 'Active' }, category || 'general');
     }
+
     document.getElementById('personnel-modal').classList.add('open');
   }
 
@@ -5348,17 +5879,23 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     if (!requireVerifiedAdminAccess('save personnel records')) return;
     document.getElementById('personnel-error').textContent = '';
     const id = document.getElementById('pm-id').value;
+    const currentRecord = id ? ((window._personnelMap || {})[id] || null) : null;
+    const category = document.getElementById('pm-category').value || currentRecord?.category || 'general';
+    if (!['supervisory', 'general'].includes(category)) {
+      document.getElementById('personnel-error').textContent = 'Category is missing. Close the modal and try again.';
+      return;
+    }
     const payload = {
       slot_number:     document.getElementById('pm-slot').value.trim(),
       callsign:        document.getElementById('pm-callsign').value.trim(),
       rank:            document.getElementById('pm-rank').value.trim(),
-      status:          document.getElementById('pm-status').value,
+      status:          normalizePersonnelStatus(document.getElementById('pm-status').value),
       roblox_username: document.getElementById('pm-roblox-user').value.trim(),
       roblox_id:       document.getElementById('pm-roblox-id').value.trim(),
       discord:         document.getElementById('pm-discord').value.trim(),
       discord_id:      document.getElementById('pm-discord-id').value.trim(),
       join_date:       document.getElementById('pm-join-date').value.trim(),
-      category:        document.getElementById('pm-category').value,
+      category,
     };
     let error;
     if (id) { ({ error } = await sb.from('personnel').update(payload).eq('id', id)); }
@@ -5526,6 +6063,26 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   }
 
   // ── Security ──────────────────────────────────────────────
+  function isEditableTarget(target) {
+    return !!(
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement ||
+      target?.isContentEditable ||
+      target?.closest?.('[contenteditable="true"]')
+    );
+  }
+
+  function isCopyProtectedTarget(target) {
+    return !isEditableTarget(target);
+  }
+
+  document.addEventListener('pointerdown', e => {
+    if (!(e instanceof PointerEvent)) return;
+    if (e.pointerType === 'touch') document.body.classList.add('touch-mode');
+    if (e.pointerType === 'mouse') document.body.classList.remove('touch-mode');
+  }, true);
+
   document.addEventListener('contextmenu', e => {
     e.preventDefault();
     logSecurityEvent('context_menu_blocked', 'medium', 'Blocked context-menu invocation', {
@@ -5536,8 +6093,36 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     return false;
   });
 
+  document.addEventListener('selectstart', e => {
+    if (!isCopyProtectedTarget(e.target)) return;
+    e.preventDefault();
+    return false;
+  });
+
+  document.addEventListener('copy', e => {
+    if (!isCopyProtectedTarget(e.target)) return;
+    e.preventDefault();
+    logSecurityEvent('copy_blocked', 'low', 'Blocked page copy attempt', {
+      source: 'ui-guard',
+      throttleKey: `copy:${e.target?.id || e.target?.tagName || 'unknown'}`
+    });
+    return false;
+  });
+
+  document.addEventListener('cut', e => {
+    if (!isCopyProtectedTarget(e.target)) return;
+    e.preventDefault();
+    logSecurityEvent('cut_blocked', 'low', 'Blocked page cut attempt', {
+      source: 'ui-guard',
+      throttleKey: `cut:${e.target?.id || e.target?.tagName || 'unknown'}`
+    });
+    return false;
+  });
+
   document.addEventListener('keydown', e => {
     const ctrl = e.ctrlKey || e.metaKey;
+    const editableTarget = isEditableTarget(e.target);
+    const lowerKey = String(e.key || '').toLowerCase();
     const combo = [
       ctrl ? 'CTRL' : '',
       e.shiftKey ? 'SHIFT' : '',
@@ -5545,7 +6130,39 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
       String(e.key || '').toUpperCase()
     ].filter(Boolean).join('+');
 
-    if (ctrl && ['s','u','p','a'].includes(e.key)) {
+    if (ctrl && lowerKey === 'f') {
+      e.preventDefault();
+      openPortalSearch();
+      return false;
+    }
+
+    if (isPortalSearchOpen()) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closePortalSearch();
+        return false;
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        movePortalSearchSelection(1);
+        return false;
+      }
+
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        movePortalSearchSelection(-1);
+        return false;
+      }
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        openSelectedPortalSearchResult();
+        return false;
+      }
+    }
+
+    if (!editableTarget && ctrl && ['s','u','p','a'].includes(lowerKey)) {
       e.preventDefault();
       logSecurityEvent('shortcut_blocked', 'medium', `Blocked reserved shortcut ${combo}`, {
         source: 'ui-guard',
@@ -5554,7 +6171,16 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
       return false;
     }
 
-    if (ctrl && e.shiftKey && ['i','I','j','J'].includes(e.key)) {
+    if (!editableTarget && ctrl && ['c','x'].includes(lowerKey)) {
+      e.preventDefault();
+      logSecurityEvent('copy_shortcut_blocked', 'low', `Blocked clipboard shortcut ${combo}`, {
+        source: 'ui-guard',
+        throttleKey: `clipboard:${combo}`
+      });
+      return false;
+    }
+
+    if (ctrl && e.shiftKey && ['i','j'].includes(lowerKey)) {
       e.preventDefault();
       logSecurityEvent('devtools_shortcut_blocked', 'high', `Blocked developer-tools shortcut ${combo}`, {
         source: 'ui-guard',
