@@ -668,6 +668,165 @@
   .conf-stamp-divider { height: 2px; background: #d03030; margin: 7px 0; opacity: .5; }
   .conf-stamp-bottom { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #d03030; letter-spacing: 8px; text-align: center; line-height: 1; text-shadow: 0 0 14px rgba(208,48,48,.4); }
   .conf-sub { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 2px; line-height: 2.2; text-align: center; margin-top: 28px; }
+  .conf-admin-shell { display: none; }
+  .classified-hero {
+    display: grid;
+    grid-template-columns: 1.25fr .95fr;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+  .classified-brief h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .classified-brief p {
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .classified-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .classified-meta-card,
+  .classified-summary-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .classified-meta-label,
+  .classified-summary-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+  .classified-meta-value {
+    color: var(--text-bright);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+  .classified-access-warning {
+    border-left: 3px solid var(--amber-bright);
+    background: rgba(212,115,30,.08);
+    color: var(--amber-bright);
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    line-height: 1.8;
+    letter-spacing: .8px;
+  }
+  .classified-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .classified-summary-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .classified-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .classified-toolbar-note,
+  .classified-inline-note {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: .9px;
+    line-height: 1.7;
+  }
+  .classified-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(201,168,76,.08);
+    border: 1px solid rgba(201,168,76,.16);
+    color: var(--gold-light);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .8px;
+  }
+  .classified-log-table td { vertical-align: top; }
+  .classified-log-type {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--blue-bright);
+    letter-spacing: .7px;
+    text-transform: uppercase;
+  }
+  .log-severity {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+  }
+  .log-severity.critical {
+    color: var(--red-bright);
+    border-color: rgba(224,80,80,.35);
+    background: rgba(224,80,80,.08);
+  }
+  .log-severity.high {
+    color: var(--amber-bright);
+    border-color: rgba(240,146,78,.3);
+    background: rgba(240,146,78,.08);
+  }
+  .log-severity.medium {
+    color: var(--gold-light);
+    border-color: rgba(201,168,76,.25);
+    background: rgba(201,168,76,.08);
+  }
+  .log-severity.low,
+  .log-severity.info {
+    color: var(--blue-bright);
+    border-color: rgba(74,159,212,.25);
+    background: rgba(74,159,212,.08);
+  }
+  .classified-empty {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  @media (max-width: 960px) {
+    .classified-hero,
+    .classified-summary-grid,
+    .classified-meta-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
   .filter-bar { display: flex; gap: 7px; margin-bottom: 20px; flex-wrap: wrap; }
   .filter-btn {
@@ -1490,7 +1649,7 @@
 
   <!-- CLASSIFIED -->
   <div class="page" id="page-conf">
-    <div class="conf-wrapper">
+    <div class="conf-wrapper" id="conf-public-shell">
       <div class="conf-document">
         <div class="conf-doc-header">
           <span class="conf-doc-id">DOC-ISP-SAVE-TS · FILE NO. 0047-C</span>
@@ -1518,44 +1677,135 @@
       </div>
       <div class="conf-sub">This section is restricted.<br>Access is granted by SAVE Command only.</div>
     </div>
-  </div>
+    <div class="conf-admin-shell" id="conf-admin-shell">
+      <div class="page-title">Classified Channel</div>
+      <div class="page-subtitle" id="panel-subtitle">SAVE COMMAND · VERIFIED SUPERVISOR ACCESS</div>
 
-  <!-- SUPERVISOR PANEL -->
-  <div class="page" id="page-panel">
-    <div class="page-title">Supervisor Panel</div>
-    <div class="page-subtitle" id="panel-subtitle">SAVE COMMAND · RESTRICTED ACCESS</div>
-    <div class="section-block" style="margin-bottom:20px">
-      <div class="section-block-header"><h2>Account Settings</h2><span class="section-tag">Your Account</span></div>
-      <div class="section-block-body">
-        <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;line-height:1.8">Send a password reset link to your own email address.</p>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span id="panel-email-display" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim)"></span>
-          <button class="admin-btn" onclick="sendOwnPasswordReset()">⬡ SEND RESET LINK</button>
-          <span id="reset-own-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green-bright);display:none"></span>
+      <div class="classified-hero">
+        <div class="section-block" style="margin-bottom:0">
+          <div class="section-block-header"><h2>Access Overview</h2><span class="section-tag">Restricted</span></div>
+          <div class="section-block-body">
+            <div class="classified-brief">
+              <h3>Supervisor controls and threat telemetry are now contained inside the classified channel.</h3>
+              <p>
+                Only users authenticated through Supabase with a verified account and a matching
+                <span class="classified-pill">admin_roles</span> record can access this console. Public visitors only see the sealed classified cover page.
+              </p>
+            </div>
+            <div class="classified-meta-grid">
+              <div class="classified-meta-card">
+                <div class="classified-meta-label">Signed In As</div>
+                <div class="classified-meta-value" id="classified-session-email">Awaiting session</div>
+              </div>
+              <div class="classified-meta-card">
+                <div class="classified-meta-label">Role</div>
+                <div class="classified-meta-value" id="classified-session-role">No clearance</div>
+              </div>
+              <div class="classified-meta-card">
+                <div class="classified-meta-label">Verification</div>
+                <div class="classified-meta-value" id="classified-session-verification">Verification pending</div>
+              </div>
+              <div class="classified-meta-card">
+                <div class="classified-meta-label">Log Storage</div>
+                <div class="classified-meta-value" id="classified-log-store">Local browser buffer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block" style="margin-bottom:0">
+          <div class="section-block-header"><h2>Security Posture</h2><span class="section-tag">Monitored</span></div>
+          <div class="section-block-body">
+            <div class="classified-access-warning" id="classified-access-note">
+              Threat telemetry monitors blocked tool shortcuts, suspicious payload signatures, failed admin access, and privileged changes.
+            </div>
+            <div class="classified-inline-note" style="margin-top:14px">
+              The log console below is meant for supervisors only. If the optional <span class="classified-pill">security_logs</span> table exists in Supabase, queued entries will sync there automatically after a verified admin signs in.
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="section-block" id="owner-section" style="display:none">
-      <div class="section-block-header"><h2>Admin Management</h2><span class="section-tag">Owner Only</span></div>
-      <div class="section-block-body">
-        <div style="margin-bottom:28px">
-          <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Invite New Supervisor</div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-            <input type="email" id="panel-invite-email" placeholder="email@example.com" style="width:280px">
-            <select id="panel-invite-role">
-              <option value="supervisor">Supervisor</option>
-              <option value="owner">Owner</option>
-            </select>
-            <button class="admin-btn" onclick="doPanelInvite()">⬡ SEND INVITE</button>
+
+      <div class="section-block" style="margin-bottom:20px">
+        <div class="section-block-header"><h2>Security &amp; Intrusion Logs</h2><span class="section-tag">Classified</span></div>
+        <div class="section-block-body">
+          <div class="classified-summary-grid">
+            <div class="classified-summary-card">
+              <div class="classified-summary-label">Total Events</div>
+              <div class="classified-summary-value" id="security-log-total">0</div>
+            </div>
+            <div class="classified-summary-card">
+              <div class="classified-summary-label">Critical / High</div>
+              <div class="classified-summary-value" id="security-log-critical">0</div>
+            </div>
+            <div class="classified-summary-card">
+              <div class="classified-summary-label">Auth Events</div>
+              <div class="classified-summary-value" id="security-log-auth">0</div>
+            </div>
+            <div class="classified-summary-card">
+              <div class="classified-summary-label">Blocked Actions</div>
+              <div class="classified-summary-value" id="security-log-blocked">0</div>
+            </div>
           </div>
-          <div id="panel-invite-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;margin-top:10px;min-height:16px"></div>
-        </div>
-        <div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Active Admins</div>
-          <table class="data-table" id="admins-table">
-            <thead><tr><th>Email</th><th>Role</th><th>Added</th><th>Actions</th></tr></thead>
-            <tbody id="admins-tbody"><tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
+
+          <div class="classified-toolbar">
+            <div class="classified-toolbar-note" id="security-log-status">
+              Threat telemetry is standing by.
+            </div>
+            <button class="admin-btn" onclick="refreshSecurityLogs()">REFRESH LOGS</button>
+          </div>
+
+          <table class="data-table classified-log-table">
+            <thead>
+              <tr>
+                <th style="width:150px">Timestamp</th>
+                <th style="width:110px">Severity</th>
+                <th style="width:150px">Type</th>
+                <th>Summary</th>
+                <th style="width:170px">Actor / Source</th>
+              </tr>
+            </thead>
+            <tbody id="security-log-tbody">
+              <tr><td colspan="5" class="classified-empty">NO CLASSIFIED LOGS AVAILABLE YET</td></tr>
+            </tbody>
           </table>
+        </div>
+      </div>
+
+      <div class="section-block" style="margin-bottom:20px">
+        <div class="section-block-header"><h2>Account Settings</h2><span class="section-tag">Your Account</span></div>
+        <div class="section-block-body">
+          <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;line-height:1.8">Send a password reset link to your own email address.</p>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <span id="panel-email-display" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim)"></span>
+            <button class="admin-btn" onclick="sendOwnPasswordReset()">⬡ SEND RESET LINK</button>
+            <span id="reset-own-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green-bright);display:none"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block" id="owner-section" style="display:none">
+        <div class="section-block-header"><h2>Admin Management</h2><span class="section-tag">Owner Only</span></div>
+        <div class="section-block-body">
+          <div style="margin-bottom:28px">
+            <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Invite New Supervisor</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <input type="email" id="panel-invite-email" placeholder="email@example.com" style="width:280px">
+              <select id="panel-invite-role">
+                <option value="supervisor">Supervisor</option>
+                <option value="owner">Owner</option>
+              </select>
+              <button class="admin-btn" onclick="doPanelInvite()">⬡ SEND INVITE</button>
+            </div>
+            <div id="panel-invite-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;margin-top:10px;min-height:16px"></div>
+          </div>
+          <div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Active Admins</div>
+            <table class="data-table" id="admins-table">
+              <thead><tr><th>Email</th><th>Role</th><th>Added</th><th>Actions</th></tr></thead>
+              <tbody id="admins-tbody"><tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:20px">Loading...</td></tr></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -1720,17 +1970,26 @@
 
   // ── Nav / Clock ───────────────────────────────────────────
   function showPage(id) {
+    if (id === 'panel') {
+      if (!hasVerifiedAdminAccess()) {
+        logSecurityEvent('restricted_route_blocked', 'high', 'Blocked direct supervisor panel route access', {
+          source: 'router',
+          details: { requestedPage: 'panel' }
+        });
+      }
+      id = 'conf';
+    }
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
-    const map = { home:0, sop:1, rules:2, tracker:3, conf:4, panel:5 };
+    const map = { home:0, sop:1, rules:2, tracker:3, conf:4 };
     const items = document.querySelectorAll('.nav-item');
     if (items[map[id]]) items[map[id]].classList.add('active');
     document.getElementById('bc').textContent = id.toUpperCase();
     window.scrollTo(0, 0);
     closeStrikesPopup();
     if (id === 'tracker') loadPersonnel();
-    if (id === 'panel')   loadPanel();
+    if (id === 'conf')    loadClassifiedConsole();
   }
 
   function scrollToSection(id) {
@@ -1753,6 +2012,379 @@
     document.getElementById('clock').textContent = time + ' ' + tz;
   }
   updateClock(); setInterval(updateClock, 1000);
+
+  const SECURITY_LOG_STORAGE_KEY = 'save_security_logs_v2';
+  const FAILED_LOGIN_STORAGE_KEY = 'save_failed_login_window_v1';
+  const MAX_SECURITY_LOGS = 250;
+  const THREAT_PATTERNS = [
+    { type:'sql_injection', severity:'critical', label:'SQL injection signature', regex: /(?:'\s*(?:or|and)\s*'?[\w\d]+=?|union\s+all?\s+select|select\s+.+\s+from|drop\s+table|insert\s+into|delete\s+from|update\s+\w+\s+set|sleep\s*\(|benchmark\s*\(|information_schema|waitfor\s+delay)/i },
+    { type:'xss_payload', severity:'critical', label:'XSS payload signature', regex: /(?:<\s*script\b|javascript:|onerror\s*=|onload\s*=|<\s*svg\b|<\s*img\b[^>]+on\w+=|document\.cookie|alert\s*\()/i },
+    { type:'path_traversal', severity:'high', label:'Path traversal pattern', regex: /(?:\.\.[\\/]|%2e%2e%2f|%2e%2e%5c|\/etc\/passwd|boot\.ini)/i },
+    { type:'command_injection', severity:'high', label:'Command injection pattern', regex: /(?:\|\||&&|;\s*(?:curl|wget|powershell|cmd|bash|sh|nc|ncat)\b|\$\(|`.+`)/i },
+    { type:'template_injection', severity:'medium', label:'Template injection pattern', regex: /(?:\{\{.+\}\}|\$\{.+\}|<%=?|%7b%7b)/i },
+    { type:'credential_probe', severity:'medium', label:'Credential harvest pattern', regex: /(?:bearer\s+[a-z0-9\-_\.]+|api[_-]?key|authorization:|session[_-]?token|refresh[_-]?token)/i }
+  ];
+  window._securityLogThrottle = window._securityLogThrottle || {};
+  window._securityLogs = window._securityLogs || [];
+  window._securityLogsRemoteUnavailable = false;
+  window._adminVerified = false;
+  window._adminUserId = null;
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function sanitizeLogValue(value, max = 180) {
+    return String(value ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
+  }
+
+  function safeDetails(details) {
+    try { return JSON.parse(JSON.stringify(details || {})); }
+    catch { return { note: 'Details omitted' }; }
+  }
+
+  function isVerifiedUser(user) {
+    return !!(user?.email_confirmed_at || user?.confirmed_at || user?.user_metadata?.email_verified || user?.email_confirmed);
+  }
+
+  function hasVerifiedAdminAccess() {
+    return !!(document.body.classList.contains('admin-mode') && window._adminVerified && window._adminEmail);
+  }
+
+  function requireVerifiedAdminAccess(action) {
+    if (hasVerifiedAdminAccess()) return true;
+    logSecurityEvent('unauthorized_action', 'high', `Blocked unauthorized attempt to ${action}`, {
+      source: 'access-guard',
+      details: { action }
+    });
+    alert('Verified supervisor access required.');
+    return false;
+  }
+
+  function requireOwnerAccess(action) {
+    if (hasVerifiedAdminAccess() && window._adminRole === 'owner') return true;
+    logSecurityEvent('owner_only_action', 'high', `Blocked non-owner attempt to ${action}`, {
+      source: 'access-guard',
+      actorRole: window._adminRole || 'public',
+      details: { action }
+    });
+    alert('Owner access required.');
+    return false;
+  }
+
+  function readSecurityLogsLocal() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(SECURITY_LOG_STORAGE_KEY) || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function writeSecurityLogsLocal(logs) {
+    localStorage.setItem(SECURITY_LOG_STORAGE_KEY, JSON.stringify((logs || []).slice(0, MAX_SECURITY_LOGS)));
+  }
+
+  function markLogsSynced(ids) {
+    const syncIds = new Set(ids || []);
+    if (!syncIds.size) return;
+    const updated = readSecurityLogsLocal().map(entry => syncIds.has(entry.id) ? { ...entry, synced: true } : entry);
+    writeSecurityLogsLocal(updated);
+  }
+
+  function mergeSecurityLogs(remoteLogs, localLogs) {
+    const merged = new Map();
+    [...(remoteLogs || []), ...(localLogs || [])].forEach(entry => {
+      if (!entry) return;
+      const key = entry.id || `${entry.type}-${entry.created_at}-${entry.summary}`;
+      if (!merged.has(key)) merged.set(key, entry);
+    });
+    return Array.from(merged.values())
+      .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+      .slice(0, MAX_SECURITY_LOGS);
+  }
+
+  function formatSecurityLogTime(iso) {
+    const dt = iso ? new Date(iso) : new Date();
+    if (Number.isNaN(dt.getTime())) return 'Unknown';
+    return dt.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
+
+  function classifyLogFamily(type) {
+    if (/auth|login|password|session/i.test(type)) return 'auth';
+    if (/blocked|unauthorized|denied|restricted/i.test(type)) return 'blocked';
+    return 'other';
+  }
+
+  function updateClassifiedAccess() {
+    const allowed = hasVerifiedAdminAccess();
+    const publicShell = document.getElementById('conf-public-shell');
+    const adminShell = document.getElementById('conf-admin-shell');
+    if (publicShell) publicShell.style.display = allowed ? 'none' : 'flex';
+    if (adminShell) adminShell.style.display = allowed ? 'block' : 'none';
+
+    const emailEl = document.getElementById('classified-session-email');
+    const roleEl = document.getElementById('classified-session-role');
+    const verifyEl = document.getElementById('classified-session-verification');
+    const storeEl = document.getElementById('classified-log-store');
+    const noteEl = document.getElementById('classified-access-note');
+
+    if (!emailEl || !roleEl || !verifyEl || !storeEl || !noteEl) return;
+
+    if (!allowed) {
+      emailEl.textContent = 'Not signed in';
+      roleEl.textContent = 'No clearance';
+      verifyEl.textContent = 'Verification required';
+      storeEl.textContent = 'Local browser buffer';
+      noteEl.textContent = 'Supervisor controls remain sealed until a verified Supabase admin signs in.';
+      return;
+    }
+
+    emailEl.textContent = window._adminEmail || 'Unknown';
+    roleEl.textContent = (window._adminRole || 'supervisor').toUpperCase();
+    verifyEl.textContent = window._adminVerified ? 'Supabase email verified' : 'Verification required';
+    storeEl.textContent = window._securityLogsRemoteUnavailable ? 'Local browser buffer' : 'Supabase + local queue';
+    noteEl.textContent = window._securityLogsRemoteUnavailable
+      ? 'The optional security_logs table is unavailable, so telemetry is staying in the local browser buffer for now.'
+      : 'Queued telemetry will sync to Supabase while also remaining cached locally in this browser.';
+  }
+
+  async function syncSecurityLogsToSupabase(entries) {
+    if (!hasVerifiedAdminAccess() || window._securityLogsRemoteUnavailable) return;
+    const unsynced = (entries || []).filter(entry => entry && !entry.synced);
+    if (!unsynced.length) return;
+
+    const payload = unsynced.map(entry => ({
+      id: entry.id,
+      event_type: entry.type,
+      severity: entry.severity,
+      summary: entry.summary,
+      source: entry.source,
+      actor_email: entry.actor_email,
+      actor_role: entry.actor_role,
+      route: entry.route,
+      details: entry.details,
+      created_at: entry.created_at
+    }));
+
+    const { error } = await sb.from('security_logs').upsert(payload, { onConflict: 'id' });
+    if (error) {
+      if (/security_logs|does not exist|schema cache|permission/i.test(error.message || '')) {
+        window._securityLogsRemoteUnavailable = true;
+        updateClassifiedAccess();
+      }
+      return;
+    }
+
+    markLogsSynced(payload.map(entry => entry.id));
+  }
+
+  async function flushSecurityLogQueue() {
+    const pending = readSecurityLogsLocal().filter(entry => !entry.synced).slice(0, 50);
+    if (pending.length) await syncSecurityLogsToSupabase(pending);
+  }
+
+  async function fetchRemoteSecurityLogs() {
+    if (!hasVerifiedAdminAccess() || window._securityLogsRemoteUnavailable) return [];
+    const { data, error } = await sb.from('security_logs').select('*').order('created_at', { ascending: false }).limit(120);
+    if (error) {
+      if (/security_logs|does not exist|schema cache|permission/i.test(error.message || '')) {
+        window._securityLogsRemoteUnavailable = true;
+        updateClassifiedAccess();
+      }
+      return [];
+    }
+
+    return (data || []).map(entry => ({
+      id: entry.id,
+      created_at: entry.created_at,
+      type: entry.event_type || entry.type || 'event',
+      severity: entry.severity || 'low',
+      summary: entry.summary || 'Security event',
+      source: entry.source || 'supabase',
+      actor_email: entry.actor_email || '',
+      actor_role: entry.actor_role || '',
+      route: entry.route || '',
+      details: entry.details || {},
+      synced: true
+    }));
+  }
+
+  function renderSecurityLogs(logs) {
+    const tbody = document.getElementById('security-log-tbody');
+    if (!tbody) return;
+
+    const list = logs || [];
+    const criticalHigh = list.filter(entry => ['critical', 'high'].includes(entry.severity)).length;
+    const authCount = list.filter(entry => classifyLogFamily(entry.type) === 'auth').length;
+    const blockedCount = list.filter(entry => classifyLogFamily(entry.type) === 'blocked').length;
+    const statusEl = document.getElementById('security-log-status');
+
+    document.getElementById('security-log-total').textContent = String(list.length);
+    document.getElementById('security-log-critical').textContent = String(criticalHigh);
+    document.getElementById('security-log-auth').textContent = String(authCount);
+    document.getElementById('security-log-blocked').textContent = String(blockedCount);
+
+    if (statusEl) {
+      statusEl.textContent = list.length
+        ? `${list.length} classified events loaded · ${window._securityLogsRemoteUnavailable ? 'local buffer only' : 'Supabase sync enabled when available'}`
+        : 'Threat telemetry is standing by.';
+    }
+
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="classified-empty">NO CLASSIFIED LOGS AVAILABLE YET</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(entry => {
+      const actor = sanitizeLogValue(entry.actor_email || entry.actor_role || 'Anonymous', 48);
+      const source = sanitizeLogValue(entry.source || 'browser', 32);
+      return `
+        <tr>
+          <td class="mono">${escapeHtml(formatSecurityLogTime(entry.created_at))}</td>
+          <td><span class="log-severity ${escapeHtml(entry.severity || 'low')}">${escapeHtml((entry.severity || 'low').toUpperCase())}</span></td>
+          <td><span class="classified-log-type">${escapeHtml(entry.type || 'event')}</span></td>
+          <td>${escapeHtml(entry.summary || 'Security event')}</td>
+          <td class="mono">${escapeHtml(actor)}<br><span style="color:var(--text-dim)">${escapeHtml(source)}</span></td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function loadSecurityLogs() {
+    if (!hasVerifiedAdminAccess()) {
+      renderSecurityLogs([]);
+      return;
+    }
+    await flushSecurityLogQueue();
+    const remoteLogs = await fetchRemoteSecurityLogs();
+    const localLogs = readSecurityLogsLocal();
+    window._securityLogs = mergeSecurityLogs(remoteLogs, localLogs);
+    renderSecurityLogs(window._securityLogs);
+  }
+
+  async function refreshSecurityLogs() {
+    await loadSecurityLogs();
+  }
+
+  async function loadClassifiedConsole() {
+    updateClassifiedAccess();
+    if (!hasVerifiedAdminAccess()) return;
+    await logSecurityEvent('classified_console_access', 'info', 'Opened classified supervisor console', {
+      source: 'router',
+      throttleKey: `classified-console:${window._adminEmail || 'anonymous'}`,
+      throttleMs: 30000
+    });
+    await loadPanel();
+    await loadSecurityLogs();
+  }
+
+  function trackFailedLogin(email) {
+    const cutoff = Date.now() - (10 * 60 * 1000);
+    const attempts = (() => {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(FAILED_LOGIN_STORAGE_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    })().filter(entry => entry.ts > cutoff);
+
+    attempts.push({ ts: Date.now(), email: sanitizeLogValue(email, 80) });
+    localStorage.setItem(FAILED_LOGIN_STORAGE_KEY, JSON.stringify(attempts));
+
+    if (attempts.length >= 3) {
+      logSecurityEvent('brute_force_pattern', 'critical', `Repeated admin login failures detected (${attempts.length} within 10 minutes)`, {
+        source: 'auth',
+        details: { email: sanitizeLogValue(email, 80), attempts: attempts.length }
+      });
+    }
+  }
+
+  function clearFailedLogins() {
+    localStorage.removeItem(FAILED_LOGIN_STORAGE_KEY);
+  }
+
+  async function logSecurityEvent(type, severity, summary, options = {}) {
+    const throttleKey = options.throttleKey || `${type}:${options.source || 'browser'}:${summary}`;
+    const throttleMs = options.throttleMs ?? 4000;
+    const now = Date.now();
+    if (window._securityLogThrottle[throttleKey] && now - window._securityLogThrottle[throttleKey] < throttleMs) return null;
+    window._securityLogThrottle[throttleKey] = now;
+
+    const entry = {
+      id: options.id || (window.crypto?.randomUUID ? window.crypto.randomUUID() : `log-${now}-${Math.random().toString(36).slice(2, 8)}`),
+      created_at: new Date().toISOString(),
+      type,
+      severity,
+      summary: sanitizeLogValue(summary, 180),
+      source: options.source || 'browser',
+      actor_email: sanitizeLogValue(options.actorEmail || window._adminEmail || '', 120),
+      actor_role: sanitizeLogValue(options.actorRole || window._adminRole || '', 40),
+      route: options.route || (document.getElementById('bc')?.textContent || 'UNKNOWN'),
+      details: safeDetails(options.details),
+      synced: false
+    };
+
+    const logs = readSecurityLogsLocal();
+    logs.unshift(entry);
+    writeSecurityLogsLocal(logs);
+
+    if (hasVerifiedAdminAccess()) {
+      await syncSecurityLogsToSupabase([entry]);
+      await loadSecurityLogs();
+    }
+
+    return entry;
+  }
+
+  function scanInputForThreats(target) {
+    if (!target || !('value' in target)) return;
+    const fieldValue = String(target.value || '').trim();
+    if (fieldValue.length < 4) return;
+
+    THREAT_PATTERNS.forEach(pattern => {
+      if (!pattern.regex.test(fieldValue)) return;
+      const isPassword = target.type === 'password';
+      logSecurityEvent(pattern.type, pattern.severity, `${pattern.label} detected in ${target.id || target.name || target.type || 'input'}`, {
+        source: 'input-monitor',
+        throttleKey: `${pattern.type}:${target.id || target.name || target.type}:${fieldValue.slice(0, 32)}`,
+        throttleMs: 15000,
+        details: {
+          field: target.id || target.name || target.placeholder || target.type || 'input',
+          value: isPassword ? `[redacted:${fieldValue.length}]` : sanitizeLogValue(fieldValue, 120)
+        }
+      });
+    });
+  }
+
+  async function fetchAdminProfile(user) {
+    if (!user?.id && !user?.email) return null;
+
+    let result = null;
+    if (user?.id) {
+      const { data } = await sb.from('admin_roles').select('*').eq('id', user.id).maybeSingle();
+      result = data || null;
+    }
+
+    if (!result && user?.email) {
+      const { data } = await sb.from('admin_roles').select('*').ilike('email', user.email).maybeSingle();
+      result = data || null;
+    }
+
+    return result;
+  }
 
   // ── Modals ────────────────────────────────────────────────
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -1778,54 +2410,132 @@
     document.getElementById('login-error').textContent = '';
     if (!email || !pass) { document.getElementById('login-error').textContent = 'Email and password required.'; return; }
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-    if (error) { document.getElementById('login-error').textContent = 'Authentication failed: ' + error.message; return; }
-    const role = await fetchRole(data.user.id);
+    if (error) {
+      trackFailedLogin(email);
+      logSecurityEvent('auth_failure', 'high', 'Admin authentication failed', {
+        source: 'auth',
+        actorEmail: email,
+        details: { message: error.message }
+      });
+      document.getElementById('login-error').textContent = 'Authentication failed: ' + error.message;
+      return;
+    }
+
+    const user = data.user;
+    if (!isVerifiedUser(user)) {
+      await logSecurityEvent('unverified_login_blocked', 'high', 'Blocked admin login from unverified Supabase account', {
+        source: 'auth',
+        actorEmail: user?.email || email
+      });
+      await sb.auth.signOut();
+      document.getElementById('login-error').textContent = 'Your Supabase account must have a verified email before it can access the classified channel.';
+      return;
+    }
+
+    const adminProfile = await fetchAdminProfile(user);
+    if (!adminProfile) {
+      await logSecurityEvent('unauthorized_admin_login', 'critical', 'Blocked authenticated user without admin_roles access', {
+        source: 'auth',
+        actorEmail: user?.email || email,
+        details: { userId: user?.id || null }
+      });
+      await sb.auth.signOut();
+      document.getElementById('login-error').textContent = 'Access denied. This account is not present in admin_roles.';
+      return;
+    }
+
+    clearFailedLogins();
     closeModal('login-modal');
-    setAdminMode(true, data.user.email, role);
+    setAdminMode(true, user.email, adminProfile.role, user);
+    await logSecurityEvent('auth_success', 'info', 'Verified admin session established', {
+      source: 'auth',
+      actorEmail: user.email,
+      actorRole: adminProfile.role,
+      details: { userId: user.id }
+    });
     if (document.getElementById('page-tracker').classList.contains('active')) loadPersonnel();
+    if (document.getElementById('page-conf').classList.contains('active')) loadClassifiedConsole();
   }
 
   async function doLogout() {
+    if (hasVerifiedAdminAccess()) {
+      await logSecurityEvent('logout', 'info', 'Admin session signed out', {
+        source: 'auth',
+        actorEmail: window._adminEmail,
+        actorRole: window._adminRole
+      });
+    }
     await sb.auth.signOut();
     setAdminMode(false, '');
     if (document.getElementById('page-tracker').classList.contains('active')) loadPersonnel();
+    updateClassifiedAccess();
   }
 
-  function setAdminMode(on, email, role) {
+  function setAdminMode(on, email, role, user) {
     document.body.classList.toggle('admin-mode', on);
     const btn   = document.getElementById('admin-toggle-btn');
     const label = document.getElementById('admin-user-label');
     document.getElementById('sup-actions-col').style.display = on ? '' : 'none';
     document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
-    document.getElementById('nav-panel').style.display = on ? 'flex' : 'none';
+    document.getElementById('nav-panel').style.display = 'none';
     if (on) {
       btn.textContent = '⬡ SIGN OUT'; btn.classList.add('signed-in');
-      label.textContent = (role === 'owner' ? '👑 ' : '') + email;
+      label.textContent = (role === 'owner' ? '👑 ' : '') + email + ' · VERIFIED';
       label.style.display = 'inline';
-      document.getElementById('invite-admin-btn').style.display = 'inline-block';
-      window._adminRole = role; window._adminEmail = email;
+      document.getElementById('invite-admin-btn').style.display = 'none';
+      window._adminRole = role;
+      window._adminEmail = email;
+      window._adminVerified = !!isVerifiedUser(user);
+      window._adminUserId = user?.id || null;
     } else {
       btn.textContent = '⬡ ADMIN LOGIN'; btn.classList.remove('signed-in');
       label.style.display = 'none';
       document.getElementById('invite-admin-btn').style.display = 'none';
-      window._adminRole = null; window._adminEmail = null;
+      window._adminRole = null;
+      window._adminEmail = null;
+      window._adminVerified = false;
+      window._adminUserId = null;
     }
-  }
-
-  async function fetchRole(userId) {
-    const { data } = await sb.from('admin_roles').select('role').eq('id', userId).single();
-    return data?.role || 'supervisor';
+    updateClassifiedAccess();
   }
 
   sb.auth.getSession().then(async ({ data: { session } }) => {
     if (session) {
-      const role = await fetchRole(session.user.id);
-      setAdminMode(true, session.user.email, role);
+      if (!isVerifiedUser(session.user)) {
+        await logSecurityEvent('unverified_session_rejected', 'high', 'Discarded cached unverified session', {
+          source: 'auth',
+          actorEmail: session.user.email
+        });
+        await sb.auth.signOut();
+        updateClassifiedAccess();
+        return;
+      }
+
+      const adminProfile = await fetchAdminProfile(session.user);
+      if (!adminProfile) {
+        await logSecurityEvent('stale_admin_session_rejected', 'critical', 'Discarded cached session without admin_roles access', {
+          source: 'auth',
+          actorEmail: session.user.email,
+          details: { userId: session.user.id }
+        });
+        await sb.auth.signOut();
+        updateClassifiedAccess();
+        return;
+      }
+
+      setAdminMode(true, session.user.email, adminProfile.role, session.user);
+      await logSecurityEvent('session_restored', 'info', 'Verified admin session restored from Supabase', {
+        source: 'auth',
+        actorEmail: session.user.email,
+        actorRole: adminProfile.role,
+        details: { userId: session.user.id }
+      });
     }
   });
 
   // ── Invite ────────────────────────────────────────────────
   function openInviteModal() {
+    if (!requireOwnerAccess('open the invite admin modal')) return;
     document.getElementById('invite-error').textContent = '';
     document.getElementById('invite-success').style.display = 'none';
     document.getElementById('invite-email').value = '';
@@ -1833,6 +2543,7 @@
   }
 
   async function doInvite() {
+    if (!requireOwnerAccess('send invite-admin requests')) return;
     const email = document.getElementById('invite-email').value.trim();
     document.getElementById('invite-error').textContent = '';
     document.getElementById('invite-success').style.display = 'none';
@@ -1844,10 +2555,21 @@
       body: JSON.stringify({ email })
     });
     const result = await res.json();
-    if (!res.ok || result.error) { document.getElementById('invite-error').textContent = result.error || 'Invite failed.'; return; }
+    if (!res.ok || result.error) {
+      await logSecurityEvent('admin_invite_failed', 'medium', 'Failed to send invite-admin request', {
+        source: 'panel',
+        details: { email, message: result.error || 'Invite failed' }
+      });
+      document.getElementById('invite-error').textContent = result.error || 'Invite failed.';
+      return;
+    }
     document.getElementById('invite-email').value = '';
     const el = document.getElementById('invite-success');
     el.textContent = `✓ Invite sent to ${email}`; el.style.display = 'block';
+    await logSecurityEvent('admin_invite_sent', 'low', 'Sent invite-admin request', {
+      source: 'panel',
+      details: { email }
+    });
     stampLastUpdated(window._adminEmail);
   }
 
@@ -1999,6 +2721,7 @@
   }
 
   async function saveStrike() {
+    if (!requireVerifiedAdminAccess('issue a strike')) return;
     const pid    = document.getElementById('add-strike-pid').value;
     const reason = document.getElementById('add-strike-reason').value.trim();
     const errEl  = document.getElementById('add-strike-error');
@@ -2008,16 +2731,39 @@
     const { error } = await sb.from('strikes').insert({
       personnel_id: pid, reason, issued_by: session?.user?.email || 'Unknown'
     });
-    if (error) { errEl.textContent = 'Failed: ' + error.message; return; }
+    if (error) {
+      logSecurityEvent('strike_issue_failed', 'medium', 'Failed to issue strike record', {
+        source: 'tracker',
+        details: { personnelId: pid, message: error.message }
+      });
+      errEl.textContent = 'Failed: ' + error.message;
+      return;
+    }
+    await logSecurityEvent('strike_issued', 'medium', 'Issued personnel strike', {
+      source: 'tracker',
+      details: { personnelId: pid, issuedBy: session?.user?.email || 'Unknown' }
+    });
     document.getElementById('add-strike-modal').classList.remove('open');
     stampLastUpdated(window._adminEmail);
     loadPersonnel();
   }
 
   async function deleteStrike(strikeId) {
+    if (!requireVerifiedAdminAccess('delete a strike')) return;
     if (!confirm('Remove this strike? This cannot be undone.')) return;
     const { error } = await sb.from('strikes').delete().eq('id', strikeId);
-    if (error) { alert('Failed: ' + error.message); return; }
+    if (error) {
+      logSecurityEvent('strike_delete_failed', 'medium', 'Failed to delete strike record', {
+        source: 'tracker',
+        details: { strikeId, message: error.message }
+      });
+      alert('Failed: ' + error.message);
+      return;
+    }
+    await logSecurityEvent('strike_deleted', 'medium', 'Removed personnel strike', {
+      source: 'tracker',
+      details: { strikeId }
+    });
     document.getElementById('strike-reason-overlay').classList.remove('open');
     stampLastUpdated(window._adminEmail);
     loadPersonnel();
@@ -2051,6 +2797,7 @@
   }
 
   async function savePersonnel() {
+    if (!requireVerifiedAdminAccess('save personnel records')) return;
     document.getElementById('personnel-error').textContent = '';
     const id = document.getElementById('pm-id').value;
     const payload = {
@@ -2068,22 +2815,49 @@
     let error;
     if (id) { ({ error } = await sb.from('personnel').update(payload).eq('id', id)); }
     else    { ({ error } = await sb.from('personnel').insert(payload)); }
-    if (error) { document.getElementById('personnel-error').textContent = 'Save failed: ' + error.message; return; }
+    if (error) {
+      logSecurityEvent('personnel_save_failed', 'medium', 'Failed to save personnel record', {
+        source: 'tracker',
+        details: { id: id || null, category: payload.category, message: error.message }
+      });
+      document.getElementById('personnel-error').textContent = 'Save failed: ' + error.message;
+      return;
+    }
+    await logSecurityEvent(id ? 'personnel_updated' : 'personnel_created', 'low', id ? 'Updated personnel record' : 'Created personnel record', {
+      source: 'tracker',
+      details: { id: id || null, category: payload.category, callsign: payload.callsign || '' }
+    });
     closeModal('personnel-modal');
     stampLastUpdated(window._adminEmail);
     loadPersonnel();
   }
 
   async function deletePersonnel(id) {
+    if (!requireVerifiedAdminAccess('delete personnel records')) return;
     if (!confirm('Delete this personnel record? This cannot be undone.')) return;
     const { error } = await sb.from('personnel').delete().eq('id', id);
-    if (error) { alert('Delete failed: ' + error.message); return; }
+    if (error) {
+      logSecurityEvent('personnel_delete_failed', 'medium', 'Failed to delete personnel record', {
+        source: 'tracker',
+        details: { id, message: error.message }
+      });
+      alert('Delete failed: ' + error.message);
+      return;
+    }
+    await logSecurityEvent('personnel_deleted', 'medium', 'Deleted personnel record', {
+      source: 'tracker',
+      details: { id }
+    });
     stampLastUpdated(window._adminEmail);
     loadPersonnel();
   }
 
   // ── Panel ─────────────────────────────────────────────────
   async function loadPanel() {
+    if (!hasVerifiedAdminAccess()) {
+      updateClassifiedAccess();
+      return;
+    }
     const role  = window._adminRole;
     const email = window._adminEmail;
     document.getElementById('panel-email-display').textContent = email || '';
@@ -2095,6 +2869,7 @@
   }
 
   async function loadAdminsList() {
+    if (!requireOwnerAccess('view the admin roster')) return;
     const { data, error } = await sb.from('admin_roles').select('*').order('created_at');
     const tbody = document.getElementById('admins-tbody');
     if (error || !data) { tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red-bright);padding:16px">Error loading admins.</td></tr>`; return; }
@@ -2111,6 +2886,7 @@
   }
 
   async function doPanelInvite() {
+    if (!requireOwnerAccess('invite new supervisors')) return;
     const email = document.getElementById('panel-invite-email').value.trim();
     const role  = document.getElementById('panel-invite-role').value;
     const msg   = document.getElementById('panel-invite-msg');
@@ -2122,43 +2898,147 @@
       body: JSON.stringify({ email, role })
     });
     const result = await res.json();
-    if (!res.ok || result.error) { msg.textContent = result.error || 'Invite failed.'; return; }
+    if (!res.ok || result.error) {
+      await logSecurityEvent('admin_invite_failed', 'medium', 'Failed to send supervisor invite', {
+        source: 'panel',
+        details: { email, role, message: result.error || 'Invite failed' }
+      });
+      msg.textContent = result.error || 'Invite failed.';
+      return;
+    }
     document.getElementById('panel-invite-email').value = '';
     msg.style.color = 'var(--green-bright)';
     msg.textContent = `✓ Invite sent to ${email} as ${role}`;
+    await logSecurityEvent('admin_invite_sent', 'low', 'Sent supervisor invite', {
+      source: 'panel',
+      details: { email, role }
+    });
     loadAdminsList();
   }
 
   async function sendOwnPasswordReset() {
+    if (!requireVerifiedAdminAccess('request your own password reset')) return;
     const { error } = await sb.auth.resetPasswordForEmail(window._adminEmail);
     const el = document.getElementById('reset-own-msg');
-    if (error) { el.style.color = 'var(--red-bright)'; el.textContent = 'Failed: ' + error.message; }
-    else        { el.style.color = 'var(--green-bright)'; el.textContent = '✓ Reset link sent to ' + window._adminEmail; }
+    if (error) {
+      await logSecurityEvent('password_reset_failed', 'medium', 'Failed to send self-service password reset', {
+        source: 'panel',
+        actorEmail: window._adminEmail,
+        details: { message: error.message }
+      });
+      el.style.color = 'var(--red-bright)';
+      el.textContent = 'Failed: ' + error.message;
+    }
+    else {
+      await logSecurityEvent('password_reset_requested', 'low', 'Requested self-service password reset', {
+        source: 'panel',
+        actorEmail: window._adminEmail
+      });
+      el.style.color = 'var(--green-bright)';
+      el.textContent = '✓ Reset link sent to ' + window._adminEmail;
+    }
     el.style.display = 'inline';
   }
 
   async function sendPasswordReset(email) {
+    if (!requireOwnerAccess('reset another admin password')) return;
     const { error } = await sb.auth.resetPasswordForEmail(email);
-    if (error) { alert('Failed: ' + error.message); return; }
+    if (error) {
+      await logSecurityEvent('admin_password_reset_failed', 'medium', 'Failed to send supervisor password reset', {
+        source: 'panel',
+        details: { email, message: error.message }
+      });
+      alert('Failed: ' + error.message);
+      return;
+    }
+    await logSecurityEvent('admin_password_reset_requested', 'medium', 'Sent supervisor password reset link', {
+      source: 'panel',
+      details: { email }
+    });
     alert(`✓ Reset link sent to ${email}`);
   }
 
   async function removeAdmin(id, email) {
+    if (!requireOwnerAccess('remove an admin')) return;
     if (!confirm(`Remove ${email} from admins?`)) return;
     const { error } = await sb.from('admin_roles').delete().eq('id', id);
-    if (error) { alert('Failed: ' + error.message); return; }
+    if (error) {
+      await logSecurityEvent('admin_remove_failed', 'high', 'Failed to remove supervisor access', {
+        source: 'panel',
+        details: { id, email, message: error.message }
+      });
+      alert('Failed: ' + error.message);
+      return;
+    }
+    await logSecurityEvent('admin_removed', 'high', 'Removed supervisor access', {
+      source: 'panel',
+      details: { id, email }
+    });
     loadAdminsList();
   }
 
   // ── Security ──────────────────────────────────────────────
-  document.addEventListener('contextmenu', e => { e.preventDefault(); return false; });
+  document.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    logSecurityEvent('context_menu_blocked', 'medium', 'Blocked context-menu invocation', {
+      source: 'ui-guard',
+      throttleKey: `contextmenu:${e.target?.id || e.target?.tagName || 'unknown'}`,
+      details: { target: e.target?.id || e.target?.tagName || 'unknown' }
+    });
+    return false;
+  });
+
   document.addEventListener('keydown', e => {
     const ctrl = e.ctrlKey || e.metaKey;
-    if (ctrl && ['s','u','p','a'].includes(e.key)) { e.preventDefault(); return false; }
-    if (ctrl && e.shiftKey && ['i','I','j','J'].includes(e.key)) { e.preventDefault(); return false; }
-    if (e.key === 'F12') { e.preventDefault(); return false; }
+    const combo = [
+      ctrl ? 'CTRL' : '',
+      e.shiftKey ? 'SHIFT' : '',
+      e.altKey ? 'ALT' : '',
+      String(e.key || '').toUpperCase()
+    ].filter(Boolean).join('+');
+
+    if (ctrl && ['s','u','p','a'].includes(e.key)) {
+      e.preventDefault();
+      logSecurityEvent('shortcut_blocked', 'medium', `Blocked reserved shortcut ${combo}`, {
+        source: 'ui-guard',
+        throttleKey: `shortcut:${combo}`
+      });
+      return false;
+    }
+
+    if (ctrl && e.shiftKey && ['i','I','j','J'].includes(e.key)) {
+      e.preventDefault();
+      logSecurityEvent('devtools_shortcut_blocked', 'high', `Blocked developer-tools shortcut ${combo}`, {
+        source: 'ui-guard',
+        throttleKey: `devtools:${combo}`
+      });
+      return false;
+    }
+
+    if (e.key === 'F12') {
+      e.preventDefault();
+      logSecurityEvent('devtools_shortcut_blocked', 'high', 'Blocked F12 developer-tools shortcut', {
+        source: 'ui-guard',
+        throttleKey: 'devtools:F12'
+      });
+      return false;
+    }
   });
-  document.addEventListener('dragstart', e => { e.preventDefault(); return false; });
+
+  document.addEventListener('dragstart', e => {
+    e.preventDefault();
+    logSecurityEvent('dragstart_blocked', 'low', 'Blocked drag-start interaction', {
+      source: 'ui-guard',
+      throttleKey: `drag:${e.target?.id || e.target?.tagName || 'unknown'}`
+    });
+    return false;
+  });
+
+  document.addEventListener('input', e => {
+    const target = e.target;
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+    scanInputForThreats(target);
+  }, true);
 </script>
 </body>
 </html>
