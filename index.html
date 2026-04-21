@@ -2509,6 +2509,10 @@
           <div class="patrol-summary-card">
             <div class="patrol-summary-label">Last 24 Hours</div>
             <div class="patrol-summary-value" id="tracker-patrol-burst">0</div>
+            <div class="patrol-summary-card">
+  <div class="patrol-summary-label">Total Time Logged</div>
+  <div class="patrol-summary-value small" id="tracker-patrol-total-time">0m</div>
+</div>
           </div>
         </div>
         <div class="patrol-analytics-shell">
@@ -2589,6 +2593,10 @@
           <div class="patrol-summary-card">
             <div class="patrol-summary-label">Latest Patrol</div>
             <div class="patrol-summary-value small" id="patrol-latest">No patrols logged</div>
+            <div class="patrol-summary-card">
+  <div class="patrol-summary-label">Total Time Logged</div>
+  <div class="patrol-summary-value small" id="patrol-total-time">0m</div>
+</div>
           </div>
         </div>
       </div>
@@ -3521,6 +3529,9 @@
     totalEl.textContent = String(list.length);
     uniqueEl.textContent = String(uniqueUsers.size);
     latestEl.textContent = list.length ? (list[0].patrol_label || buildPatrolLabel(list[0].rank_code, list[0].username, list[0].patrol_number)) : 'No patrols logged';
+    const totalMinutes = list.reduce((sum, log) => sum + calculatePatrolDurationMinutes(log.start_time, log.end_time), 0);
+const totalTimeEl = document.getElementById('patrol-total-time');
+if (totalTimeEl) totalTimeEl.textContent = formatDurationMinutes(totalMinutes);
   }
 
   function patrolDayKey(value) {
@@ -3631,6 +3642,9 @@
     uniqueEl.textContent = String(uniqueUsers.size);
     latestEl.textContent = list.length ? (list[0].patrol_label || buildPatrolLabel(list[0].rank_code, list[0].username, list[0].patrol_number)) : 'No patrols logged';
     burstEl.textContent = String(last24Hours);
+    const totalAllMinutes = list.reduce((sum, log) => sum + calculatePatrolDurationMinutes(log.start_time, log.end_time), 0);
+const totalTimeTrackerEl = document.getElementById('tracker-patrol-total-time');
+if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(totalAllMinutes);
     renderPatrolPulse(list);
     renderPatrolMetricList('tracker-patrol-leaderboard', leaderboard, 'No patrol leaders yet.');
     renderPatrolMetricList('tracker-patrol-ranks', rankMix, 'No rank mix available yet.');
