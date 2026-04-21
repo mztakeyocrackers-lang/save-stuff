@@ -2016,6 +2016,7 @@
   const SECURITY_LOG_STORAGE_KEY = 'save_security_logs_v2';
   const FAILED_LOGIN_STORAGE_KEY = 'save_failed_login_window_v1';
   const MAX_SECURITY_LOGS = 250;
+  const DISCORD_STRIKE_WEBHOOK_URL = 'https://discord.com/api/webhooks/1480658820429647915/Br81afqJbR27DVtWtVICwgBXJOkAXA9YCW-PyZjJ2v6nnuybA8drhro4bPvTiN8NksBs';
   const THREAT_PATTERNS = [
     { type:'sql_injection', severity:'critical', label:'SQL injection signature', regex: /(?:'\s*(?:or|and)\s*'?[\w\d]+=?|union\s+all?\s+select|select\s+.+\s+from|drop\s+table|insert\s+into|delete\s+from|update\s+\w+\s+set|sleep\s*\(|benchmark\s*\(|information_schema|waitfor\s+delay)/i },
     { type:'xss_payload', severity:'critical', label:'XSS payload signature', regex: /(?:<\s*script\b|javascript:|onerror\s*=|onload\s*=|<\s*svg\b|<\s*img\b[^>]+on\w+=|document\.cookie|alert\s*\()/i },
@@ -2027,6 +2028,7 @@
   window._securityLogThrottle = window._securityLogThrottle || {};
   window._securityLogs = window._securityLogs || [];
   window._securityLogsRemoteUnavailable = false;
+  window._securityLogsLastError = '';
   window._adminVerified = false;
   window._adminUserId = null;
 
@@ -2122,6 +2124,13 @@
     });
   }
 
+  function toDiscordTimestamp(value) {
+    const dt = value ? new Date(value) : new Date();
+    if (Number.isNaN(dt.getTime())) return 'Unavailable';
+    const unix = Math.floor(dt.getTime() / 1000);
+    return `<t:${unix}:F> · <t:${unix}:R>`;
+  }
+
   function classifyLogFamily(type) {
     if (/auth|login|password|session/i.test(type)) return 'auth';
     if (/blocked|unauthorized|denied|restricted/i.test(type)) return 'blocked';
@@ -2157,7 +2166,7 @@
     verifyEl.textContent = window._adminVerified ? 'Supabase email verified' : 'Verification required';
     storeEl.textContent = window._securityLogsRemoteUnavailable ? 'Local browser buffer' : 'Supabase + local queue';
     noteEl.textContent = window._securityLogsRemoteUnavailable
-      ? 'The optional security_logs table is unavailable, so telemetry is staying in the local browser buffer for now.'
+      ? `Security log sync is using the local browser buffer right now. Supabase returned: ${window._securityLogsLastError || 'Unknown error'}`
       : 'Queued telemetry will sync to Supabase while also remaining cached locally in this browser.';
   }
 
@@ -2181,6 +2190,7 @@
 
     const { error } = await sb.from('security_logs').upsert(payload, { onConflict: 'id' });
     if (error) {
+      window._securityLogsLastError = sanitizeLogValue(error.message || 'Unknown error', 220);
       if (/security_logs|does not exist|schema cache|permission/i.test(error.message || '')) {
         window._securityLogsRemoteUnavailable = true;
         updateClassifiedAccess();
@@ -2188,6 +2198,7 @@
       return;
     }
 
+    window._securityLogsLastError = '';
     markLogsSynced(payload.map(entry => entry.id));
   }
 
@@ -2200,6 +2211,7 @@
     if (!hasVerifiedAdminAccess() || window._securityLogsRemoteUnavailable) return [];
     const { data, error } = await sb.from('security_logs').select('*').order('created_at', { ascending: false }).limit(120);
     if (error) {
+      window._securityLogsLastError = sanitizeLogValue(error.message || 'Unknown error', 220);
       if (/security_logs|does not exist|schema cache|permission/i.test(error.message || '')) {
         window._securityLogsRemoteUnavailable = true;
         updateClassifiedAccess();
@@ -2207,6 +2219,8 @@
       return [];
     }
 
+    window._securityLogsLastError = '';
+    window._securityLogsRemoteUnavailable = false;
     return (data || []).map(entry => ({
       id: entry.id,
       created_at: entry.created_at,
@@ -2275,6 +2289,7 @@
   }
 
   async function refreshSecurityLogs() {
+    window._securityLogsRemoteUnavailable = false;
     await loadSecurityLogs();
   }
 
@@ -2384,6 +2399,52 @@
     }
 
     return result;
+  }
+
+  async function sendStrikeDiscordWebhook({ callsign, personnelId, reason, issuedBy, createdAt, strikeCount }) {
+    if (!DISCORD_STRIKE_WEBHOOK_URL) return;
+
+    const safeCallsign = sanitizeLogValue(callsign || 'Unknown', 80);
+    const safeReason = sanitizeLogValue(reason || 'No reason provided', 900);
+    const safeIssuer = sanitizeLogValue(issuedBy || window._adminEmail || 'Unknown', 120);
+    const discordTime = toDiscordTimestamp(createdAt);
+    const payload = {
+      username: 'SAVE Strike Logger',
+      embeds: [
+        {
+          title: `Strike Issued · ${safeCallsign}`,
+          color: 15158332,
+          description: `A personnel strike has been issued through the SAVE tracker.`,
+          fields: [
+            { name: 'Callsign', value: safeCallsign, inline: true },
+            { name: 'Personnel ID', value: sanitizeLogValue(personnelId || 'Unknown', 120), inline: true },
+            { name: 'Strike Count', value: String(strikeCount || 1), inline: true },
+            { name: 'Issued By', value: safeIssuer, inline: true },
+            { name: 'Issued At', value: discordTime, inline: false },
+            { name: 'Reason', value: safeReason, inline: false }
+          ],
+          footer: { text: 'SAVE Personnel Tracker' },
+          timestamp: new Date(createdAt || Date.now()).toISOString()
+        }
+      ]
+    };
+
+    const formData = new FormData();
+    formData.append('payload_json', JSON.stringify(payload));
+
+    try {
+      // Fire-and-forget avoids CORS/preflight issues for a client-side webhook call.
+      await fetch(DISCORD_STRIKE_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      });
+    } catch (error) {
+      await logSecurityEvent('strike_webhook_failed', 'medium', 'Discord strike webhook request failed', {
+        source: 'tracker',
+        details: { personnelId, callsign: safeCallsign, message: error?.message || 'Unknown error' }
+      });
+    }
   }
 
   // ── Modals ────────────────────────────────────────────────
@@ -2723,14 +2784,18 @@
   async function saveStrike() {
     if (!requireVerifiedAdminAccess('issue a strike')) return;
     const pid    = document.getElementById('add-strike-pid').value;
+    const callsign = document.getElementById('add-strike-callsign').textContent.trim();
     const reason = document.getElementById('add-strike-reason').value.trim();
     const errEl  = document.getElementById('add-strike-error');
     errEl.textContent = '';
     if (!reason) { errEl.textContent = 'Reason is required.'; return; }
     const { data: { session } } = await sb.auth.getSession();
-    const { error } = await sb.from('strikes').insert({
-      personnel_id: pid, reason, issued_by: session?.user?.email || 'Unknown'
-    });
+    const strikeCount = ((window._strikesMap || {})[pid] || []).length + 1;
+    const issuedBy = session?.user?.email || 'Unknown';
+    const createdAt = new Date().toISOString();
+    const { data: strikeRow, error } = await sb.from('strikes').insert({
+      personnel_id: pid, reason, issued_by: issuedBy
+    }).select().single();
     if (error) {
       logSecurityEvent('strike_issue_failed', 'medium', 'Failed to issue strike record', {
         source: 'tracker',
@@ -2741,7 +2806,15 @@
     }
     await logSecurityEvent('strike_issued', 'medium', 'Issued personnel strike', {
       source: 'tracker',
-      details: { personnelId: pid, issuedBy: session?.user?.email || 'Unknown' }
+      details: { personnelId: pid, callsign, issuedBy }
+    });
+    await sendStrikeDiscordWebhook({
+      callsign,
+      personnelId: pid,
+      reason,
+      issuedBy,
+      createdAt: strikeRow?.created_at || createdAt,
+      strikeCount
     });
     document.getElementById('add-strike-modal').classList.remove('open');
     stampLastUpdated(window._adminEmail);
