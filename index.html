@@ -1912,6 +1912,10 @@
     <div class="modal-sub">CALLSIGN: <span id="add-strike-callsign" style="color:var(--gold-light)"></span></div>
     <div class="modal-error" id="add-strike-error"></div>
     <input type="hidden" id="add-strike-pid">
+    <label>Player Username</label>
+    <input type="text" id="add-strike-player-username" placeholder="Player username">
+    <label>Your Username</label>
+    <input type="text" id="add-strike-supervisor-username" placeholder="Your username">
     <label>Reason</label>
     <textarea id="add-strike-reason" placeholder="Describe the violation or reason for this strike..."
       style="width:100%;background:var(--bg);border:1px solid var(--border-bright);border-radius:3px;
@@ -2135,6 +2139,11 @@
     if (/auth|login|password|session/i.test(type)) return 'auth';
     if (/blocked|unauthorized|denied|restricted/i.test(type)) return 'blocked';
     return 'other';
+  }
+
+  function guessSupervisorUsername() {
+    if (!window._adminEmail) return '';
+    return sanitizeLogValue(window._adminEmail.split('@')[0] || '', 80);
   }
 
   function updateClassifiedAccess() {
@@ -2401,10 +2410,12 @@
     return result;
   }
 
-  async function sendStrikeDiscordWebhook({ callsign, personnelId, reason, issuedBy, createdAt, strikeCount }) {
+  async function sendStrikeDiscordWebhook({ callsign, personnelId, playerUsername, supervisorUsername, reason, issuedBy, createdAt, strikeCount }) {
     if (!DISCORD_STRIKE_WEBHOOK_URL) return;
 
     const safeCallsign = sanitizeLogValue(callsign || 'Unknown', 80);
+    const safePlayerUsername = sanitizeLogValue(playerUsername || safeCallsign || 'Unknown', 80);
+    const safeSupervisorUsername = sanitizeLogValue(supervisorUsername || issuedBy || window._adminEmail || 'Unknown', 120);
     const safeReason = sanitizeLogValue(reason || 'No reason provided', 900);
     const safeIssuer = sanitizeLogValue(issuedBy || window._adminEmail || 'Unknown', 120);
     const discordTime = toDiscordTimestamp(createdAt);
@@ -2417,13 +2428,13 @@
           description: `A personnel strike has been issued through the SAVE tracker.`,
           fields: [
             { name: 'Callsign', value: safeCallsign, inline: true },
-            { name: 'Personnel ID', value: sanitizeLogValue(personnelId || 'Unknown', 120), inline: true },
+            { name: 'Player Username', value: safePlayerUsername, inline: true },
             { name: 'Strike Count', value: String(strikeCount || 1), inline: true },
-            { name: 'Issued By', value: safeIssuer, inline: true },
+            { name: 'Your Username', value: safeSupervisorUsername, inline: true },
             { name: 'Issued At', value: discordTime, inline: false },
             { name: 'Reason', value: safeReason, inline: false }
           ],
-          footer: { text: 'SAVE Personnel Tracker' },
+          footer: { text: `SAVE Personnel Tracker · Internal ID ${sanitizeLogValue(personnelId || 'Unknown', 120)}` },
           timestamp: new Date(createdAt || Date.now()).toISOString()
         }
       ]
@@ -2647,6 +2658,7 @@
       });
       return;
     }
+    window._personnelMap = Object.fromEntries((data || []).map(row => [row.id, row]));
     window._strikesMap = {};
     (strikesData || []).forEach(s => {
       if (!window._strikesMap[s.personnel_id]) window._strikesMap[s.personnel_id] = [];
@@ -2773,8 +2785,11 @@
   }
 
   function openAddStrikeModal(personnelId, callsign) {
+    const personnel = (window._personnelMap || {})[personnelId] || {};
     document.getElementById('add-strike-pid').value = personnelId;
     document.getElementById('add-strike-callsign').textContent = callsign;
+    document.getElementById('add-strike-player-username').value = personnel.roblox_username || '';
+    document.getElementById('add-strike-supervisor-username').value = guessSupervisorUsername();
     document.getElementById('add-strike-reason').value = '';
     document.getElementById('add-strike-error').textContent = '';
     closeStrikesPopup();
@@ -2785,6 +2800,8 @@
     if (!requireVerifiedAdminAccess('issue a strike')) return;
     const pid    = document.getElementById('add-strike-pid').value;
     const callsign = document.getElementById('add-strike-callsign').textContent.trim();
+    const playerUsername = document.getElementById('add-strike-player-username').value.trim();
+    const supervisorUsername = document.getElementById('add-strike-supervisor-username').value.trim();
     const reason = document.getElementById('add-strike-reason').value.trim();
     const errEl  = document.getElementById('add-strike-error');
     errEl.textContent = '';
@@ -2806,11 +2823,13 @@
     }
     await logSecurityEvent('strike_issued', 'medium', 'Issued personnel strike', {
       source: 'tracker',
-      details: { personnelId: pid, callsign, issuedBy }
+      details: { personnelId: pid, callsign, playerUsername, supervisorUsername, issuedBy }
     });
     await sendStrikeDiscordWebhook({
       callsign,
       personnelId: pid,
+      playerUsername,
+      supervisorUsername,
       reason,
       issuedBy,
       createdAt: strikeRow?.created_at || createdAt,
