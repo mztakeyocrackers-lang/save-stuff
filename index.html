@@ -6870,44 +6870,110 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
     scanInputForThreats(target);
   }, true);
+function openArrestDetailFromRow(row) {
+  var statusText = row.getAttribute('data-status') || 'Open';
+  var createdAt  = row.getAttribute('data-created') || '';
+  var loggedAt   = 'Unknown';
+  try {
+    if (createdAt) {
+      loggedAt = new Date(createdAt).toLocaleString('en-US', {
+        month:'short', day:'numeric', year:'numeric',
+        hour:'2-digit', minute:'2-digit', second:'2-digit'
+      });
+    }
+  } catch(e) {}
+
+  function tone(s) {
+    var n = String(s||'').trim().toLowerCase();
+    if (n === 'closed')  return 'closed';
+    if (n === 'pending') return 'pending';
+    return 'open';
+  }
+
+  document.getElementById('arrest-detail-note').textContent =
+    'Read-only case review panel. Logged ' + loggedAt + ' and retained in the arrest tracker.';
+  document.getElementById('arrest-detail-case').textContent =
+    row.getAttribute('data-case') || 'Unavailable';
+  document.getElementById('arrest-detail-officer').textContent =
+    row.getAttribute('data-officer') || 'Unknown';
+  document.getElementById('arrest-detail-suspect').textContent =
+    row.getAttribute('data-suspect') || 'Unknown';
+
+  var statusEl = document.getElementById('arrest-detail-status');
+  statusEl.textContent = statusText;
+  statusEl.className = 'arrest-record-status-pill is-' + tone(statusText);
+
+  document.getElementById('arrest-detail-logged').textContent   = loggedAt;
+  document.getElementById('arrest-detail-location').textContent =
+    row.getAttribute('data-location') || 'Not provided';
+  document.getElementById('arrest-detail-logger').textContent   =
+    row.getAttribute('data-logger') || row.getAttribute('data-officer') || 'Unknown';
+  document.getElementById('arrest-detail-charge').textContent   =
+    row.getAttribute('data-charge') || 'No charges listed.';
+  document.getElementById('arrest-detail-notes').textContent    =
+    row.getAttribute('data-notes') || 'No notes provided.';
+
+  document.getElementById('arrest-detail-modal').classList.add('open');
+}
+
 renderArrestLogs = function(logs, errorMessage) {
   errorMessage = errorMessage || '';
-  const tbody = document.getElementById('arrest-logs-tbody');
+  var tbody = document.getElementById('arrest-logs-tbody');
   if (!tbody) return;
 
-  const list = logs || [];
-  const canDelete = hasVerifiedAdminAccess();
-  const actionCol = document.getElementById('arrest-actions-col');
+  var list = logs || [];
+  var canDelete = hasVerifiedAdminAccess();
+  var actionCol = document.getElementById('arrest-actions-col');
   if (actionCol) actionCol.style.display = canDelete ? '' : 'none';
 
+  var cols = canDelete ? '3' : '2';
+
   if (errorMessage) {
-    tbody.innerHTML = `<tr><td colspan="${canDelete ? '3' : '2'}" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">ARREST LOGS UNAVAILABLE · ${escapeHtml(errorMessage)}</td></tr>`;
+    tbody.innerHTML = '<tr><td colspan="' + cols + '" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">ARREST LOGS UNAVAILABLE</td></tr>';
+    return;
+  }
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="' + cols + '" style="text-align:center;color:var(--text-dim);padding:24px;font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:1px">NO ARREST RECORDS YET</td></tr>';
     return;
   }
 
-  if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="${canDelete ? '3' : '2'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO ARREST RECORDS YET</td></tr>`;
-    return;
+  function ea(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/\n/g, ' ')
+      .replace(/\r/g, '');
+  }
+  function eh(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   tbody.innerHTML = list.map(function(log) {
-    const id = escapeHtml(log.id);
-    const deleteCell = canDelete
-      ? `<td><button type="button" class="delete-btn" onclick="event.stopPropagation();deleteArrestLog('${id}')">DEL</button></td>`
-      : '';
-    return `
-      <tr class="arrest-log-row" tabindex="0" role="button"
-          style="cursor:pointer"
-          onclick="openArrestDetailModal('${id}')"
-          aria-label="Open arrest record ${escapeHtml(log.case_number || 'case')}"
-          data-arrest-id="${id}">
-        <td><span class="arrest-case-number">${escapeHtml(log.case_number || '—')}</span></td>
-        <td>
-          <span class="arrest-officer-tag">${escapeHtml(log.officer_name || '—')}</span>
-          <span class="arrest-summary-hint">Click to open full arrest log</span>
-        </td>
-        ${deleteCell}
-      </tr>`;
+    var delCell = '';
+    if (canDelete) {
+      delCell = '<td><button type="button" class="delete-btn" onclick="event.stopPropagation();deleteArrestLog(\'' + ea(log.id) + '\')">DEL</button></td>';
+    }
+    return '<tr class="arrest-log-row" tabindex="0" role="button" style="cursor:pointer"'
+      + ' onclick="if(!event.target.closest(\'.delete-btn\'))openArrestDetailFromRow(this)"'
+      + ' data-arrest-id="' + ea(log.id)            + '"'
+      + ' data-case="'      + ea(log.case_number)    + '"'
+      + ' data-officer="'   + ea(log.officer_name)   + '"'
+      + ' data-suspect="'   + ea(log.suspect_name)   + '"'
+      + ' data-charge="'    + ea(log.charge)          + '"'
+      + ' data-location="'  + ea(log.location)        + '"'
+      + ' data-status="'    + ea(log.status)          + '"'
+      + ' data-notes="'     + ea(log.notes)           + '"'
+      + ' data-created="'   + ea(log.created_at)      + '"'
+      + ' data-logger="'    + ea(log.logged_by)       + '">'
+      + '<td><span class="arrest-case-number">'   + eh(log.case_number  || '\u2014') + '</span></td>'
+      + '<td><span class="arrest-officer-tag">'   + eh(log.officer_name || '\u2014') + '</span>'
+      + '<span class="arrest-summary-hint">Click to open full arrest log</span></td>'
+      + delCell
+      + '</tr>';
   }).join('');
 };
 </script>
