@@ -6881,9 +6881,15 @@ function openArrestDetailFromRow(row) {
   var loggedAt   = 'Unknown';
   try {
     if (createdAt) {
-      loggedAt = new Date(createdAt).toLocaleString('en-US', {
-        month:'short', day:'numeric', year:'numeric',
-        hour:'2-digit', minute:'2-digit', second:'2-digit'
+     var diff = Date.now() - new Date(createdAt).getTime();
+var mins = Math.floor(diff / 60000);
+var hrs  = Math.floor(mins / 60);
+var days = Math.floor(hrs / 24);
+if (mins < 1)       loggedAt = 'Just now';
+else if (mins < 60) loggedAt = mins + ' minutes ago';
+else if (hrs < 24)  loggedAt = hrs + ' hour' + (hrs===1?'':'s') + ' ago';
+else if (days < 30) loggedAt = days + ' day' + (days===1?'':'s') + ' ago';
+else                loggedAt = new Date(createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
       });
     }
   } catch(e) {}
