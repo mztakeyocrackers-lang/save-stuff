@@ -1104,6 +1104,25 @@
     animation: portalSearchFocusPulse 1.7s ease;
     scroll-margin-top: 92px;
   }
+  .spotlight-target {
+    position: relative;
+    z-index: 10020 !important;
+  }
+  body.page-focus-active::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(4,6,10,.84);
+    pointer-events: none;
+    z-index: 10010;
+    animation: pageFocusVeilFade 1.45s ease forwards;
+  }
+  @keyframes pageFocusVeilFade {
+    0% { opacity: 0; }
+    16% { opacity: 1; }
+    72% { opacity: .94; }
+    100% { opacity: 0; }
+  }
   @keyframes portalSearchFocusPulse {
     0% { box-shadow: 0 0 0 0 rgba(201,168,76,.28), 0 0 0 rgba(201,168,76,0); }
     45% { box-shadow: 0 0 0 6px rgba(201,168,76,.12), 0 0 32px rgba(201,168,76,.18); }
@@ -1635,6 +1654,35 @@
     border: 1px solid rgba(74,159,212,.14);
     background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.9));
     box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .legal-overview-card[data-legal-target] {
+    position: relative;
+    cursor: pointer;
+    outline: none;
+  }
+  .legal-overview-card[data-legal-target]::after {
+    content: 'Open and Spotlight';
+    display: inline-flex;
+    align-items: center;
+    margin-top: 12px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(201,168,76,.18);
+    background: rgba(201,168,76,.05);
+    color: var(--gold-light);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 1.15px;
+    text-transform: uppercase;
+  }
+  .legal-overview-card[data-legal-target]:hover,
+  .legal-overview-card[data-legal-target]:focus-visible,
+  .legal-overview-card[data-legal-target].active {
+    transform: translateY(-2px);
+    border-color: rgba(201,168,76,.22);
+    background: linear-gradient(180deg, rgba(20,25,40,.98), rgba(9,12,20,.92));
+    box-shadow: 0 18px 34px rgba(0,0,0,.24);
   }
   .legal-overview-card strong {
     display: block;
@@ -1672,6 +1720,14 @@
     transform: translateY(-2px);
     border-color: rgba(201,168,76,.2);
     box-shadow: 0 18px 38px rgba(0,0,0,.24);
+  }
+  .legal-card.interactive-legal-card {
+    cursor: pointer;
+    outline: none;
+  }
+  .legal-card.interactive-legal-card:focus-visible {
+    border-color: rgba(201,168,76,.28);
+    box-shadow: 0 18px 38px rgba(0,0,0,.24), 0 0 0 1px rgba(201,168,76,.18);
   }
   .legal-card h3 {
     font-family: 'Rajdhani', sans-serif;
@@ -3109,21 +3165,29 @@
         </div>
       </div>
       <div class="legal-overview-grid">
-        <div class="legal-overview-card">
+        <div class="legal-overview-card" data-legal-target="legal-terms">
           <strong>Usage Terms</strong>
           <span>Conditions for access, acceptable use, and enforcement rights.</span>
         </div>
-        <div class="legal-overview-card">
+        <div class="legal-overview-card" data-legal-target="legal-data">
           <strong>Data Notice</strong>
           <span>What identifiers and records may be processed through the portal.</span>
         </div>
-        <div class="legal-overview-card">
+        <div class="legal-overview-card" data-legal-target="legal-monitoring">
           <strong>Security Logging</strong>
           <span>Monitoring disclosures tied to login attempts, privileged actions, and telemetry.</span>
         </div>
-        <div class="legal-overview-card">
+        <div class="legal-overview-card" data-legal-target="legal-copyright">
+          <strong>Copyright</strong>
+          <span>Ownership language, reuse limits, and content-protection terms.</span>
+        </div>
+        <div class="legal-overview-card" data-legal-target="legal-illinois">
           <strong>Illinois Citations</strong>
-          <span>Referenced statutes and federal copyright provisions linked to official sources.</span>
+          <span>State-specific references tied to the portal's data and security posture.</span>
+        </div>
+        <div class="legal-overview-card" data-legal-target="legal-disclosures">
+          <strong>Disclosures</strong>
+          <span>Operator disclaimers, scope limits, and revision notice language.</span>
         </div>
       </div>
     </div>
@@ -3652,7 +3716,9 @@
   }
   setLastUpdated();
   syncLegalYear();
+  syncSidebarOrder();
   initNavPageBindings();
+  initInteractiveLegalPage();
   initStrikeReasonPresets();
 
   // Auto-stamp "last updated" whenever an admin saves the page
@@ -3701,6 +3767,8 @@
     document.getElementById('bc').textContent = breadcrumbLabels[id] || id.toUpperCase();
     window.scrollTo(0, 0);
     closeStrikesPopup();
+    clearPageFocus();
+    if (id !== 'legal') setActiveLegalNavCard('');
     if (id === 'tracker') loadTrackerPage();
     if (id === 'blacklists') loadBlacklists();
     if (id === 'arrests') loadArrestLogs();
@@ -3708,9 +3776,12 @@
     if (id === 'conf')    loadClassifiedConsole();
   }
 
-  function scrollToSection(id) {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  function syncSidebarOrder() {
+    const nav = document.querySelector('#sidebar nav');
+    const confItem = Array.from(nav?.querySelectorAll('.nav-item') || []).find(item => item.getAttribute('onclick')?.includes("showPage('conf')"));
+    const blacklistItem = Array.from(nav?.querySelectorAll('.nav-item') || []).find(item => item.getAttribute('onclick')?.includes("showPage('blacklists')"));
+    if (!nav || !confItem || !blacklistItem) return;
+    nav.insertBefore(blacklistItem, confItem);
   }
 
   function initNavPageBindings() {
@@ -3722,11 +3793,108 @@
     });
   }
 
+  function initInteractiveLegalPage() {
+    document.querySelectorAll('.legal-overview-card[data-legal-target]').forEach(card => {
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.addEventListener('click', () => openLegalPage(card.dataset.legalTarget));
+      card.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        openLegalPage(card.dataset.legalTarget);
+      });
+    });
+
+    document.querySelectorAll('#page-legal .legal-card.anchor').forEach(card => {
+      card.classList.add('interactive-legal-card');
+      card.setAttribute('tabindex', '0');
+      card.addEventListener('click', event => {
+        if (event.target.closest('a, button')) return;
+        setActiveLegalNavCard(card.id);
+        spotlightElement(card, { block: 'center', delay: 40 });
+      });
+      card.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        setActiveLegalNavCard(card.id);
+        spotlightElement(card, { block: 'center', delay: 40 });
+      });
+    });
+  }
+
+  function setActiveLegalNavCard(targetId) {
+    document.querySelectorAll('.legal-overview-card[data-legal-target]').forEach(card => {
+      const isActive = card.dataset.legalTarget === targetId;
+      card.classList.toggle('active', isActive);
+      card.setAttribute('aria-current', isActive ? 'true' : 'false');
+    });
+  }
+
+  window._pageFocusState = window._pageFocusState || {
+    revealTimer: null,
+    veilTimer: null,
+    clearTimer: null,
+    currentTarget: null
+  };
+
+  function clearPageFocusTimers() {
+    const state = window._pageFocusState;
+    ['revealTimer', 'veilTimer', 'clearTimer'].forEach(key => {
+      if (state[key]) {
+        clearTimeout(state[key]);
+        state[key] = null;
+      }
+    });
+  }
+
+  function clearPageFocus() {
+    clearPageFocusTimers();
+    document.body.classList.remove('page-focus-active');
+    document.querySelectorAll('.spotlight-target').forEach(element => {
+      element.classList.remove('spotlight-target');
+    });
+    clearPortalSearchFocus();
+    window._pageFocusState.currentTarget = null;
+  }
+
+  function spotlightElement(target, options = {}) {
+    if (!target) return;
+    const focusTarget = getPortalSearchFocusTarget(target);
+    if (!focusTarget) return;
+    const legalCard = focusTarget.closest?.('#page-legal .legal-card.anchor') || (focusTarget.matches?.('#page-legal .legal-card.anchor') ? focusTarget : null);
+    if (legalCard?.id) setActiveLegalNavCard(legalCard.id);
+
+    const state = window._pageFocusState;
+    clearPageFocus();
+    focusTarget.scrollIntoView({ behavior: 'smooth', block: options.block || 'center' });
+
+    state.revealTimer = window.setTimeout(() => {
+      state.currentTarget = focusTarget;
+      focusTarget.classList.add('portal-search-focus', 'spotlight-target');
+      document.body.classList.add('page-focus-active');
+      state.veilTimer = window.setTimeout(() => {
+        document.body.classList.remove('page-focus-active');
+      }, options.veilDuration || 1450);
+      state.clearTimer = window.setTimeout(() => {
+        focusTarget.classList.remove('portal-search-focus', 'spotlight-target');
+        if (state.currentTarget === focusTarget) state.currentTarget = null;
+      }, options.highlightDuration || 2600);
+    }, options.delay ?? 180);
+  }
+
+  function scrollToSection(id, options = {}) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.closest('#page-legal')) setActiveLegalNavCard(id);
+    spotlightElement(el, options);
+  }
+
   function openLegalPage(anchorId) {
     showPage('legal');
+    setActiveLegalNavCard(anchorId || '');
     if (!anchorId) return;
     window.requestAnimationFrame(() => {
-      window.setTimeout(() => scrollToSection(anchorId), 60);
+      window.setTimeout(() => scrollToSection(anchorId, { block: 'center', delay: 60 }), 60);
     });
   }
 
@@ -5487,6 +5655,11 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   }
 
   function clearPortalSearchFocus() {
+    const state = getPortalSearchState();
+    if (state.focusTimer) {
+      clearTimeout(state.focusTimer);
+      state.focusTimer = null;
+    }
     document.querySelectorAll('.portal-search-focus').forEach(element => {
       element.classList.remove('portal-search-focus');
     });
@@ -5509,15 +5682,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   function focusPortalSearchResult(result, attempt = 0) {
     const target = findPortalSearchTarget(result);
     if (target) {
-      const focusTarget = getPortalSearchFocusTarget(target);
-      const state = getPortalSearchState();
-      if (state.focusTimer) clearTimeout(state.focusTimer);
-      clearPortalSearchFocus();
-      focusTarget.classList.add('portal-search-focus');
-      focusTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      state.focusTimer = window.setTimeout(() => {
-        focusTarget.classList.remove('portal-search-focus');
-      }, 2200);
+      spotlightElement(target, { block: 'center', delay: 80, veilDuration: 1500, highlightDuration: 2600 });
       return;
     }
 
