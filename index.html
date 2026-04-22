@@ -6870,6 +6870,46 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
     scanInputForThreats(target);
   }, true);
+renderArrestLogs = function(logs, errorMessage) {
+  errorMessage = errorMessage || '';
+  const tbody = document.getElementById('arrest-logs-tbody');
+  if (!tbody) return;
+
+  const list = logs || [];
+  const canDelete = hasVerifiedAdminAccess();
+  const actionCol = document.getElementById('arrest-actions-col');
+  if (actionCol) actionCol.style.display = canDelete ? '' : 'none';
+
+  if (errorMessage) {
+    tbody.innerHTML = `<tr><td colspan="${canDelete ? '3' : '2'}" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">ARREST LOGS UNAVAILABLE · ${escapeHtml(errorMessage)}</td></tr>`;
+    return;
+  }
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="${canDelete ? '3' : '2'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO ARREST RECORDS YET</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(function(log) {
+    const id = escapeHtml(log.id);
+    const deleteCell = canDelete
+      ? `<td><button type="button" class="delete-btn" onclick="event.stopPropagation();deleteArrestLog('${id}')">DEL</button></td>`
+      : '';
+    return `
+      <tr class="arrest-log-row" tabindex="0" role="button"
+          style="cursor:pointer"
+          onclick="openArrestDetailModal('${id}')"
+          aria-label="Open arrest record ${escapeHtml(log.case_number || 'case')}"
+          data-arrest-id="${id}">
+        <td><span class="arrest-case-number">${escapeHtml(log.case_number || '—')}</span></td>
+        <td>
+          <span class="arrest-officer-tag">${escapeHtml(log.officer_name || '—')}</span>
+          <span class="arrest-summary-hint">Click to open full arrest log</span>
+        </td>
+        ${deleteCell}
+      </tr>`;
+  }).join('');
+};
 </script>
 </body>
 </html>
