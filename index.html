@@ -1184,17 +1184,22 @@
     color: var(--text-dim);
     text-transform: uppercase;
   }
-  .arrest-detail-grid {
+  .arrest-record-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
-    margin-bottom: 18px;
+    margin-top: 16px;
   }
-  .arrest-detail-card {
+  .arrest-record-field {
     padding: 14px 16px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.92));
+    min-height: 96px;
+  }
+  .arrest-record-field.full {
+    grid-column: 1 / -1;
+    min-height: 132px;
   }
   .arrest-detail-label {
     font-family: 'Share Tech Mono', monospace;
@@ -1204,27 +1209,47 @@
     color: var(--text-dim);
     margin-bottom: 7px;
   }
-  .arrest-detail-value {
-    color: var(--text-bright);
-    font-size: 13px;
-    line-height: 1.7;
-  }
-  .arrest-detail-value.mono {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-  }
-  .arrest-detail-block {
-    margin-bottom: 16px;
-    padding: 14px 16px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.92));
-  }
-  .arrest-detail-copy {
+  .arrest-record-copy {
     color: var(--text);
     font-size: 13px;
     line-height: 1.85;
     white-space: pre-wrap;
+  }
+  .arrest-record-copy.mono {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text-bright);
+  }
+  .arrest-record-status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    min-width: 96px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(201,168,76,.22);
+    background: rgba(201,168,76,.1);
+    color: var(--gold-light);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+  }
+  .arrest-record-status-pill.is-open {
+    border-color: rgba(76,201,162,.24);
+    background: rgba(76,201,162,.1);
+    color: var(--green-bright);
+  }
+  .arrest-record-status-pill.is-closed {
+    border-color: rgba(224,80,80,.28);
+    background: rgba(224,80,80,.08);
+    color: #ff8d8d;
+  }
+  .arrest-record-status-pill.is-pending {
+    border-color: rgba(74,159,212,.26);
+    background: rgba(74,159,212,.1);
+    color: var(--blue-bright);
   }
 
   .strike-reason-overlay {
@@ -2111,7 +2136,7 @@
     .legal-overview-grid,
     .patrol-summary-grid,
     .reason-preset-grid,
-    .arrest-detail-grid {
+    .arrest-record-fields {
       grid-template-columns: 1fr;
     }
     .patrol-summary-card.wide {
@@ -3654,44 +3679,47 @@
 <div class="modal-overlay" id="arrest-detail-modal" onclick="if(event.target===this)closeModal('arrest-detail-modal')">
   <div class="modal wide">
     <h2>Arrest Record</h2>
-    <div class="modal-sub">SAVE ARREST LOGGER - FULL CASE VIEW</div>
-    <div class="case-preview">
+    <div class="modal-sub">SAVE ARREST LOGGER - CASE REVIEW PANEL</div>
+    <div class="quota-modal-note" id="arrest-detail-note">Read-only case review panel. Open any arrest from the tracker to inspect the full report.</div>
+    <div class="case-preview" style="margin-top:18px">
       <div class="case-preview-label">Case Number</div>
       <div class="case-preview-value" id="arrest-detail-case">Unavailable</div>
     </div>
-    <div class="arrest-detail-grid">
-      <div class="arrest-detail-card">
-        <div class="arrest-detail-label">Arresting Officer</div>
-        <div class="arrest-detail-value mono" id="arrest-detail-officer">Unknown</div>
+    <div class="patrol-summary-grid" style="margin-top:18px">
+      <div class="patrol-summary-card">
+        <div class="patrol-summary-label">Arresting Officer</div>
+        <div class="patrol-summary-value small" id="arrest-detail-officer">Unknown</div>
       </div>
-      <div class="arrest-detail-card">
-        <div class="arrest-detail-label">Suspect</div>
-        <div class="arrest-detail-value mono" id="arrest-detail-suspect">Unknown</div>
+      <div class="patrol-summary-card">
+        <div class="patrol-summary-label">Suspect</div>
+        <div class="patrol-summary-value small" id="arrest-detail-suspect">Unknown</div>
       </div>
-      <div class="arrest-detail-card">
-        <div class="arrest-detail-label">Status</div>
-        <div class="arrest-detail-value" id="arrest-detail-status">Unknown</div>
+      <div class="patrol-summary-card">
+        <div class="patrol-summary-label">Status</div>
+        <div class="arrest-record-status-pill" id="arrest-detail-status">OPEN</div>
       </div>
-      <div class="arrest-detail-card">
-        <div class="arrest-detail-label">Logged</div>
-        <div class="arrest-detail-value mono" id="arrest-detail-logged">Unknown</div>
+      <div class="patrol-summary-card">
+        <div class="patrol-summary-label">Logged</div>
+        <div class="patrol-summary-value small" id="arrest-detail-logged">Unknown</div>
       </div>
-      <div class="arrest-detail-card">
+    </div>
+    <div class="arrest-record-fields">
+      <div class="arrest-record-field">
         <div class="arrest-detail-label">Location</div>
-        <div class="arrest-detail-value" id="arrest-detail-location">Not provided</div>
+        <div class="arrest-record-copy" id="arrest-detail-location">Not provided</div>
       </div>
-      <div class="arrest-detail-card">
+      <div class="arrest-record-field">
         <div class="arrest-detail-label">Logged By</div>
-        <div class="arrest-detail-value mono" id="arrest-detail-logger">Unknown</div>
+        <div class="arrest-record-copy mono" id="arrest-detail-logger">Unknown</div>
       </div>
-    </div>
-    <div class="arrest-detail-block">
-      <div class="arrest-detail-label">Charge(s)</div>
-      <div class="arrest-detail-copy" id="arrest-detail-charge">No charges listed.</div>
-    </div>
-    <div class="arrest-detail-block">
-      <div class="arrest-detail-label">Notes</div>
-      <div class="arrest-detail-copy" id="arrest-detail-notes">No notes provided.</div>
+      <div class="arrest-record-field full">
+        <div class="arrest-detail-label">Charge(s)</div>
+        <div class="arrest-record-copy" id="arrest-detail-charge">No charges listed.</div>
+      </div>
+      <div class="arrest-record-field full">
+        <div class="arrest-detail-label">Notes</div>
+        <div class="arrest-record-copy" id="arrest-detail-notes">No notes provided.</div>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-primary" onclick="closeModal('arrest-detail-modal')">CLOSE</button>
@@ -3837,6 +3865,7 @@
   syncSidebarOrder();
   initNavPageBindings();
   initInteractiveLegalPage();
+  initArrestLogInteractions();
   initStrikeReasonPresets();
 
   // Auto-stamp "last updated" whenever an admin saves the page
@@ -5139,15 +5168,48 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     document.getElementById('arrest-log-modal').classList.add('open');
   }
 
+  function initArrestLogInteractions() {
+    const tbody = document.getElementById('arrest-logs-tbody');
+    if (!tbody || tbody.dataset.bound === '1') return;
+
+    tbody.dataset.bound = '1';
+    tbody.addEventListener('click', event => {
+      if (event.target.closest('.delete-btn')) return;
+      const row = event.target.closest('.arrest-log-row[data-arrest-id]');
+      if (!row || !tbody.contains(row)) return;
+      openArrestDetailModal(row.dataset.arrestId || '');
+    });
+    tbody.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const row = event.target.closest('.arrest-log-row[data-arrest-id]');
+      if (!row || !tbody.contains(row)) return;
+      event.preventDefault();
+      openArrestDetailModal(row.dataset.arrestId || '');
+    });
+  }
+
+  function getArrestStatusTone(status) {
+    const normalized = String(status || 'Open').trim().toLowerCase();
+    if (normalized === 'closed') return 'closed';
+    if (normalized === 'pending') return 'pending';
+    return 'open';
+  }
+
   function openArrestDetailModal(logId) {
     const log = (window._arrests || []).find(entry => entry.id === logId);
     if (!log) return;
 
+    const statusText = String(log.status || 'Open');
+    const loggedAt = formatSecurityLogTime(log.created_at) || 'Unknown';
+    const statusEl = document.getElementById('arrest-detail-status');
+
+    document.getElementById('arrest-detail-note').textContent = `Read-only case review panel. Logged ${loggedAt} and retained in the arrest tracker.`;
     document.getElementById('arrest-detail-case').textContent = log.case_number || 'Unavailable';
     document.getElementById('arrest-detail-officer').textContent = log.officer_name || 'Unknown';
     document.getElementById('arrest-detail-suspect').textContent = log.suspect_name || 'Unknown';
-    document.getElementById('arrest-detail-status').textContent = String(log.status || 'Open');
-    document.getElementById('arrest-detail-logged').textContent = formatSecurityLogTime(log.created_at) || 'Unknown';
+    statusEl.textContent = statusText;
+    statusEl.className = `arrest-record-status-pill is-${getArrestStatusTone(statusText)}`;
+    document.getElementById('arrest-detail-logged').textContent = loggedAt;
     document.getElementById('arrest-detail-location').textContent = log.location || 'Not provided';
     document.getElementById('arrest-detail-logger').textContent = log.logged_by || log.officer_name || 'Unknown';
     document.getElementById('arrest-detail-charge').textContent = log.charge || 'No charges listed.';
@@ -5189,10 +5251,10 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
 
     tbody.innerHTML = list.map(log => {
       const deleteCell = canDelete
-        ? `<td><button type="button" class="delete-btn" onclick="event.stopPropagation();deleteArrestLog('${escapeHtml(log.id)}')">DEL</button></td>`
+        ? `<td><button type="button" class="delete-btn" onclick="deleteArrestLog('${escapeHtml(log.id)}')">DEL</button></td>`
         : '';
       return `
-        <tr class="arrest-log-row" tabindex="0" role="button" onclick="openArrestDetailModal('${escapeHtml(log.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openArrestDetailModal('${escapeHtml(log.id)}')}">
+        <tr class="arrest-log-row" tabindex="0" role="button" aria-label="Open arrest record ${escapeHtml(log.case_number || 'case')}" data-arrest-id="${escapeHtml(log.id)}">
           <td><span class="arrest-case-number">${escapeHtml(log.case_number || '—')}</span></td>
           <td><span class="arrest-officer-tag">${escapeHtml(log.officer_name || '—')}</span><span class="arrest-summary-hint">Click to open full arrest log</span></td>
           ${deleteCell}
