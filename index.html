@@ -1167,6 +1167,65 @@
     border: 1px solid rgba(74,159,212,.2); letter-spacing: .5px;
   }
   .arrest-charge-text { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .arrest-log-row {
+    cursor: pointer;
+    transition: background .15s ease, box-shadow .15s ease;
+  }
+  .arrest-log-row:hover td,
+  .arrest-log-row:focus-visible td {
+    background: rgba(201,168,76,.04);
+  }
+  .arrest-summary-hint {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .arrest-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .arrest-detail-card {
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.92));
+  }
+  .arrest-detail-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 7px;
+  }
+  .arrest-detail-value {
+    color: var(--text-bright);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .arrest-detail-value.mono {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+  }
+  .arrest-detail-block {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.92));
+  }
+  .arrest-detail-copy {
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.85;
+    white-space: pre-wrap;
+  }
 
   .strike-reason-overlay {
     display: none; position: fixed; inset: 0;
@@ -1217,6 +1276,9 @@
     border-radius: 8px;
     border: 1px solid rgba(74,159,212,.16);
     background: linear-gradient(180deg, rgba(15,19,32,.96), rgba(9,12,20,.9));
+  }
+  .patrol-summary-card.wide {
+    grid-column: 1 / -1;
   }
   .patrol-summary-label {
     font-family: 'Share Tech Mono', monospace;
@@ -2048,8 +2110,12 @@
     }
     .legal-overview-grid,
     .patrol-summary-grid,
-    .reason-preset-grid {
+    .reason-preset-grid,
+    .arrest-detail-grid {
       grid-template-columns: 1fr;
+    }
+    .patrol-summary-card.wide {
+      grid-column: auto;
     }
     .portal-search-head,
     .portal-search-meta {
@@ -2947,6 +3013,9 @@
         <div class="arrest-helper-copy" style="margin-top:-4px">
           Completed arrest logs are pushed to the arrest Discord webhook automatically after they save.
         </div>
+        <div class="arrest-helper-copy" style="margin-top:-4px">
+          The list below only shows the case number and arresting officer. Click any arrest row to open the full report.
+        </div>
         <div class="patrol-summary-grid">
           <div class="patrol-summary-card">
             <div class="patrol-summary-label">Total Arrests</div>
@@ -2970,11 +3039,11 @@
         <table class="tracker-data-table">
           <thead>
             <tr>
-              <th>Case #</th><th>Suspect</th><th>Officer</th><th>Charge(s)</th><th>Location</th><th>Status</th><th>Logged</th><th id="arrest-actions-col" style="display:none"></th>
+              <th>Case #</th><th>Arresting Officer</th><th id="arrest-actions-col" style="display:none"></th>
             </tr>
           </thead>
           <tbody id="arrest-logs-tbody">
-            <tr><td colspan="8" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING ARREST LOGS...</td></tr>
+            <tr><td colspan="3" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING ARREST LOGS...</td></tr>
           </tbody>
         </table>
       </div>
@@ -3581,6 +3650,55 @@
   </div>
 </div>
 
+<!-- ARREST DETAIL MODAL -->
+<div class="modal-overlay" id="arrest-detail-modal" onclick="if(event.target===this)closeModal('arrest-detail-modal')">
+  <div class="modal wide">
+    <h2>Arrest Record</h2>
+    <div class="modal-sub">SAVE ARREST LOGGER - FULL CASE VIEW</div>
+    <div class="case-preview">
+      <div class="case-preview-label">Case Number</div>
+      <div class="case-preview-value" id="arrest-detail-case">Unavailable</div>
+    </div>
+    <div class="arrest-detail-grid">
+      <div class="arrest-detail-card">
+        <div class="arrest-detail-label">Arresting Officer</div>
+        <div class="arrest-detail-value mono" id="arrest-detail-officer">Unknown</div>
+      </div>
+      <div class="arrest-detail-card">
+        <div class="arrest-detail-label">Suspect</div>
+        <div class="arrest-detail-value mono" id="arrest-detail-suspect">Unknown</div>
+      </div>
+      <div class="arrest-detail-card">
+        <div class="arrest-detail-label">Status</div>
+        <div class="arrest-detail-value" id="arrest-detail-status">Unknown</div>
+      </div>
+      <div class="arrest-detail-card">
+        <div class="arrest-detail-label">Logged</div>
+        <div class="arrest-detail-value mono" id="arrest-detail-logged">Unknown</div>
+      </div>
+      <div class="arrest-detail-card">
+        <div class="arrest-detail-label">Location</div>
+        <div class="arrest-detail-value" id="arrest-detail-location">Not provided</div>
+      </div>
+      <div class="arrest-detail-card">
+        <div class="arrest-detail-label">Logged By</div>
+        <div class="arrest-detail-value mono" id="arrest-detail-logger">Unknown</div>
+      </div>
+    </div>
+    <div class="arrest-detail-block">
+      <div class="arrest-detail-label">Charge(s)</div>
+      <div class="arrest-detail-copy" id="arrest-detail-charge">No charges listed.</div>
+    </div>
+    <div class="arrest-detail-block">
+      <div class="arrest-detail-label">Notes</div>
+      <div class="arrest-detail-copy" id="arrest-detail-notes">No notes provided.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="closeModal('arrest-detail-modal')">CLOSE</button>
+    </div>
+  </div>
+</div>
+
 <!-- PATROL QUOTA MODAL -->
 <div class="modal-overlay" id="patrol-quota-modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal wide">
@@ -3600,7 +3718,7 @@
         <div class="patrol-summary-label">Total Patrols</div>
         <div class="patrol-summary-value" id="patrol-quota-total">0</div>
       </div>
-      <div class="patrol-summary-card">
+      <div class="patrol-summary-card wide">
         <div class="patrol-summary-label">Tracked Time</div>
         <div class="patrol-summary-value small" id="patrol-quota-time">0m</div>
       </div>
@@ -5021,6 +5139,22 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     document.getElementById('arrest-log-modal').classList.add('open');
   }
 
+  function openArrestDetailModal(logId) {
+    const log = (window._arrests || []).find(entry => entry.id === logId);
+    if (!log) return;
+
+    document.getElementById('arrest-detail-case').textContent = log.case_number || 'Unavailable';
+    document.getElementById('arrest-detail-officer').textContent = log.officer_name || 'Unknown';
+    document.getElementById('arrest-detail-suspect').textContent = log.suspect_name || 'Unknown';
+    document.getElementById('arrest-detail-status').textContent = String(log.status || 'Open');
+    document.getElementById('arrest-detail-logged').textContent = formatSecurityLogTime(log.created_at) || 'Unknown';
+    document.getElementById('arrest-detail-location').textContent = log.location || 'Not provided';
+    document.getElementById('arrest-detail-logger').textContent = log.logged_by || log.officer_name || 'Unknown';
+    document.getElementById('arrest-detail-charge').textContent = log.charge || 'No charges listed.';
+    document.getElementById('arrest-detail-notes').textContent = log.notes || 'No notes provided.';
+    document.getElementById('arrest-detail-modal').classList.add('open');
+  }
+
   function updateArrestOverview(logs) {
     const list = logs || [];
     const today = arrestDayKey();
@@ -5044,34 +5178,23 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     if (actionCol) actionCol.style.display = canDelete ? '' : 'none';
 
     if (errorMessage) {
-      tbody.innerHTML = `<tr><td colspan="${canDelete ? '8' : '7'}" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">ARREST LOGS UNAVAILABLE · ${escapeHtml(errorMessage)}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${canDelete ? '3' : '2'}" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">ARREST LOGS UNAVAILABLE · ${escapeHtml(errorMessage)}</td></tr>`;
       return;
     }
 
     if (!list.length) {
-      tbody.innerHTML = `<tr><td colspan="${canDelete ? '8' : '7'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO ARREST RECORDS YET</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${canDelete ? '3' : '2'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO ARREST RECORDS YET</td></tr>`;
       return;
     }
 
     tbody.innerHTML = list.map(log => {
-      const status = String(log.status || 'Open');
-      const statusClass = status.toLowerCase() === 'open' ? 'status-open' : 'status-closed';
-      const statusDot = status.toLowerCase() === 'open' ? '<span class="status-dot-sm"></span>' : '';
-      const notesHtml = log.notes
-        ? `<br><span class="mono" style="font-size:10px;color:var(--text-dim)">${escapeHtml(log.notes)}</span>`
-        : '';
       const deleteCell = canDelete
-        ? `<td><button class="delete-btn" onclick="deleteArrestLog('${escapeHtml(log.id)}')">DEL</button></td>`
+        ? `<td><button type="button" class="delete-btn" onclick="event.stopPropagation();deleteArrestLog('${escapeHtml(log.id)}')">DEL</button></td>`
         : '';
       return `
-        <tr>
+        <tr class="arrest-log-row" tabindex="0" role="button" onclick="openArrestDetailModal('${escapeHtml(log.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openArrestDetailModal('${escapeHtml(log.id)}')}">
           <td><span class="arrest-case-number">${escapeHtml(log.case_number || '—')}</span></td>
-          <td><span class="arrest-suspect-name">${escapeHtml(log.suspect_name || '—')}</span></td>
-          <td><span class="arrest-officer-tag">${escapeHtml(log.officer_name || '—')}</span></td>
-          <td><span class="arrest-charge-text">${escapeHtml(log.charge || '—')}</span>${notesHtml}</td>
-          <td class="mono">${escapeHtml(log.location || '—')}</td>
-          <td><span class="status-badge ${statusClass}">${statusDot}${escapeHtml(status)}</span></td>
-          <td class="mono" style="font-size:11px;white-space:nowrap">${escapeHtml(formatSecurityLogTime(log.created_at))}</td>
+          <td><span class="arrest-officer-tag">${escapeHtml(log.officer_name || '—')}</span><span class="arrest-summary-hint">Click to open full arrest log</span></td>
           ${deleteCell}
         </tr>`;
     }).join('');
@@ -6368,11 +6491,16 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     if (id) { ({ error } = await sb.from('personnel').update(payload).eq('id', id)); }
     else    { ({ error } = await sb.from('personnel').insert(payload)); }
     if (error) {
+      const message = String(error.message || '');
       logSecurityEvent('personnel_save_failed', 'medium', 'Failed to save personnel record', {
         source: 'tracker',
-        details: { id: id || null, category: payload.category, message: error.message }
+        details: { id: id || null, category: payload.category, message }
       });
-      document.getElementById('personnel-error').textContent = 'Save failed: ' + error.message;
+      if (/record "new" has no field "updated_at"/i.test(message)) {
+        document.getElementById('personnel-error').textContent = 'Save failed: Supabase personnel table is missing the updated_at column. Run the SQL fix, then try again.';
+        return;
+      }
+      document.getElementById('personnel-error').textContent = 'Save failed: ' + message;
       return;
     }
     await logSecurityEvent(id ? 'personnel_updated' : 'personnel_created', 'low', id ? 'Updated personnel record' : 'Created personnel record', {
