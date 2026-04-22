@@ -2036,6 +2036,7 @@
     <div class="nav-item" onclick="showPage('patrols')"><span class="nav-icon">◈</span> Patrol Logs</div>
     <div class="nav-item" onclick="showPage('conf')"><span class="nav-icon">◈</span> Classified</div>
     <div class="nav-item admin-only" id="nav-panel" onclick="showPage('panel')" style="display:none;border-left-color:var(--gold)"><span class="nav-icon">⬡</span> Supervisor Panel</div>
+    <div class="nav-item" onclick="showPage('blacklists')"><span class="nav-icon">&#9674;</span> SAVE Blacklists</div>
   </nav>
   <div class="status-bar">
     <span class="status-dot"></span>SYSTEM ONLINE<br>
@@ -2816,6 +2817,61 @@
     </div>
   </div>
 
+  <!-- BLACKLISTS -->
+  <div class="page" id="page-blacklists">
+    <div class="page-title">Department Blacklists</div>
+    <div class="page-subtitle">SAVE BLACKLISTS - Public View - Admin Logging and Management Only</div>
+
+    <div class="tracker-section">
+      <div class="tracker-header">
+        <h2>Blacklist Tracker</h2>
+        <span class="section-tag">Public Read - Verified Supervisor Writes</span>
+      </div>
+      <div style="padding:18px 18px 0">
+        <div class="patrol-helper-copy">
+          SAVE blacklist records stay viewable to everyone, but only verified supervisors or owners can add, edit, or remove an entry.
+        </div>
+        <div class="patrol-helper-copy" style="margin-top:-4px">
+          Roblox and Discord identifiers stay on the same record so department enforcement, appeal review, and alt-account checks all stay in one place.
+        </div>
+        <div class="patrol-summary-grid">
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Total Entries</div>
+            <div class="patrol-summary-value" id="blacklist-total">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Roblox Tagged</div>
+            <div class="patrol-summary-value" id="blacklist-roblox">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Discord Tagged</div>
+            <div class="patrol-summary-value" id="blacklist-discord">0</div>
+          </div>
+          <div class="patrol-summary-card">
+            <div class="patrol-summary-label">Latest Entry</div>
+            <div class="patrol-summary-value small" id="blacklist-latest">No blacklist entries yet</div>
+          </div>
+        </div>
+      </div>
+      <div class="tracker-table-outer">
+        <table class="tracker-data-table">
+          <thead>
+            <tr>
+              <th>Roblox</th><th>Roblox ID</th><th>Discord</th><th>Discord ID</th><th>Reason</th><th>Listed By</th><th>Added</th>
+              <th id="blacklist-actions-col" style="display:none"></th>
+            </tr>
+          </thead>
+          <tbody id="blacklist-tbody">
+            <tr><td colspan="8" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING BLACKLIST RECORDS...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tracker-footer">
+        <button class="add-row-btn" style="margin:0" onclick="openBlacklistModal()">+ ADD BLACKLIST</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ARRESTS -->
   <div class="page" id="page-arrests">
     <div class="page-title">Arrest Logs</div>
@@ -3246,7 +3302,7 @@
         type="search"
         id="portal-search-input"
         class="portal-search-input"
-        placeholder="Search SOP, tracker, patrol logs, arrests, legal, or classified content..."
+        placeholder="Search SOP, tracker, blacklists, patrol logs, arrests, legal, or classified content..."
         autocomplete="off"
         spellcheck="false">
       <div class="portal-search-meta">
@@ -3255,7 +3311,7 @@
       </div>
       <div class="portal-search-results" id="portal-search-results">
         <div class="portal-search-empty">
-          Search across page titles, SOP sections, rules, tracker records, patrol logs, arrest logs, legal notices, and classified headings from one place.
+          Search across page titles, SOP sections, rules, tracker records, blacklist entries, patrol logs, arrest logs, legal notices, and classified headings from one place.
         </div>
       </div>
     </div>
@@ -3331,6 +3387,36 @@
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('personnel-modal')">CANCEL</button>
       <button class="btn-primary" onclick="savePersonnel()">SAVE RECORD</button>
+    </div>
+  </div>
+</div>
+
+<!-- BLACKLIST MODAL -->
+<div class="modal-overlay" id="blacklist-modal">
+  <div class="modal wide">
+    <h2 id="blacklist-modal-title">Add Blacklist Entry</h2>
+    <div class="modal-sub">SAVE BLACKLISTS - VERIFIED SUPERVISOR ACCESS ONLY</div>
+    <div class="modal-error" id="blacklist-error"></div>
+    <input type="hidden" id="bl-id">
+    <div class="form-grid">
+      <div><label>Roblox Username</label><input type="text" id="bl-roblox-user" placeholder="username"></div>
+      <div><label>Roblox ID</label><input type="text" id="bl-roblox-id" placeholder="1234567890"></div>
+      <div><label>Discord</label><input type="text" id="bl-discord" placeholder="handle or tag"></div>
+      <div><label>Discord ID</label><input type="text" id="bl-discord-id" placeholder="000000000000000000"></div>
+      <div><label>Listed By</label><input type="text" id="bl-listed-by" placeholder="Supervisor username or email"></div>
+      <div><label>Listed On</label><input type="text" id="bl-listed-on" placeholder="Apr 21, 2026"></div>
+      <div class="form-group full">
+        <label>Reason</label>
+        <input type="text" id="bl-reason" placeholder="Why this person is blacklisted">
+      </div>
+      <div class="form-group full">
+        <label>Notes (optional)</label>
+        <textarea id="bl-notes" placeholder="Additional context, alt account notes, links, or appeal details..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('blacklist-modal')">CANCEL</button>
+      <button class="btn-primary" onclick="saveBlacklistRecord()">SAVE BLACKLIST</button>
     </div>
   </div>
 </div>
@@ -3606,6 +3692,7 @@
       sop: 'SAVE-SOP',
       rules: 'SAVE-RULES',
       tracker: 'SAVE-TRACKER',
+      blacklists: 'SAVE BLACKLISTS',
       arrests: 'ARREST LOGS',
       patrols: 'PATROL LOGS',
       conf: 'CLASSIFIED',
@@ -3615,6 +3702,7 @@
     window.scrollTo(0, 0);
     closeStrikesPopup();
     if (id === 'tracker') loadTrackerPage();
+    if (id === 'blacklists') loadBlacklists();
     if (id === 'arrests') loadArrestLogs();
     if (id === 'patrols') loadPatrolLogs();
     if (id === 'conf')    loadClassifiedConsole();
@@ -4219,6 +4307,9 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   window._shiftLogs = window._shiftLogs || [];
   window._patrolLogsLoaded = false;
   window._personnelRows = window._personnelRows || [];
+  window._blacklistRows = window._blacklistRows || [];
+  window._blacklistMap = window._blacklistMap || {};
+  window._blacklistsLoaded = false;
 
   function escapeHtml(value) {
     return String(value ?? '')
@@ -4963,6 +5054,213 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     loadArrestLogs();
   }
 
+  function getDefaultBlacklistListedOn() {
+    return new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+
+  function getBlacklistPrimaryLabel(row = {}) {
+    return row.roblox_username || row.discord || row.discord_id || row.roblox_id || row.listed_by || 'Unknown Entry';
+  }
+
+  function getBlacklistAddedLabel(row = {}) {
+    return row.listed_on || formatSecurityLogTime(row.created_at) || 'Unknown';
+  }
+
+  function updateBlacklistOverview(rows) {
+    const list = rows || [];
+    const robloxTagged = list.filter(row => String(row.roblox_username || row.roblox_id || '').trim()).length;
+    const discordTagged = list.filter(row => String(row.discord || row.discord_id || '').trim()).length;
+    const latest = list[0] || null;
+
+    document.getElementById('blacklist-total').textContent = String(list.length);
+    document.getElementById('blacklist-roblox').textContent = String(robloxTagged);
+    document.getElementById('blacklist-discord').textContent = String(discordTagged);
+    document.getElementById('blacklist-latest').textContent = latest
+      ? `${getBlacklistPrimaryLabel(latest)} - ${getBlacklistAddedLabel(latest)}`
+      : 'No blacklist entries yet';
+  }
+
+  function renderBlacklists(rows, errorMessage = '') {
+    const tbody = document.getElementById('blacklist-tbody');
+    if (!tbody) return;
+
+    const list = rows || [];
+    const canManage = hasVerifiedAdminAccess();
+    const actionCol = document.getElementById('blacklist-actions-col');
+    if (actionCol) actionCol.style.display = canManage ? '' : 'none';
+
+    if (errorMessage) {
+      tbody.innerHTML = `<tr><td colspan="${canManage ? '8' : '7'}" style="text-align:center;color:var(--amber-bright);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">BLACKLIST TRACKER UNAVAILABLE - ${escapeHtml(errorMessage)}</td></tr>`;
+      return;
+    }
+
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="${canManage ? '8' : '7'}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">NO BLACKLIST ENTRIES ON FILE</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(row => {
+      const reason = row.reason || 'No reason provided';
+      const notesHtml = row.notes
+        ? `<br><span class="mono" style="font-size:10px;color:var(--text-dim)">${escapeHtml(row.notes)}</span>`
+        : '';
+      const actionCell = canManage
+        ? `<td><button class="edit-btn" onclick="openBlacklistModal('${escapeHtml(row.id)}')">EDIT</button><button class="delete-btn" onclick="deleteBlacklistRecord('${escapeHtml(row.id)}')">DEL</button></td>`
+        : '';
+      return `
+        <tr>
+          <td class="mono">${escapeHtml(row.roblox_username || '-')}</td>
+          <td class="mono">${escapeHtml(row.roblox_id || '-')}</td>
+          <td class="mono">${escapeHtml(row.discord || '-')}</td>
+          <td class="mono">${escapeHtml(row.discord_id || '-')}</td>
+          <td><span class="arrest-charge-text">${escapeHtml(reason)}</span>${notesHtml}</td>
+          <td class="mono">${escapeHtml(row.listed_by || 'Unknown')}</td>
+          <td style="font-size:12px;color:var(--text-muted)">${escapeHtml(getBlacklistAddedLabel(row))}</td>
+          ${actionCell}
+        </tr>`;
+    }).join('');
+  }
+
+  async function loadBlacklists() {
+    const { data, error } = await sb.from('save_blacklists').select('*').order('created_at', { ascending: false });
+    window._blacklistRows = data || [];
+    window._blacklistMap = Object.fromEntries((window._blacklistRows || []).map(row => [row.id, row]));
+    window._blacklistsLoaded = !error;
+    updateBlacklistOverview(window._blacklistRows);
+
+    if (error) {
+      renderBlacklists([], `Create the save_blacklists table in Supabase to enable the department blacklist tracker. (${error.message})`);
+      return;
+    }
+
+    renderBlacklists(window._blacklistRows);
+  }
+
+  function resetBlacklistModalFields() {
+    ['bl-roblox-user', 'bl-roblox-id', 'bl-discord', 'bl-discord-id', 'bl-reason', 'bl-notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('bl-listed-by').value = window._adminEmail || '';
+    document.getElementById('bl-listed-on').value = getDefaultBlacklistListedOn();
+  }
+
+  function fillBlacklistModalFields(row = {}) {
+    document.getElementById('bl-roblox-user').value = row.roblox_username || '';
+    document.getElementById('bl-roblox-id').value = row.roblox_id || '';
+    document.getElementById('bl-discord').value = row.discord || '';
+    document.getElementById('bl-discord-id').value = row.discord_id || '';
+    document.getElementById('bl-listed-by').value = row.listed_by || window._adminEmail || '';
+    document.getElementById('bl-listed-on').value = row.listed_on || getDefaultBlacklistListedOn();
+    document.getElementById('bl-reason').value = row.reason || '';
+    document.getElementById('bl-notes').value = row.notes || '';
+  }
+
+  async function openBlacklistModal(id) {
+    if (!requireVerifiedAdminAccess(id ? 'edit department blacklist entries' : 'create department blacklist entries')) return;
+    const errorEl = document.getElementById('blacklist-error');
+    errorEl.textContent = '';
+    document.getElementById('bl-id').value = id || '';
+    document.getElementById('blacklist-modal-title').textContent = id ? 'Edit Blacklist Entry' : 'Add Blacklist Entry';
+    resetBlacklistModalFields();
+
+    if (id) {
+      const cached = (window._blacklistMap || {})[id];
+      if (cached) {
+        fillBlacklistModalFields(cached);
+      } else {
+        const { data, error } = await sb.from('save_blacklists').select('*').eq('id', id).single();
+        if (error || !data) {
+          errorEl.textContent = 'Unable to load that blacklist record right now.';
+          return;
+        }
+        fillBlacklistModalFields(data);
+      }
+    }
+
+    document.getElementById('blacklist-modal').classList.add('open');
+  }
+
+  async function saveBlacklistRecord() {
+    if (!requireVerifiedAdminAccess('save department blacklist entries')) return;
+    const errorEl = document.getElementById('blacklist-error');
+    errorEl.textContent = '';
+
+    const id = document.getElementById('bl-id').value;
+    const payload = {
+      roblox_username: document.getElementById('bl-roblox-user').value.trim() || null,
+      roblox_id: document.getElementById('bl-roblox-id').value.trim() || null,
+      discord: document.getElementById('bl-discord').value.trim() || null,
+      discord_id: document.getElementById('bl-discord-id').value.trim() || null,
+      listed_by: document.getElementById('bl-listed-by').value.trim() || window._adminEmail || 'Command',
+      listed_on: document.getElementById('bl-listed-on').value.trim() || getDefaultBlacklistListedOn(),
+      reason: document.getElementById('bl-reason').value.trim(),
+      notes: document.getElementById('bl-notes').value.trim() || null
+    };
+
+    if (!payload.reason) {
+      errorEl.textContent = 'Reason is required.';
+      return;
+    }
+
+    if (![payload.roblox_username, payload.roblox_id, payload.discord, payload.discord_id].some(Boolean)) {
+      errorEl.textContent = 'Add at least one Roblox or Discord identifier.';
+      return;
+    }
+
+    let error;
+    if (id) {
+      ({ error } = await sb.from('save_blacklists').update(payload).eq('id', id));
+    } else {
+      ({ error } = await sb.from('save_blacklists').insert(payload));
+    }
+
+    if (error) {
+      await logSecurityEvent('blacklist_save_failed', 'medium', 'Failed to save department blacklist entry', {
+        source: 'blacklists',
+        details: { id: id || null, message: error.message }
+      });
+      errorEl.textContent = 'Failed: ' + error.message;
+      return;
+    }
+
+    await logSecurityEvent(id ? 'blacklist_updated' : 'blacklist_created', 'medium', id ? 'Updated department blacklist entry' : 'Created department blacklist entry', {
+      source: 'blacklists',
+      actorEmail: window._adminEmail || '',
+      details: {
+        id: id || null,
+        roblox: payload.roblox_username || '',
+        discord: payload.discord || '',
+        listedBy: payload.listed_by
+      }
+    });
+    closeModal('blacklist-modal');
+    stampLastUpdated(window._adminEmail);
+    loadBlacklists();
+  }
+
+  async function deleteBlacklistRecord(id) {
+    if (!requireVerifiedAdminAccess('delete department blacklist entries')) return;
+    if (!confirm('Delete this blacklist entry? This cannot be undone.')) return;
+
+    const { error } = await sb.from('save_blacklists').delete().eq('id', id);
+    if (error) {
+      await logSecurityEvent('blacklist_delete_failed', 'medium', 'Failed to delete department blacklist entry', {
+        source: 'blacklists',
+        details: { id, message: error.message }
+      });
+      alert('Failed: ' + error.message);
+      return;
+    }
+
+    await logSecurityEvent('blacklist_deleted', 'medium', 'Deleted department blacklist entry', {
+      source: 'blacklists',
+      actorEmail: window._adminEmail || '',
+      details: { id }
+    });
+    stampLastUpdated(window._adminEmail);
+    loadBlacklists();
+  }
+
   const PORTAL_SEARCHABLE_SELECTORS = [
     '.page-title',
     '.page-subtitle',
@@ -5016,6 +5314,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
       sop: 'SAVE-SOP',
       rules: 'SAVE-RULES',
       tracker: 'SAVE-TRACKER',
+      blacklists: 'SAVE Blacklists',
       arrests: 'Arrest Logs',
       patrols: 'Patrol Logs',
       conf: 'Classified',
@@ -5122,7 +5421,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
       countEl.textContent = 'Type to search across the portal.';
       resultsEl.innerHTML = `
         <div class="portal-search-empty">
-          Search across page titles, SOP sections, rules, tracker records, patrol logs, arrest logs, legal notices, and classified headings from one place.
+          Search across page titles, SOP sections, rules, tracker records, blacklist entries, patrol logs, arrest logs, legal notices, and classified headings from one place.
         </div>`;
       return;
     }
@@ -5330,6 +5629,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
       details: { userId: user.id }
     });
     if (document.getElementById('page-tracker').classList.contains('active')) loadTrackerPage();
+    if (document.getElementById('page-blacklists').classList.contains('active')) loadBlacklists();
     if (document.getElementById('page-arrests').classList.contains('active')) loadArrestLogs();
     if (document.getElementById('page-patrols').classList.contains('active')) loadPatrolLogs();
     if (document.getElementById('page-conf').classList.contains('active')) loadClassifiedConsole();
@@ -5346,6 +5646,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     await sb.auth.signOut();
     setAdminMode(false, '');
     if (document.getElementById('page-tracker').classList.contains('active')) loadTrackerPage();
+    if (document.getElementById('page-blacklists').classList.contains('active')) loadBlacklists();
     if (document.getElementById('page-arrests').classList.contains('active')) loadArrestLogs();
     if (document.getElementById('page-patrols').classList.contains('active')) loadPatrolLogs();
     updateClassifiedAccess();
@@ -5358,6 +5659,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     const patrolDeleteAllowed = on && ['supervisor', 'owner'].includes(String(role || '').toLowerCase());
     document.getElementById('sup-actions-col').style.display = on ? '' : 'none';
     document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
+    document.getElementById('blacklist-actions-col').style.display = on ? '' : 'none';
     document.getElementById('arrest-actions-col').style.display = on ? '' : 'none';
     document.getElementById('shift-actions-col').style.display = patrolDeleteAllowed ? '' : 'none';
     document.getElementById('nav-panel').style.display = 'none';
