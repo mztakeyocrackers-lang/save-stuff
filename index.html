@@ -203,6 +203,142 @@
   }
   @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.3; } }
 
+  body.site-locked {
+    overflow: hidden;
+  }
+
+  body.site-locked #sidebar,
+  body.site-locked #main {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  #site-auth-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    background:
+      radial-gradient(circle at top, rgba(201,168,76,.08), transparent 42%),
+      linear-gradient(180deg, rgba(5,8,15,.96) 0%, rgba(4,6,12,.985) 100%);
+  }
+
+  body.site-locked #site-auth-overlay {
+    display: flex;
+  }
+
+  .site-auth-card {
+    width: min(680px, 100%);
+    background: linear-gradient(180deg, rgba(9,12,24,.98) 0%, rgba(8,10,19,.98) 100%);
+    border: 1px solid rgba(201,168,76,.2);
+    box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(201,168,76,.04) inset;
+    border-radius: 14px;
+    padding: 34px 34px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .site-auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .site-auth-kicker {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+  }
+
+  .site-auth-card h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: .95;
+    color: var(--text-bright);
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  .site-auth-copy,
+  .site-auth-footnote {
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 58ch;
+  }
+
+  .site-auth-status,
+  .site-auth-identity {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    letter-spacing: .4px;
+    border: 1px solid rgba(201,168,76,.12);
+    background: rgba(255,255,255,.02);
+    color: var(--text);
+  }
+
+  .site-auth-status.error {
+    color: #ffc3c3;
+    border-color: rgba(224,80,80,.3);
+    background: rgba(184,50,50,.12);
+  }
+
+  .site-auth-status.success,
+  .site-auth-identity {
+    color: #d9f3e4;
+    border-color: rgba(42,186,101,.22);
+    background: rgba(42,186,101,.1);
+  }
+
+  .site-auth-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .site-auth-actions .admin-btn,
+  .site-auth-actions .legal-link-btn {
+    min-width: 220px;
+    justify-content: center;
+  }
+
+  .discord-session-chip {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    max-width: 360px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(74,159,212,.25);
+    background: rgba(26,82,120,.16);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: #b7dbf3;
+  }
+
+  .discord-session-chip strong {
+    color: var(--text-bright);
+    font-weight: 600;
+  }
+
+  body.discord-verified .discord-session-chip {
+    display: inline-flex;
+  }
+
   /* MAIN */
   #main { margin-left: var(--nav-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -2161,7 +2297,22 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body class="site-locked auth-loading">
+
+<div id="site-auth-overlay" aria-live="polite">
+  <div class="site-auth-card">
+    <div class="site-auth-kicker">Discord Authentication Required</div>
+    <h1>SAVE Command Portal Access</h1>
+    <p class="site-auth-copy" id="site-auth-copy">Sign in with Discord to continue. Access is restricted to approved personnel who are in the server, hold the verified role, and match a linked tracker record.</p>
+    <div class="site-auth-status" id="site-auth-status">Checking secure access requirements...</div>
+    <div class="site-auth-identity" id="site-auth-identity" style="display:none"></div>
+    <div class="site-auth-actions">
+      <button type="button" class="admin-btn" id="discord-auth-btn" onclick="beginDiscordPortalLogin()" disabled>Authenticate with Discord</button>
+      <button type="button" class="legal-link-btn" onclick="window.location.href='https://discord.com/channels/1465136660533612798'">Open Discord</button>
+    </div>
+    <div class="site-auth-footnote">Required checks: Discord sign-in, current SAVE server membership, verified role, and a linked personnel record in the tracker.</div>
+  </div>
+</div>
 
 <aside id="sidebar">
   <div class="sidebar-header">
@@ -2202,7 +2353,9 @@
       ISP <span class="breadcrumb-sep">/</span> <span id="bc">HOME</span>
     </div>
     <div style="display:flex;align-items:center;gap:14px">
+      <span class="discord-session-chip" id="discord-session-chip"></span>
       <span id="admin-user-label" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);display:none"></span>
+      <button class="admin-btn" id="discord-signout-btn" onclick="logoutDiscordPortal()" style="display:none">⬡ DISCORD SIGN OUT</button>
       <button class="admin-btn" id="invite-admin-btn" onclick="openInviteModal()" style="display:none">⬡ INVITE ADMIN</button>
       <button class="admin-btn" id="legal-access-btn" onclick="openLegalPage('legal-terms')">⬡ LEGAL NOTICE</button>
       <button class="admin-btn" id="admin-toggle-btn" onclick="openLoginModal()">⬡ ADMIN LOGIN</button>
@@ -2916,7 +3069,7 @@
       </div>
       <div style="padding:18px 18px 0">
         <div class="patrol-helper-copy">
-          Anyone can log a patrol here. Paste the Discord message link as proof, and the system will generate the patrol label automatically in the format
+          Patrol entries are tied to your linked Discord identity. Paste the Discord message link as proof, and the system will generate the patrol label automatically in the format
           <span class="patrol-label-pill">RANK, USERNAME - PATROL #</span>
           based on how many patrols that username already has on file.
         </div>
@@ -2924,7 +3077,7 @@
           Each patrol log now requires a start time and end time, and the completed entry is delivered to the patrol log channel through SAVE Assistant automatically.
         </div>
         <div class="patrol-helper-copy" style="margin-top:-4px">
-          Patrol entries stay public to submit, but only verified supervisors or owners can remove an existing patrol log.
+          Your rank and username are pulled from your linked personnel record and cannot be edited in the patrol logger.
         </div>
         <div class="patrol-summary-grid">
           <div class="patrol-summary-card">
@@ -3030,7 +3183,7 @@
       </div>
       <div style="padding:18px 18px 0">
         <div class="arrest-helper-copy">
-          Anyone can log an arrest here. Case numbers are generated automatically in the format
+          Arrest logs are tied to your linked Discord identity. Case numbers are generated automatically in the format
           <span class="patrol-label-pill">ISP-YYYYMMDD-OFFICER-NNN</span>
           based on how many arrests that officer has already logged today.
         </div>
@@ -3038,7 +3191,7 @@
           Completed arrest logs are delivered to the SAVE Assistant Discord bot log automatically after they save.
         </div>
         <div class="arrest-helper-copy" style="margin-top:-4px">
-          The list below only shows the case number and arresting officer. Click any arrest row to open the full report.
+          The list below only shows the case number and arresting officer. Officer identity is pulled from your linked personnel record and cannot be edited.
         </div>
         <div class="patrol-summary-grid">
           <div class="patrol-summary-card">
@@ -3586,22 +3739,20 @@
     <div class="modal-error" id="shift-log-error"></div>
     <div class="form-grid">
       <div>
-        <label>Personnel</label>
-        <select id="shift-personnel-select" onchange="syncShiftFormFromPersonnel()">
-          <option value="">Select personnel</option>
-        </select>
+        <label>Linked Discord Identity</label>
+        <input type="text" id="shift-linked-identity" placeholder="Discord sign-in required" readonly>
       </div>
       <div>
         <label>Rank Abbrev</label>
-        <input type="text" id="shift-rank-code" placeholder="T" maxlength="8" oninput="this.value=this.value.toUpperCase();updateShiftLogPreview()">
+        <input type="text" id="shift-rank-code" placeholder="T" maxlength="8" readonly>
       </div>
       <div>
         <label>Username</label>
-        <input type="text" id="shift-username" placeholder="username" oninput="updateShiftLogPreview()">
+        <input type="text" id="shift-username" placeholder="username" readonly>
       </div>
       <div>
         <label>Full Rank</label>
-        <input type="text" id="shift-rank-full" placeholder="Trooper" oninput="updateShiftLogPreview()">
+        <input type="text" id="shift-rank-full" placeholder="Trooper" readonly>
       </div>
       <div>
         <label>Start Time</label>
@@ -3612,7 +3763,7 @@
         <input type="time" id="shift-end-time">
       </div>
     </div>
-    <div class="shift-field-note" id="shift-access-note">Roster autofill is optional. If the personnel list is unavailable, enter rank and username manually before saving.</div>
+    <div class="shift-field-note" id="shift-access-note">This patrol logger uses your linked Discord account. Manual personnel selection is disabled.</div>
     <label>Proof Link</label>
     <input type="url" id="shift-proof-url" class="shift-proof-input" placeholder="https://discord.com/channels/.../.../...">
     <label>Notes (optional)</label>
@@ -3645,7 +3796,7 @@
       </div>
       <div class="form-group">
         <label>Arresting Officer</label>
-        <input type="text" id="arrest-officer" placeholder="Your username" oninput="updateArrestCasePreview()">
+        <input type="text" id="arrest-officer" placeholder="Discord sign-in required" readonly>
       </div>
       <div class="form-group full">
         <label>Charge(s)</label>
@@ -3866,6 +4017,7 @@
   initInteractiveLegalPage();
   initArrestLogInteractions();
   initStrikeReasonPresets();
+  initializeDiscordPortalAccess();
 
   // Auto-stamp "last updated" whenever an admin saves the page
   function stampLastUpdated(adminEmail) {
@@ -3883,6 +4035,7 @@
 
   // ── Nav / Clock ───────────────────────────────────────────
   function showPage(id) {
+    if (!hasDiscordPortalAccess()) return;
     if (id === 'panel') {
       if (!hasVerifiedAdminAccess()) {
         logSecurityEvent('restricted_route_blocked', 'high', 'Blocked direct supervisor panel route access', {
@@ -4464,10 +4617,10 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   function updateShiftLogPreview() {
     const preview = document.getElementById('shift-log-preview');
     if (!preview) return;
-    const rankCode = document.getElementById('shift-rank-code')?.value || formatRankCode(document.getElementById('shift-rank-full')?.value || '');
-    const username = document.getElementById('shift-username')?.value || '';
+    const rankCode = getAuthenticatedPortalRankCode();
+    const username = getAuthenticatedPortalUsername();
     if (!String(username).trim()) {
-      preview.textContent = 'Awaiting personnel selection';
+      preview.textContent = 'Discord-linked personnel required';
       return;
     }
     const patrolNumber = getNextPatrolNumber(username);
@@ -4557,14 +4710,11 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   }
 
   async function openShiftLogModal() {
-    if (hasVerifiedAdminAccess() && !Object.keys(window._personnelMap || {}).length) {
-      await loadPersonnel({ suppressErrors: true });
+    if (!hasDiscordPortalAccess()) {
+      revokeDiscordPortalAccess('Discord sign-in is required before you can log a patrol.');
+      return;
     }
-    populateShiftPersonnelOptions(Object.values(window._personnelMap || {}));
-    document.getElementById('shift-personnel-select').value = '';
-    document.getElementById('shift-rank-code').value = '';
-    document.getElementById('shift-rank-full').value = '';
-    document.getElementById('shift-username').value = '';
+    syncAuthenticatedIdentityFields();
     document.getElementById('shift-start-time').value = '';
     document.getElementById('shift-end-time').value = '';
     document.getElementById('shift-proof-url').value = '';
@@ -4624,6 +4774,178 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   window._blacklistRows = window._blacklistRows || [];
   window._blacklistMap = window._blacklistMap || {};
   window._blacklistsLoaded = false;
+  window._discordPortalSession = window._discordPortalSession || null;
+
+  function hasDiscordPortalAccess() {
+    return !!window._discordPortalSession?.verified;
+  }
+
+  function getDiscordPortalErrorMessage(code) {
+    const normalized = String(code || '').trim().toLowerCase();
+    if (normalized === 'missing_role') return 'Access denied. Your Discord account is in the server, but it does not currently hold the verified role.';
+    if (normalized === 'not_in_guild') return 'Access denied. Your Discord account is not currently a member of the SAVE server.';
+    if (normalized === 'not_whitelisted') return 'Access denied. Your Discord account is not linked to an approved tracker record.';
+    if (normalized === 'oauth_failed') return 'Discord authentication failed during the secure callback. Try again in a moment.';
+    if (normalized === 'missing_code') return 'Discord did not return a valid authorization code. Start the sign-in flow again.';
+    if (normalized === 'session_expired') return 'Your Discord portal session expired. Sign in again to continue.';
+    return 'Discord access could not be verified for this portal session.';
+  }
+
+  function getAuthenticatedPersonnelRecord() {
+    return window._discordPortalSession?.personnel || null;
+  }
+
+  function getAuthenticatedPortalRankText() {
+    return String(getAuthenticatedPersonnelRecord()?.rank || '').trim() || 'Unassigned';
+  }
+
+  function getAuthenticatedPortalRankCode() {
+    return formatRankCode(getAuthenticatedPortalRankText());
+  }
+
+  function getAuthenticatedPortalUsername() {
+    const personnel = getAuthenticatedPersonnelRecord();
+    const user = window._discordPortalSession?.user || {};
+    return String(
+      personnel?.discord ||
+      user?.globalName ||
+      user?.username ||
+      personnel?.roblox_username ||
+      ''
+    ).trim() || 'Unknown';
+  }
+
+  function getAuthenticatedPortalIdentityLabel() {
+    const personnel = getAuthenticatedPersonnelRecord();
+    const segments = [
+      personnel?.callsign ? `Callsign ${personnel.callsign}` : '',
+      getAuthenticatedPortalRankText(),
+      getAuthenticatedPortalUsername()
+    ].filter(Boolean);
+    return segments.join(' · ');
+  }
+
+  function setDiscordPortalStatus(message, tone = '') {
+    const statusEl = document.getElementById('site-auth-status');
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.className = `site-auth-status${tone ? ` ${tone}` : ''}`;
+  }
+
+  function syncAuthenticatedIdentityFields() {
+    const identity = getAuthenticatedPortalIdentityLabel();
+    const username = getAuthenticatedPortalUsername();
+    const rankText = getAuthenticatedPortalRankText();
+    const rankCode = getAuthenticatedPortalRankCode();
+    const shiftIdentity = document.getElementById('shift-linked-identity');
+    const shiftRankCode = document.getElementById('shift-rank-code');
+    const shiftRankFull = document.getElementById('shift-rank-full');
+    const shiftUsername = document.getElementById('shift-username');
+    const arrestOfficer = document.getElementById('arrest-officer');
+
+    if (shiftIdentity) shiftIdentity.value = identity;
+    if (shiftRankCode) shiftRankCode.value = rankCode;
+    if (shiftRankFull) shiftRankFull.value = rankText;
+    if (shiftUsername) shiftUsername.value = username;
+    if (arrestOfficer) arrestOfficer.value = username;
+  }
+
+  function applyDiscordPortalSession(payload) {
+    const user = payload?.user || {};
+    const personnel = payload?.personnel || {};
+    window._discordPortalSession = {
+      verified: true,
+      user,
+      personnel
+    };
+
+    const chip = document.getElementById('discord-session-chip');
+    const identityEl = document.getElementById('site-auth-identity');
+    const signoutBtn = document.getElementById('discord-signout-btn');
+    const callsign = personnel?.callsign ? `#${personnel.callsign}` : 'Linked';
+    const rank = personnel?.rank || 'Personnel';
+    const username = getAuthenticatedPortalUsername();
+
+    document.body.classList.remove('site-locked', 'auth-loading');
+    document.body.classList.add('discord-verified');
+    setDiscordPortalStatus('Discord access verified. Secure portal unlocked.', 'success');
+
+    if (identityEl) {
+      identityEl.style.display = 'block';
+      identityEl.textContent = `${callsign} · ${rank} · ${username}`;
+    }
+
+    if (chip) {
+      chip.innerHTML = `<strong>${escapeHtml(callsign)}</strong><span>${escapeHtml(rank)} · ${escapeHtml(username)}</span>`;
+    }
+
+    if (signoutBtn) signoutBtn.style.display = 'inline-flex';
+    syncAuthenticatedIdentityFields();
+    updateShiftLogPreview();
+  }
+
+  function revokeDiscordPortalAccess(message, tone = 'error') {
+    window._discordPortalSession = null;
+    document.body.classList.add('site-locked');
+    document.body.classList.remove('discord-verified');
+    setDiscordPortalStatus(message, tone);
+    const identityEl = document.getElementById('site-auth-identity');
+    if (identityEl) {
+      identityEl.style.display = 'none';
+      identityEl.textContent = '';
+    }
+    const chip = document.getElementById('discord-session-chip');
+    if (chip) chip.textContent = '';
+    const signoutBtn = document.getElementById('discord-signout-btn');
+    if (signoutBtn) signoutBtn.style.display = 'none';
+  }
+
+  function beginDiscordPortalLogin() {
+    window.location.href = '/api/discord/login';
+  }
+
+  async function logoutDiscordPortal() {
+    try {
+      await fetch('/api/discord/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch {}
+    revokeDiscordPortalAccess('Portal session ended. Sign in with Discord to continue.', '');
+    window.location.href = '/';
+  }
+
+  async function initializeDiscordPortalAccess() {
+    const authBtn = document.getElementById('discord-auth-btn');
+    const params = new URLSearchParams(window.location.search);
+    if (authBtn) authBtn.disabled = true;
+    setDiscordPortalStatus('Checking secure access requirements...');
+
+    try {
+      const response = await fetch('/api/discord/me', {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-store'
+      });
+
+      if (!response.ok) {
+        const authError = params.get('auth_error');
+        revokeDiscordPortalAccess(authError ? getDiscordPortalErrorMessage(authError) : 'Discord sign-in is required before this portal can load.');
+        return;
+      }
+
+      const payload = await response.json();
+      applyDiscordPortalSession(payload);
+      if (params.has('auth_error') || params.has('auth')) {
+        history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch (error) {
+      revokeDiscordPortalAccess(`Unable to verify Discord access right now. ${error?.message || 'Try again.'}`);
+    } finally {
+      document.body.classList.remove('auth-loading');
+      if (authBtn) authBtn.disabled = false;
+    }
+  }
 
   function escapeHtml(value) {
     return String(value ?? '')
@@ -5157,11 +5479,16 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   }
 
   async function openArrestLogModal() {
+    if (!hasDiscordPortalAccess()) {
+      revokeDiscordPortalAccess('Discord sign-in is required before you can log an arrest.');
+      return;
+    }
     if (!window._arrestLogsLoaded) await loadArrestLogs();
     document.getElementById('arrest-log-error').textContent = '';
-    ['arrest-suspect', 'arrest-officer', 'arrest-charge', 'arrest-location', 'arrest-notes'].forEach(id => {
+    ['arrest-suspect', 'arrest-charge', 'arrest-location', 'arrest-notes'].forEach(id => {
       document.getElementById(id).value = '';
     });
+    document.getElementById('arrest-officer').value = getAuthenticatedPortalUsername();
     document.getElementById('arrest-status').value = 'Open';
     updateArrestCasePreview();
     document.getElementById('arrest-log-modal').classList.add('open');
@@ -5329,8 +5656,12 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   }
 
   async function saveArrestLog() {
+    if (!hasDiscordPortalAccess()) {
+      revokeDiscordPortalAccess('Discord sign-in is required before you can save an arrest log.');
+      return;
+    }
     const suspect = document.getElementById('arrest-suspect').value.trim();
-    const officer = document.getElementById('arrest-officer').value.trim();
+    const officer = getAuthenticatedPortalUsername();
     const charge = document.getElementById('arrest-charge').value.trim();
     const location = document.getElementById('arrest-location').value.trim();
     const status = document.getElementById('arrest-status').value;
@@ -5344,8 +5675,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
 
     const caseNumber = buildArrestCaseNumber(officer, countOfficerArrestLogsToday(officer));
     const createdAt = new Date().toISOString();
-    const { data: { session } } = await sb.auth.getSession();
-    const loggedBy = officer || session?.user?.email || window._adminEmail || 'Public submission';
+    const loggedBy = officer;
     const payload = {
       case_number: caseNumber,
       suspect_name: suspect,
@@ -6386,10 +6716,14 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
 
   // ── Personnel CRUD ────────────────────────────────────────
   async function saveShiftLog() {
-    const personnelId = document.getElementById('shift-personnel-select').value || null;
-    const username = document.getElementById('shift-username').value.trim();
-    const rankFull = document.getElementById('shift-rank-full').value.trim();
-    const rankCode = (document.getElementById('shift-rank-code').value.trim() || formatRankCode(rankFull)).toUpperCase();
+    if (!hasDiscordPortalAccess()) {
+      revokeDiscordPortalAccess('Discord sign-in is required before you can save a patrol log.');
+      return;
+    }
+    const personnelId = getAuthenticatedPersonnelRecord()?.id || null;
+    const username = getAuthenticatedPortalUsername();
+    const rankFull = getAuthenticatedPortalRankText();
+    const rankCode = getAuthenticatedPortalRankCode();
     const startTime = document.getElementById('shift-start-time').value.trim();
     const endTime = document.getElementById('shift-end-time').value.trim();
     const proofUrl = document.getElementById('shift-proof-url').value.trim();
@@ -6405,8 +6739,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     const patrolNumber = getNextPatrolNumber(username);
     const patrolLabel = buildPatrolLabel(rankCode, username, patrolNumber);
     const createdAt = new Date().toISOString();
-    const { data: { session } } = await sb.auth.getSession();
-    const loggedBy = session?.user?.email || window._adminEmail || username || 'Public submission';
+    const loggedBy = username;
     const payload = {
       personnel_id: personnelId,
       rank_text: rankFull || rankCode,
