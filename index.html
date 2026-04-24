@@ -4010,6 +4010,30 @@
 
     <div class="tracker-section">
       <div class="tracker-header">
+        <h2>Senior Personnel</h2>
+        <span class="section-tag">Senior SAVE Personnel</span>
+      </div>
+      <div class="tracker-table-outer">
+        <table class="tracker-data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Callsign</th><th>Rank</th><th>Roblox</th><th>Roblox ID</th>
+              <th>Discord</th><th>Discord ID</th><th>Joined</th><th>Status</th><th>Quota</th><th>Strikes</th>
+              <th id="sen-actions-col" style="display:none"></th>
+            </tr>
+          </thead>
+          <tbody id="senior-tbody">
+            <tr><td colspan="12" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">LOADING RECORDS...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tracker-footer">
+        <button class="add-row-btn" style="margin:0" onclick="openPersonnelModal(null,'senior')">+ ADD PERSONNEL</button>
+      </div>
+    </div>
+
+    <div class="tracker-section">
+      <div class="tracker-header">
         <h2>General Personnel</h2>
         <span class="section-tag">Assigned SAVE Personnel</span>
       </div>
@@ -7418,6 +7442,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     const label = document.getElementById('admin-user-label');
     const patrolDeleteAllowed = on && ['supervisor', 'owner'].includes(String(role || '').toLowerCase());
     document.getElementById('sup-actions-col').style.display = on ? '' : 'none';
+    document.getElementById('sen-actions-col').style.display = on ? '' : 'none';
     document.getElementById('gen-actions-col').style.display = on ? '' : 'none';
     document.getElementById('blacklist-actions-col').style.display = on ? '' : 'none';
     document.getElementById('arrest-actions-col').style.display = on ? '' : 'none';
@@ -7536,7 +7561,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
 
   function renderPersonnelAccessState(message) {
     const colspan = hasVerifiedAdminAccess() ? '12' : '11';
-    ['supervisory-tbody','general-tbody'].forEach(id => {
+    ['supervisory-tbody','senior-tbody','general-tbody'].forEach(id => {
       const tbody = document.getElementById(id);
       if (!tbody) return;
       tbody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center;color:var(--text-dim);padding:24px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px">${escapeHtml(message)}</td></tr>`;
@@ -7602,6 +7627,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
   function refreshPersonnelTables() {
     const rows = window._personnelRows || [];
     renderTable('supervisory-tbody', rows.filter(r => r.category === 'supervisory'));
+    renderTable('senior-tbody', rows.filter(r => r.category === 'senior'));
     renderTable('general-tbody', rows.filter(r => r.category === 'general'));
   }
 
@@ -7933,7 +7959,7 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
     const id = document.getElementById('pm-id').value;
     const currentRecord = id ? ((window._personnelMap || {})[id] || null) : null;
     const category = document.getElementById('pm-category').value || currentRecord?.category || 'general';
-    if (!['supervisory', 'general'].includes(category)) {
+    if (!['supervisory', 'senior', 'general'].includes(category)) {
       document.getElementById('personnel-error').textContent = 'Category is missing. Close the modal and try again.';
       return;
     }
