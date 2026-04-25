@@ -4,6 +4,7 @@ const {
   fetchPersonnelByDiscordId,
   fetchSupabaseJson,
   getConfig,
+  getQuery,
   getSession,
   getTranscriptServiceKeyReady,
   sendJson,
@@ -11,7 +12,8 @@ const {
 } = require('./_lib');
 
 module.exports = async function handler(req, res) {
-  const token = String(req.query.t || '').trim();
+  const query = getQuery(req);
+  const token = String(query.t || '').trim();
   if (!token) {
     sendJson(res, 400, { error: 'missing_token' });
     return;
