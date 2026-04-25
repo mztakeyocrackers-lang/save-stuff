@@ -8,6 +8,7 @@ const {
   fetchDiscordUser,
   fetchPersonnelByDiscordId,
   getConfig,
+  getQuery,
   parseCookies,
   redirect,
   sanitizeReturnTarget,
@@ -18,9 +19,10 @@ module.exports = async function handler(req, res) {
   const { clientId, clientSecret, guildId, verifiedRoleId, redirectUri, siteUrl, sessionSecret } = getConfig();
   const fallbackUrl = siteUrl || '/';
   const cookies = parseCookies(req);
+  const query = getQuery(req);
   const returnTo = sanitizeReturnTarget(cookies[RETURN_COOKIE]) || fallbackUrl;
-  const code = req.query.code;
-  const state = req.query.state;
+  const code = query.code;
+  const state = query.state;
   const withQuery = (target, key, value) => `${target}${target.includes('?') ? '&' : '?'}${key}=${encodeURIComponent(value)}`;
 
   if (!code) {
