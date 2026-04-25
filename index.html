@@ -7869,18 +7869,6 @@ if (totalTimeTrackerEl) totalTimeTrackerEl.textContent = formatDurationMinutes(t
       source: 'tracker',
       details: { username, patrolLabel, startTime, endTime, proofUrl }
     });
-    await sendPatrolDiscordWebhook({
-      personnelId,
-      patrolLabel,
-      rankCode,
-      rankText: rankFull || rankCode,
-      username,
-      startTime,
-      endTime,
-      proofUrl,
-      loggedBy,
-      createdAt: insertedLog?.created_at || createdAt
-    });
     document.getElementById('shift-log-modal').classList.remove('open');
     stampLastUpdated(window._adminEmail);
     loadPatrolLogs();
