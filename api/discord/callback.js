@@ -1,4 +1,5 @@
 const {
+  RETURN_COOKIE,
   SESSION_COOKIE,
   STATE_COOKIE,
   buildSessionPayload,
@@ -9,6 +10,7 @@ const {
   getConfig,
   parseCookies,
   redirect,
+  sanitizeReturnTarget,
   serializeCookie
 } = require('./_lib');
 
@@ -16,21 +18,25 @@ module.exports = async function handler(req, res) {
   const { clientId, clientSecret, guildId, verifiedRoleId, redirectUri, siteUrl, sessionSecret } = getConfig();
   const fallbackUrl = siteUrl || '/';
   const cookies = parseCookies(req);
+  const returnTo = sanitizeReturnTarget(cookies[RETURN_COOKIE]) || fallbackUrl;
   const code = req.query.code;
   const state = req.query.state;
+  const withQuery = (target, key, value) => `${target}${target.includes('?') ? '&' : '?'}${key}=${encodeURIComponent(value)}`;
 
   if (!code) {
-    redirect(res, `${fallbackUrl}?auth_error=missing_code`, [
+    redirect(res, withQuery(returnTo, 'auth_error', 'missing_code'), [
       serializeCookie(STATE_COOKIE, '', { maxAge: 0 }),
-      serializeCookie(SESSION_COOKIE, '', { maxAge: 0 })
+      serializeCookie(SESSION_COOKIE, '', { maxAge: 0 }),
+      serializeCookie(RETURN_COOKIE, '', { maxAge: 0 }),
     ]);
     return;
   }
 
   if (!state || state !== cookies[STATE_COOKIE]) {
-    redirect(res, `${fallbackUrl}?auth_error=oauth_failed`, [
+    redirect(res, withQuery(returnTo, 'auth_error', 'oauth_failed'), [
       serializeCookie(STATE_COOKIE, '', { maxAge: 0 }),
-      serializeCookie(SESSION_COOKIE, '', { maxAge: 0 })
+      serializeCookie(SESSION_COOKIE, '', { maxAge: 0 }),
+      serializeCookie(RETURN_COOKIE, '', { maxAge: 0 }),
     ]);
     return;
   }
@@ -61,27 +67,30 @@ module.exports = async function handler(req, res) {
       member = await fetchDiscordMember(tokenData.access_token, guildId);
     } catch (error) {
       const reason = error?.status === 404 ? 'not_in_guild' : 'oauth_failed';
-      redirect(res, `${fallbackUrl}?auth_error=${reason}`, [
+      redirect(res, withQuery(returnTo, 'auth_error', reason), [
         serializeCookie(STATE_COOKIE, '', { maxAge: 0 }),
-        serializeCookie(SESSION_COOKIE, '', { maxAge: 0 })
+        serializeCookie(SESSION_COOKIE, '', { maxAge: 0 }),
+        serializeCookie(RETURN_COOKIE, '', { maxAge: 0 }),
       ]);
       return;
     }
 
     const roles = Array.isArray(member?.roles) ? member.roles.map(String) : [];
     if (!roles.includes(String(verifiedRoleId))) {
-      redirect(res, `${fallbackUrl}?auth_error=missing_role`, [
+      redirect(res, withQuery(returnTo, 'auth_error', 'missing_role'), [
         serializeCookie(STATE_COOKIE, '', { maxAge: 0 }),
-        serializeCookie(SESSION_COOKIE, '', { maxAge: 0 })
+        serializeCookie(SESSION_COOKIE, '', { maxAge: 0 }),
+        serializeCookie(RETURN_COOKIE, '', { maxAge: 0 }),
       ]);
       return;
     }
 
     const personnel = await fetchPersonnelByDiscordId(String(user.id));
     if (!personnel) {
-      redirect(res, `${fallbackUrl}?auth_error=not_whitelisted`, [
+      redirect(res, withQuery(returnTo, 'auth_error', 'not_whitelisted'), [
         serializeCookie(STATE_COOKIE, '', { maxAge: 0 }),
-        serializeCookie(SESSION_COOKIE, '', { maxAge: 0 })
+        serializeCookie(SESSION_COOKIE, '', { maxAge: 0 }),
+        serializeCookie(RETURN_COOKIE, '', { maxAge: 0 }),
       ]);
       return;
     }
@@ -93,16 +102,18 @@ module.exports = async function handler(req, res) {
       expiresIn: tokenData.expires_in
     });
 
-    redirect(res, `${fallbackUrl}?auth=1`, [
+    redirect(res, withQuery(returnTo, 'auth', '1'), [
       serializeCookie(STATE_COOKIE, '', { maxAge: 0 }),
+      serializeCookie(RETURN_COOKIE, '', { maxAge: 0 }),
       serializeCookie(SESSION_COOKIE, encodeSession(payload, sessionSecret), {
         maxAge: Math.max(300, Math.min(Number(tokenData.expires_in || 3600), 43200))
       })
     ]);
   } catch {
-    redirect(res, `${fallbackUrl}?auth_error=oauth_failed`, [
+    redirect(res, withQuery(returnTo, 'auth_error', 'oauth_failed'), [
       serializeCookie(STATE_COOKIE, '', { maxAge: 0 }),
-      serializeCookie(SESSION_COOKIE, '', { maxAge: 0 })
+      serializeCookie(SESSION_COOKIE, '', { maxAge: 0 }),
+      serializeCookie(RETURN_COOKIE, '', { maxAge: 0 }),
     ]);
   }
 };
