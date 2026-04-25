@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, noarchive, nosnippet">
+  <title>SAVE Ticket Transcript</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0f1625;
+      --surface-2: #151f32;
+      --border: #243249;
+      --accent: #4a9fd4;
+      --gold: #c9a84c;
+      --text: #dbe6f4;
+      --muted: #8fa2bd;
+      --danger: #e05b5b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(74,159,212,.12), transparent 42%),
+        linear-gradient(180deg, #07111f 0%, #060b14 100%);
+      color: var(--text);
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 48px;
+    }
+
+    .hero, .card, .message {
+      background: rgba(15, 22, 37, .92);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.24);
+    }
+
+    .hero {
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .kicker {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gold);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 36px;
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .card {
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .value {
+      font-size: 15px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 22px;
+    }
+
+    #messages {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      padding: 16px 18px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .author {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .content {
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .attachments, .embeds {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.04);
+    }
+
+    .attachments a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(74,159,212,.28);
+      background: rgba(74,159,212,.08);
+      color: #abd7f5;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .empty, .error-box {
+      color: var(--muted);
+      text-align: center;
+      padding: 30px 16px;
+    }
+
+    .error-box {
+      color: #ffd6d6;
+      border: 1px solid rgba(224,91,91,.35);
+      background: rgba(224,91,91,.08);
+      border-radius: 14px;
+    }
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(3, 6, 12, .82);
+      backdrop-filter: blur(8px);
+      padding: 18px;
+      z-index: 10;
+    }
+
+    .auth-overlay.visible {
+      display: flex;
+    }
+
+    .auth-card {
+      width: min(520px, 100%);
+      background: #0f1625;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 22px 60px rgba(0,0,0,.45);
+    }
+
+    .auth-card h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .auth-card p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 0 18px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #d6b55a, #c9a84c);
+      color: #101521;
+    }
+
+    .secondary {
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+      <div class="kicker">SAVE Transcript Access</div>
+      <h2>Discord sign-in required</h2>
+      <p id="authMessage">Sign in with your linked Discord account to view this ticket transcript.</p>
+      <div class="button-row">
+        <button class="primary" id="loginButton">Continue with Discord</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="kicker">SAVE Ticket Transcript</div>
+      <h1 id="heroTitle">Loading transcript...</h1>
+      <p id="heroSubtitle">This direct link will open one ticket transcript after Discord verification.</p>
+      <div class="grid" id="summaryGrid"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Messages</h2>
+      <div id="messages">
+        <div class="empty">Loading transcript messages...</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const authOverlay = document.getElementById('authOverlay');
+    const authMessage = document.getElementById('authMessage');
+    const loginButton = document.getElementById('loginButton');
+    const heroTitle = document.getElementById('heroTitle');
+    const heroSubtitle = document.getElementById('heroSubtitle');
+    const summaryGrid = document.getElementById('summaryGrid');
+    const messagesEl = document.getElementById('messages');
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatDate(value) {
+      if (!value) return 'Unknown';
+      try {
+        return new Date(value).toLocaleString();
+      } catch {
+        return 'Unknown';
+      }
+    }
+
+    function getTranscriptToken() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('t') || '';
+    }
+
+    function showAuth(message) {
+      authMessage.textContent = message || 'Sign in with your linked Discord account to view this ticket transcript.';
+      authOverlay.classList.add('visible');
+    }
+
+    function hideAuth() {
+      authOverlay.classList.remove('visible');
+    }
+
+    function renderSummaryItem(label, value, isPill = false) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'card';
+      wrapper.style.marginBottom = '0';
+      wrapper.innerHTML = `
+        <div class="label">${escapeHtml(label)}</div>
+        <div class="value">${isPill ? `<span class="pill">${escapeHtml(value)}</span>` : escapeHtml(value)}</div>
+      `;
+      return wrapper;
+    }
+
+    function renderMessage(message) {
+      const article = document.createElement('article');
+      article.className = 'message';
+
+      const attachments = Array.isArray(message.attachments) ? message.attachments : [];
+      const embeds = Array.isArray(message.embeds) ? message.embeds : [];
+
+      article.innerHTML = `
+        <div class="meta">
+          <span class="author">${escapeHtml(message.author_tag || message.author_name || 'Unknown User')}</span>
+          <span>User ID: ${escapeHtml(message.author_discord_id || 'Unknown')}</span>
+          <span>${escapeHtml(formatDate(message.created_at))}</span>
+          ${message.edited_at ? `<span>Edited ${escapeHtml(formatDate(message.edited_at))}</span>` : ''}
+        </div>
+        <div class="content">${message.content ? message.content.split('\n').map((line) => escapeHtml(line)).join('<br>') : '<em>No text content</em>'}</div>
+      `;
+
+      if (attachments.length) {
+        const box = document.createElement('div');
+        box.className = 'attachments';
+        box.innerHTML = `
+          <strong>Attachments</strong>
+          <ul>
+            ${attachments.map((attachment) => `<li><a href="${escapeHtml(attachment.url || '')}" target="_blank" rel="noreferrer">${escapeHtml(attachment.name || attachment.url || 'Attachment')}</a></li>`).join('')}
+          </ul>
+        `;
+        article.appendChild(box);
+      }
+
+      if (embeds.length) {
+        const box = document.createElement('div');
+        box.className = 'embeds';
+        box.textContent = `Embeds attached: ${embeds.length}`;
+        article.appendChild(box);
+      }
+
+      return article;
+    }
+
+    async function loadTranscript() {
+      const token = getTranscriptToken();
+      if (!token) {
+        heroTitle.textContent = 'Transcript link is missing a token';
+        heroSubtitle.textContent = 'This transcript URL is incomplete.';
+        messagesEl.innerHTML = '<div class="error-box">The transcript token is missing from this URL.</div>';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/discord/transcript?t=${encodeURIComponent(token)}`, {
+          method: 'GET',
+          credentials: 'include',
+          cache: 'no-store',
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          showAuth('Sign in with your linked Discord account to view this transcript.');
+          messagesEl.innerHTML = '<div class="empty">Waiting for Discord sign-in...</div>';
+          return;
+        }
+
+        const payload = await response.json();
+        if (!response.ok || !payload?.transcript) {
+          throw new Error(payload?.error || 'Transcript could not be loaded.');
+        }
+
+        hideAuth();
+
+        const transcript = payload.transcript;
+        const messages = Array.isArray(payload.messages) ? payload.messages : [];
+
+        heroTitle.textContent = transcript.ticket_type_label || 'Ticket Transcript';
+        heroSubtitle.textContent = `${transcript.channel_name} • ${messages.length} message(s)`;
+
+        summaryGrid.innerHTML = '';
+        summaryGrid.appendChild(renderSummaryItem('Ticket Type', transcript.ticket_type_label || 'Unknown', true));
+        summaryGrid.appendChild(renderSummaryItem('Opened By', transcript.opener_tag || transcript.opener_discord_id || 'Unknown'));
+        summaryGrid.appendChild(renderSummaryItem('Closed By', transcript.closer_tag || transcript.closer_discord_id || 'Unknown'));
+        summaryGrid.appendChild(renderSummaryItem('Closed At', formatDate(transcript.closed_at)));
+        summaryGrid.appendChild(renderSummaryItem('Close Reason', transcript.close_reason || 'No reason provided'));
+        summaryGrid.appendChild(renderSummaryItem('Channel', `#${transcript.channel_name || 'unknown'}`));
+
+        messagesEl.innerHTML = '';
+        if (!messages.length) {
+          messagesEl.innerHTML = '<div class="empty">No messages were saved for this transcript.</div>';
+          return;
+        }
+
+        for (const message of messages) {
+          messagesEl.appendChild(renderMessage(message));
+        }
+      } catch (error) {
+        heroTitle.textContent = 'Transcript failed to load';
+        heroSubtitle.textContent = 'There was a problem loading this transcript.';
+        messagesEl.innerHTML = `<div class="error-box">${escapeHtml(error.message || 'Unknown transcript error.')}</div>`;
+      }
+    }
+
+    loginButton.addEventListener('click', () => {
+      const returnTo = `${window.location.pathname}${window.location.search}`;
+      window.location.href = `/api/discord/login?return_to=${encodeURIComponent(returnTo)}`;
+    });
+
+    loadTranscript();
+  </script>
+</body>
+</html>
