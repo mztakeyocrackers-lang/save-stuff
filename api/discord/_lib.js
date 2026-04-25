@@ -5,7 +5,7 @@ const STATE_COOKIE = 'save_discord_oauth_state';
 const RETURN_COOKIE = 'save_discord_return_to';
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://xnqjdgixcocekzehsote.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucWpkZ2l4Y29jZWt6ZWhzb3RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NTI4OTIsImV4cCI6MjA5MjIyODg5Mn0.U0zMSMRZE91RYnToZgooIel0VHDyLlxKK-Cr-Oh9ves';
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucWpkZ2l4Y29jZWt6ZWhzb3RlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NjY1Mjg5MiwiZXhwIjoyMDkyMjI4ODkyfQ.FOZQ-fvT6eWjVerAkD0qNRWC-ImhaLkk1li_co-TxQU';
 
 function getConfig() {
   return {
@@ -98,3 +98,151 @@ function buildSessionPayload({ user, personnel, accessToken, expiresIn }) {
       callsign: String(personnel.callsign || ''),
       rank: String(personnel.rank || ''),
       roblox_username: String(personnel.roblox_username || ''),
+      roblox_id: String(personnel.roblox_id || ''),
+      discord: String(personnel.discord || ''),
+      discord_id: String(personnel.discord_id || ''),
+      status: String(personnel.status || ''),
+      category: String(personnel.category || '')
+    },
+    accessToken: String(accessToken || ''),
+    expiresAt: Date.now() + lifetimeMs
+  };
+}
+
+async function fetchJson(url, options = {}) {
+  const response = await fetch(url, options);
+  const text = await response.text();
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
+  return { response, data };
+}
+
+async function fetchDiscordUser(accessToken) {
+  const { response, data } = await fetchJson('https://discord.com/api/users/@me', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+  if (!response.ok) throw new Error(data?.message || 'Failed to fetch Discord user.');
+  return data;
+}
+
+async function fetchDiscordMember(accessToken, guildId) {
+  const { response, data } = await fetchJson(`https://discord.com/api/users/@me/guilds/${guildId}/member`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+  if (!response.ok) {
+    const error = new Error(data?.message || 'Failed to fetch guild membership.');
+    error.status = response.status;
+    throw error;
+  }
+  return data;
+}
+
+async function fetchPersonnelByDiscordId(discordId) {
+  const url = new URL(`${SUPABASE_URL}/rest/v1/personnel`);
+  url.searchParams.set('select', 'id,callsign,rank,roblox_username,roblox_id,discord,discord_id,status,category');
+  url.searchParams.set('discord_id', `eq.${discordId}`);
+  url.searchParams.set('limit', '1');
+
+  const { response, data } = await fetchJson(url.toString(), {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      Accept: 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(data?.message || 'Failed to query linked personnel record.');
+  }
+
+  return Array.isArray(data) ? data[0] || null : null;
+}
+
+async function fetchSupabaseJson(url, { serviceRole = false, ...options } = {}) {
+  const apiKey = serviceRole ? SUPABASE_SERVICE_ROLE_KEY : SUPABASE_ANON_KEY;
+  if (!apiKey) {
+    throw new Error(serviceRole ? 'Missing SUPABASE_SERVICE_ROLE_KEY.' : 'Missing SUPABASE_ANON_KEY.');
+  }
+
+  const { response, data } = await fetchJson(url, {
+    ...options,
+    headers: {
+      apikey: apiKey,
+      Authorization: `Bearer ${apiKey}`,
+      Accept: 'application/json',
+      ...(options.headers || {}),
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(data?.message || data?.error || 'Supabase request failed.');
+  }
+
+  return data;
+}
+
+function getTranscriptServiceKeyReady() {
+  return Boolean(SUPABASE_SERVICE_ROLE_KEY);
+}
+
+function sanitizeReturnTarget(value) {
+  const raw = String(value || '').trim();
+  if (!raw.startsWith('/')) {
+    return '';
+  }
+
+  if (raw.startsWith('//')) {
+    return '';
+  }
+
+  return raw;
+}
+
+function sendJson(res, statusCode, payload) {
+  res.statusCode = statusCode;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.end(JSON.stringify(payload));
+}
+
+function redirect(res, location, cookies = []) {
+  if (cookies.length) res.setHeader('Set-Cookie', cookies);
+  res.statusCode = 302;
+  res.setHeader('Location', location);
+  res.end();
+}
+
+function getSession(req) {
+  const { sessionSecret } = getConfig();
+  const cookies = parseCookies(req);
+  return decodeSession(cookies[SESSION_COOKIE], sessionSecret);
+}
+
+module.exports = {
+  SESSION_COOKIE,
+  STATE_COOKIE,
+  RETURN_COOKIE,
+  buildSessionPayload,
+  decodeSession,
+  encodeSession,
+  fetchDiscordMember,
+  fetchSupabaseJson,
+  fetchDiscordUser,
+  fetchPersonnelByDiscordId,
+  getConfig,
+  getQuery,
+  getTranscriptServiceKeyReady,
+  getSession,
+  parseCookies,
+  redirect,
+  sanitizeReturnTarget,
+  sendJson,
+  serializeCookie
+};
