@@ -30,6 +30,19 @@ function parseCookies(req) {
   }, {});
 }
 
+function getQuery(req) {
+  if (req && req.query && typeof req.query === 'object') {
+    return req.query;
+  }
+
+  try {
+    const url = new URL(String(req?.url || ''), 'https://save-stuff.vercel.app');
+    return Object.fromEntries(url.searchParams.entries());
+  } catch {
+    return {};
+  }
+}
+
 function serializeCookie(name, value, options = {}) {
   const bits = [`${name}=${encodeURIComponent(value)}`];
   bits.push(`Path=${options.path || '/'}`);
@@ -85,16 +98,3 @@ function buildSessionPayload({ user, personnel, accessToken, expiresIn }) {
       callsign: String(personnel.callsign || ''),
       rank: String(personnel.rank || ''),
       roblox_username: String(personnel.roblox_username || ''),
-      roblox_id: String(personnel.roblox_id || ''),
-      discord: String(personnel.discord || ''),
-      discord_id: String(personnel.discord_id || ''),
-      status: String(personnel.status || ''),
-      category: String(personnel.category || '')
-    },
-    accessToken: String(accessToken || ''),
-    expiresAt: Date.now() + lifetimeMs
-  };
-}
-
-async function fetchJson(url, options = {}) {
-  const response = await fetch(url, options);
