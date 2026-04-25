@@ -107,35 +107,128 @@
     }
 
     .message {
-      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .message.deleted {
+      border-color: rgba(224,91,91,.4);
+      background:
+        linear-gradient(90deg, rgba(224,91,91,.16), rgba(224,91,91,.04) 24%, rgba(15, 22, 37, .94) 24%),
+        rgba(15, 22, 37, .92);
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.08);
+      background: #0a1020;
+    }
+
+    .message-body {
+      min-width: 0;
+    }
+
+    .message-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .identity {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .display-name {
+      color: var(--text);
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .username {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .deleted-pill,
+    .bot-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+
+    .deleted-pill {
+      color: #ffd6d6;
+      background: rgba(224,91,91,.14);
+      border: 1px solid rgba(224,91,91,.3);
+    }
+
+    .bot-pill {
+      color: #abd7f5;
+      background: rgba(74,159,212,.12);
+      border: 1px solid rgba(74,159,212,.24);
     }
 
     .meta {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       color: var(--muted);
       font-size: 12px;
-    }
-
-    .author {
-      color: var(--text);
-      font-weight: 700;
     }
 
     .content {
       line-height: 1.6;
       white-space: pre-wrap;
       word-break: break-word;
+      font-size: 14px;
+    }
+
+    .content.empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .message.deleted .display-name,
+    .message.deleted .username,
+    .message.deleted .meta,
+    .message.deleted .content {
+      color: #ffd0d0;
     }
 
     .attachments, .embeds {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
       background: rgba(255,255,255,.03);
       border: 1px solid rgba(255,255,255,.04);
+    }
+
+    .attachments strong, .embeds strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .attachments ul {
+      margin: 0;
+      padding-left: 18px;
     }
 
     .attachments a {
@@ -312,21 +405,60 @@
       return wrapper;
     }
 
+    function getTranscriptMeta(message) {
+      const embeds = Array.isArray(message?.embeds) ? message.embeds : [];
+      return embeds.find((embed) => embed && embed.__transcriptMeta) || null;
+    }
+
+    function getRenderableEmbeds(message) {
+      const embeds = Array.isArray(message?.embeds) ? message.embeds : [];
+      return embeds.filter((embed) => !embed?.__transcriptMeta);
+    }
+
+    function getDefaultAvatarUrl(discordId) {
+      try {
+        const snowflake = BigInt(String(discordId || '0'));
+        const index = Number((snowflake >> 22n) % 6n);
+        return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
+      } catch {
+        return 'https://cdn.discordapp.com/embed/avatars/0.png';
+      }
+    }
+
     function renderMessage(message) {
       const article = document.createElement('article');
-      article.className = 'message';
+      const metaEmbed = getTranscriptMeta(message);
+      const isDeleted = Boolean(metaEmbed?.isDeleted);
+      article.className = `message${isDeleted ? ' deleted' : ''}`;
 
       const attachments = Array.isArray(message.attachments) ? message.attachments : [];
-      const embeds = Array.isArray(message.embeds) ? message.embeds : [];
+      const embeds = getRenderableEmbeds(message);
+      const displayName = metaEmbed?.displayName || message.author_name || message.author_tag || 'Unknown User';
+      const username = metaEmbed?.username || message.author_tag || '';
+      const avatarUrl = metaEmbed?.avatarUrl || getDefaultAvatarUrl(message.author_discord_id);
+      const isBot = Boolean(metaEmbed?.isBot);
+      const safeContent = message.content
+        ? message.content.split('\n').map((line) => escapeHtml(line)).join('<br>')
+        : '<span class="content empty">No text content</span>';
 
       article.innerHTML = `
-        <div class="meta">
-          <span class="author">${escapeHtml(message.author_tag || message.author_name || 'Unknown User')}</span>
-          <span>User ID: ${escapeHtml(message.author_discord_id || 'Unknown')}</span>
-          <span>${escapeHtml(formatDate(message.created_at))}</span>
-          ${message.edited_at ? `<span>Edited ${escapeHtml(formatDate(message.edited_at))}</span>` : ''}
+        <img class="avatar" src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar">
+        <div class="message-body">
+          <div class="message-head">
+            <div class="identity">
+              <span class="display-name">${escapeHtml(displayName)}</span>
+              ${username && username !== displayName ? `<span class="username">@${escapeHtml(username.replace(/^@+/, ''))}</span>` : ''}
+            </div>
+            ${isBot ? '<span class="bot-pill">BOT</span>' : ''}
+            ${isDeleted ? '<span class="deleted-pill">🗑 Deleted Message</span>' : ''}
+          </div>
+          <div class="meta">
+            <span>User ID: ${escapeHtml(message.author_discord_id || 'Unknown')}</span>
+            <span>${escapeHtml(formatDate(message.created_at))}</span>
+            ${message.edited_at ? `<span>Edited ${escapeHtml(formatDate(message.edited_at))}</span>` : ''}
+          </div>
+          <div class="content${message.content ? '' : ' empty'}">${safeContent}</div>
         </div>
-        <div class="content">${message.content ? message.content.split('\n').map((line) => escapeHtml(line)).join('<br>') : '<em>No text content</em>'}</div>
       `;
 
       if (attachments.length) {
@@ -338,14 +470,14 @@
             ${attachments.map((attachment) => `<li><a href="${escapeHtml(attachment.url || '')}" target="_blank" rel="noreferrer">${escapeHtml(attachment.name || attachment.url || 'Attachment')}</a></li>`).join('')}
           </ul>
         `;
-        article.appendChild(box);
+        article.querySelector('.message-body').appendChild(box);
       }
 
       if (embeds.length) {
         const box = document.createElement('div');
         box.className = 'embeds';
-        box.textContent = `Embeds attached: ${embeds.length}`;
-        article.appendChild(box);
+        box.innerHTML = `<strong>Embeds</strong><div>${escapeHtml(`Embeds attached: ${embeds.length}`)}</div>`;
+        article.querySelector('.message-body').appendChild(box);
       }
 
       return article;
