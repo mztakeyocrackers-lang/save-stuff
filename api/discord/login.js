@@ -1,9 +1,10 @@
 const crypto = require('crypto');
-const { RETURN_COOKIE, STATE_COOKIE, getConfig, redirect, sanitizeReturnTarget, serializeCookie } = require('./_lib');
+const { RETURN_COOKIE, STATE_COOKIE, getConfig, getQuery, redirect, sanitizeReturnTarget, serializeCookie } = require('./_lib');
 
 module.exports = async function handler(req, res) {
   const { clientId, redirectUri, sessionSecret } = getConfig();
-  const returnTo = sanitizeReturnTarget(req.query.return_to);
+  const query = getQuery(req);
+  const returnTo = sanitizeReturnTarget(query.return_to);
   if (!clientId || !redirectUri || !sessionSecret) {
     res.statusCode = 500;
     res.end('Discord portal authentication is not configured yet.');
