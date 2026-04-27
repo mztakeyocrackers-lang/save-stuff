@@ -10,12 +10,16 @@
       --bg: #070b14;
       --surface: #0f1625;
       --surface-2: #151f32;
+      --surface-3: #1a2335;
       --border: #243249;
       --accent: #4a9fd4;
       --gold: #c9a84c;
       --text: #dbe6f4;
       --muted: #8fa2bd;
+      --muted-2: #71839e;
       --danger: #e05b5b;
+      --chat-line: rgba(255,255,255,.06);
+      --chat-hover: rgba(255,255,255,.03);
     }
 
     * { box-sizing: border-box; }
@@ -35,7 +39,7 @@
       padding: 28px 18px 48px;
     }
 
-    .hero, .card, .message {
+    .hero, .card {
       background: rgba(15, 22, 37, .92);
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -43,8 +47,26 @@
     }
 
     .hero {
-      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
       margin-bottom: 20px;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(201,168,76,.95), rgba(74,159,212,.95));
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
     }
 
     .kicker {
@@ -54,6 +76,20 @@
       color: var(--gold);
       margin-bottom: 10px;
       font-weight: 700;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(74,159,212,.1);
+      border: 1px solid rgba(74,159,212,.22);
+      color: #abd7f5;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      white-space: nowrap;
     }
 
     h1 {
@@ -68,11 +104,23 @@
       line-height: 1.55;
     }
 
+    .hero-note {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: 1px solid rgba(255,255,255,.05);
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 14px;
       margin-top: 18px;
+      align-items: stretch;
     }
 
     .card {
@@ -95,34 +143,120 @@
       word-break: break-word;
     }
 
+    .summary-card {
+      margin-bottom: 0;
+      min-height: 100%;
+      background: linear-gradient(180deg, rgba(21,31,50,.9), rgba(15,22,37,.92));
+      border: 1px solid rgba(255,255,255,.05);
+      box-shadow: none;
+    }
+
+    .summary-card.wide {
+      grid-column: span 2;
+    }
+
     .section-title {
-      margin: 0 0 14px;
+      margin: 0;
       font-size: 22px;
+    }
+
+    .section-kicker {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .section-caption {
+      color: var(--muted-2);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .chat-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .chat-card-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      background:
+        radial-gradient(circle at top right, rgba(74,159,212,.08), transparent 40%),
+        rgba(255,255,255,.01);
     }
 
     #messages {
       display: flex;
       flex-direction: column;
+      gap: 0;
+      padding: 10px 0 14px;
+      background:
+        linear-gradient(180deg, rgba(8,12,21,.96), rgba(9,14,24,.98)),
+        var(--surface);
+    }
+
+    .date-divider {
+      display: flex;
+      align-items: center;
       gap: 12px;
+      margin: 10px 20px;
+      color: var(--muted-2);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    .date-divider::before,
+    .date-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--chat-line);
+    }
+
+    .date-divider span {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.06);
     }
 
     .message {
       display: grid;
-      grid-template-columns: 52px minmax(0, 1fr);
+      grid-template-columns: 44px minmax(0, 1fr);
       gap: 14px;
-      padding: 18px;
+      padding: 14px 20px;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      transition: background .15s ease;
+    }
+
+    .message:hover {
+      background: var(--chat-hover);
+    }
+
+    .message + .message {
+      border-top: 1px solid rgba(255,255,255,.035);
     }
 
     .message.deleted {
-      border-color: rgba(224,91,91,.4);
       background:
-        linear-gradient(90deg, rgba(224,91,91,.16), rgba(224,91,91,.04) 24%, rgba(15, 22, 37, .94) 24%),
-        rgba(15, 22, 37, .92);
+        linear-gradient(90deg, rgba(224,91,91,.16), rgba(224,91,91,.04) 12px, transparent 12px),
+        transparent;
     }
 
     .avatar {
-      width: 52px;
-      height: 52px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       object-fit: cover;
       border: 1px solid rgba(255,255,255,.08);
@@ -136,9 +270,9 @@
     .message-head {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
     }
 
     .identity {
@@ -146,6 +280,7 @@
       flex-wrap: wrap;
       align-items: baseline;
       gap: 8px;
+      min-width: 0;
     }
 
     .display-name {
@@ -157,6 +292,12 @@
     .username {
       color: var(--muted);
       font-size: 13px;
+    }
+
+    .timestamp {
+      color: var(--muted-2);
+      font-size: 12px;
+      white-space: nowrap;
     }
 
     .deleted-pill,
@@ -183,13 +324,13 @@
       border: 1px solid rgba(74,159,212,.24);
     }
 
-    .meta {
+    .audit-line {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 12px;
-      color: var(--muted);
-      font-size: 12px;
+      margin-bottom: 8px;
+      color: var(--muted-2);
+      font-size: 11px;
     }
 
     .content {
@@ -206,34 +347,45 @@
 
     .message.deleted .display-name,
     .message.deleted .username,
-    .message.deleted .meta,
+    .message.deleted .audit-line,
+    .message.deleted .timestamp,
     .message.deleted .content {
       color: #ffd0d0;
     }
 
     .attachments, .embeds {
       margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.04);
-    }
-
-    .attachments strong, .embeds strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 13px;
-      font-weight: 700;
+      padding-left: 2px;
     }
 
     .attachments ul {
       margin: 0;
-      padding-left: 18px;
+      padding-left: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .attachments a {
       color: var(--accent);
       text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .attachments a::before {
+      content: 'Attachment';
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted-2);
     }
 
     .embed-stack {
@@ -397,6 +549,7 @@
       gap: 12px;
       flex-wrap: wrap;
       margin-top: 18px;
+      align-items: stretch;
     }
 
     button {
@@ -434,14 +587,24 @@
 
   <main class="shell">
     <section class="hero">
-      <div class="kicker">SAVE Ticket Transcript</div>
+      <div class="hero-top">
+        <div class="kicker">SAVE Ticket Transcript</div>
+        <div class="hero-badge">Protected Transcript View</div>
+      </div>
       <h1 id="heroTitle">Loading transcript...</h1>
       <p id="heroSubtitle">This direct link will open one ticket transcript after Discord verification.</p>
+      <div class="hero-note">This page replays one archived SAVE ticket as closely as possible to the original Discord conversation while still preserving transcript metadata and moderation context.</div>
       <div class="grid" id="summaryGrid"></div>
     </section>
 
-    <section class="card">
-      <h2 class="section-title">Messages</h2>
+    <section class="card chat-card">
+      <div class="chat-card-head">
+        <div>
+          <div class="section-kicker">Archived Conversation</div>
+          <h2 class="section-title">Messages</h2>
+        </div>
+        <div class="section-caption">Discord-style replay</div>
+      </div>
       <div id="messages">
         <div class="empty">Loading transcript messages...</div>
       </div>
@@ -475,6 +638,25 @@
       }
     }
 
+    function formatDayLabel(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return date.toLocaleDateString(undefined, {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    }
+
+    function getDateKey(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    }
+
     function getTranscriptToken() {
       const params = new URLSearchParams(window.location.search);
       return params.get('t') || '';
@@ -489,15 +671,21 @@
       authOverlay.classList.remove('visible');
     }
 
-    function renderSummaryItem(label, value, isPill = false) {
+    function renderSummaryItem(label, value, { isPill = false, wide = false } = {}) {
       const wrapper = document.createElement('div');
-      wrapper.className = 'card';
-      wrapper.style.marginBottom = '0';
+      wrapper.className = `card summary-card${wide ? ' wide' : ''}`;
       wrapper.innerHTML = `
         <div class="label">${escapeHtml(label)}</div>
         <div class="value">${isPill ? `<span class="pill">${escapeHtml(value)}</span>` : escapeHtml(value)}</div>
       `;
       return wrapper;
+    }
+
+    function renderDateDivider(value) {
+      const divider = document.createElement('div');
+      divider.className = 'date-divider';
+      divider.innerHTML = `<span>${escapeHtml(formatDayLabel(value) || 'Unknown Date')}</span>`;
+      return divider;
     }
 
     function getTranscriptMeta(message) {
@@ -518,64 +706,6 @@
       } catch {
         return 'https://cdn.discordapp.com/embed/avatars/0.png';
       }
-    }
-
-    function renderMessage(message) {
-      const article = document.createElement('article');
-      const metaEmbed = getTranscriptMeta(message);
-      const isDeleted = Boolean(metaEmbed?.isDeleted);
-      article.className = `message${isDeleted ? ' deleted' : ''}`;
-
-      const attachments = Array.isArray(message.attachments) ? message.attachments : [];
-      const embeds = getRenderableEmbeds(message);
-      const displayName = metaEmbed?.displayName || message.author_name || message.author_tag || 'Unknown User';
-      const username = metaEmbed?.username || message.author_tag || '';
-      const avatarUrl = metaEmbed?.avatarUrl || getDefaultAvatarUrl(message.author_discord_id);
-      const isBot = Boolean(metaEmbed?.isBot);
-      const safeContent = message.content
-        ? message.content.split('\n').map((line) => escapeHtml(line)).join('<br>')
-        : '<span class="content empty">No text content</span>';
-
-      article.innerHTML = `
-        <img class="avatar" src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar">
-        <div class="message-body">
-          <div class="message-head">
-            <div class="identity">
-              <span class="display-name">${escapeHtml(displayName)}</span>
-              ${username && username !== displayName ? `<span class="username">@${escapeHtml(username.replace(/^@+/, ''))}</span>` : ''}
-            </div>
-            ${isBot ? '<span class="bot-pill">BOT</span>' : ''}
-            ${isDeleted ? '<span class="deleted-pill">🗑 Deleted Message</span>' : ''}
-          </div>
-          <div class="meta">
-            <span>User ID: ${escapeHtml(message.author_discord_id || 'Unknown')}</span>
-            <span>${escapeHtml(formatDate(message.created_at))}</span>
-            ${message.edited_at ? `<span>Edited ${escapeHtml(formatDate(message.edited_at))}</span>` : ''}
-          </div>
-          <div class="content${message.content ? '' : ' empty'}">${safeContent}</div>
-        </div>
-      `;
-
-      if (attachments.length) {
-        const box = document.createElement('div');
-        box.className = 'attachments';
-        box.innerHTML = `
-          <strong>Attachments</strong>
-          <ul>
-            ${attachments.map((attachment) => `<li><a href="${escapeHtml(attachment.url || '')}" target="_blank" rel="noreferrer">${escapeHtml(attachment.name || attachment.url || 'Attachment')}</a></li>`).join('')}
-          </ul>
-        `;
-        article.querySelector('.message-body').appendChild(box);
-      }
-
-      if (embeds.length) {
-        const box = document.createElement('div');
-        box.className = 'embeds';
-        box.innerHTML = `<strong>Embeds</strong><div>${escapeHtml(`Embeds attached: ${embeds.length}`)}</div>`;
-        article.querySelector('.message-body').appendChild(box);
-      }
-
-      return article;
     }
 
     function renderEmbedCard(embed) {
@@ -627,7 +757,7 @@
         if (embed.timestamp) {
           footerParts.push(formatDate(embed.timestamp));
         }
-        parts.push(`<div class="embed-footer">${escapeHtml(footerParts.filter(Boolean).join(' • '))}</div>`);
+        parts.push(`<div class="embed-footer">${escapeHtml(footerParts.filter(Boolean).join(' - '))}</div>`);
       }
 
       wrapper.innerHTML = parts.join('');
@@ -638,18 +768,22 @@
       const article = document.createElement('article');
       const metaEmbed = getTranscriptMeta(message);
       const isDeleted = Boolean(metaEmbed?.isDeleted);
-      article.className = `message${isDeleted ? ' deleted' : ''}`;
-
       const attachments = Array.isArray(message.attachments) ? message.attachments : [];
       const embeds = getRenderableEmbeds(message);
       const displayName = metaEmbed?.displayName || message.author_name || message.author_tag || 'Unknown User';
       const username = metaEmbed?.username || message.author_tag || '';
       const avatarUrl = metaEmbed?.avatarUrl || getDefaultAvatarUrl(message.author_discord_id);
       const isBot = Boolean(metaEmbed?.isBot);
+      const createdAt = formatDate(message.created_at);
+      const auditBits = [
+        message.author_discord_id ? `User ID: ${message.author_discord_id}` : '',
+        message.edited_at ? `Edited ${formatDate(message.edited_at)}` : '',
+      ].filter(Boolean);
       const safeContent = message.content
         ? message.content.split('\n').map((line) => escapeHtml(line)).join('<br>')
         : '<span class="content empty">No text content</span>';
 
+      article.className = `message${isDeleted ? ' deleted' : ''}`;
       article.innerHTML = `
         <img class="avatar" src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar">
         <div class="message-body">
@@ -657,42 +791,36 @@
             <div class="identity">
               <span class="display-name">${escapeHtml(displayName)}</span>
               ${username && username !== displayName ? `<span class="username">@${escapeHtml(username.replace(/^@+/, ''))}</span>` : ''}
+              ${isBot ? '<span class="bot-pill">BOT</span>' : ''}
+              ${isDeleted ? '<span class="deleted-pill">Deleted</span>' : ''}
             </div>
-            ${isBot ? '<span class="bot-pill">BOT</span>' : ''}
-            ${isDeleted ? '<span class="deleted-pill">🗑 Deleted Message</span>' : ''}
+            <span class="timestamp">${escapeHtml(createdAt)}</span>
           </div>
-          <div class="meta">
-            <span>User ID: ${escapeHtml(message.author_discord_id || 'Unknown')}</span>
-            <span>${escapeHtml(formatDate(message.created_at))}</span>
-            ${message.edited_at ? `<span>Edited ${escapeHtml(formatDate(message.edited_at))}</span>` : ''}
-          </div>
+          ${auditBits.length ? `<div class="audit-line">${auditBits.map((bit) => `<span>${escapeHtml(bit)}</span>`).join('')}</div>` : ''}
           <div class="content${message.content ? '' : ' empty'}">${safeContent}</div>
         </div>
       `;
+
+      const messageBody = article.querySelector('.message-body');
 
       if (attachments.length) {
         const box = document.createElement('div');
         box.className = 'attachments';
         box.innerHTML = `
-          <strong>Attachments</strong>
           <ul>
             ${attachments.map((attachment) => `<li><a href="${escapeHtml(attachment.url || '')}" target="_blank" rel="noreferrer">${escapeHtml(attachment.name || attachment.url || 'Attachment')}</a></li>`).join('')}
           </ul>
         `;
-        article.querySelector('.message-body').appendChild(box);
+        messageBody.appendChild(box);
       }
 
       if (embeds.length) {
-        const box = document.createElement('div');
-        box.className = 'embeds';
-        box.innerHTML = '<strong>Embeds</strong>';
         const stack = document.createElement('div');
-        stack.className = 'embed-stack';
+        stack.className = 'embeds embed-stack';
         for (const embed of embeds) {
           stack.appendChild(renderEmbedCard(embed));
         }
-        box.appendChild(stack);
-        article.querySelector('.message-body').appendChild(box);
+        messageBody.appendChild(stack);
       }
 
       return article;
@@ -731,15 +859,15 @@
         const messages = Array.isArray(payload.messages) ? payload.messages : [];
 
         heroTitle.textContent = transcript.ticket_type_label || 'Ticket Transcript';
-        heroSubtitle.textContent = `${transcript.channel_name} • ${messages.length} message(s)`;
+        heroSubtitle.textContent = `#${transcript.channel_name || 'unknown'} - ${messages.length} saved message${messages.length === 1 ? '' : 's'}`;
 
         summaryGrid.innerHTML = '';
-        summaryGrid.appendChild(renderSummaryItem('Ticket Type', transcript.ticket_type_label || 'Unknown', true));
+        summaryGrid.appendChild(renderSummaryItem('Ticket Type', transcript.ticket_type_label || 'Unknown', { isPill: true }));
         summaryGrid.appendChild(renderSummaryItem('Opened By', transcript.opener_tag || transcript.opener_discord_id || 'Unknown'));
         summaryGrid.appendChild(renderSummaryItem('Closed By', transcript.closer_tag || transcript.closer_discord_id || 'Unknown'));
         summaryGrid.appendChild(renderSummaryItem('Closed At', formatDate(transcript.closed_at)));
-        summaryGrid.appendChild(renderSummaryItem('Close Reason', transcript.close_reason || 'No reason provided'));
         summaryGrid.appendChild(renderSummaryItem('Channel', `#${transcript.channel_name || 'unknown'}`));
+        summaryGrid.appendChild(renderSummaryItem('Close Reason', transcript.close_reason || 'No reason provided', { wide: true }));
 
         messagesEl.innerHTML = '';
         if (!messages.length) {
@@ -747,7 +875,13 @@
           return;
         }
 
+        let lastDateKey = '';
         for (const message of messages) {
+          const messageDateKey = getDateKey(message.created_at);
+          if (messageDateKey && messageDateKey !== lastDateKey) {
+            messagesEl.appendChild(renderDateDivider(message.created_at));
+            lastDateKey = messageDateKey;
+          }
           messagesEl.appendChild(renderMessage(message));
         }
       } catch (error) {
@@ -766,3 +900,4 @@
   </script>
 </body>
 </html>
+
