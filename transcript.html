@@ -236,6 +236,101 @@
       text-decoration: none;
     }
 
+    .embed-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .embed-card {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,255,255,.035);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .embed-author {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .embed-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .embed-description {
+      color: var(--text);
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 14px;
+    }
+
+    .embed-fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .embed-field {
+      background: rgba(255,255,255,.03);
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.04);
+    }
+
+    .embed-field.inline-false {
+      grid-column: 1 / -1;
+    }
+
+    .embed-field-name {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .embed-field-value {
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.5;
+      font-size: 13px;
+    }
+
+    .embed-thumb {
+      max-width: 120px;
+      max-height: 120px;
+      border-radius: 10px;
+      display: block;
+      margin-top: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .embed-image {
+      width: 100%;
+      max-width: 540px;
+      border-radius: 12px;
+      display: block;
+      margin-top: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .embed-footer {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
     .pill {
       display: inline-flex;
       align-items: center;
@@ -477,6 +572,126 @@
         const box = document.createElement('div');
         box.className = 'embeds';
         box.innerHTML = `<strong>Embeds</strong><div>${escapeHtml(`Embeds attached: ${embeds.length}`)}</div>`;
+        article.querySelector('.message-body').appendChild(box);
+      }
+
+      return article;
+    }
+
+    function renderEmbedCard(embed) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'embed-card';
+
+      const color = Number.isFinite(embed?.color) ? embed.color : null;
+      if (color !== null) {
+        wrapper.style.borderLeftColor = `#${color.toString(16).padStart(6, '0')}`;
+      }
+
+      const parts = [];
+
+      if (embed?.author?.name) {
+        parts.push(`<div class="embed-author">${escapeHtml(embed.author.name)}</div>`);
+      }
+
+      if (embed?.title) {
+        const title = embed.url
+          ? `<a href="${escapeHtml(embed.url)}" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none;">${escapeHtml(embed.title)}</a>`
+          : escapeHtml(embed.title);
+        parts.push(`<div class="embed-title">${title}</div>`);
+      }
+
+      if (embed?.description) {
+        parts.push(`<div class="embed-description">${String(embed.description).split('\n').map((line) => escapeHtml(line)).join('<br>')}</div>`);
+      }
+
+      if (Array.isArray(embed?.fields) && embed.fields.length) {
+        const fieldsHtml = embed.fields.map((field) => `
+          <div class="embed-field${field.inline ? '' : ' inline-false'}">
+            <div class="embed-field-name">${escapeHtml(field.name || 'Field')}</div>
+            <div class="embed-field-value">${String(field.value || '').split('\n').map((line) => escapeHtml(line)).join('<br>')}</div>
+          </div>
+        `).join('');
+        parts.push(`<div class="embed-fields">${fieldsHtml}</div>`);
+      }
+
+      if (embed?.thumbnail?.url) {
+        parts.push(`<img class="embed-thumb" src="${escapeHtml(embed.thumbnail.url)}" alt="Embed thumbnail">`);
+      }
+
+      if (embed?.image?.url) {
+        parts.push(`<img class="embed-image" src="${escapeHtml(embed.image.url)}" alt="Embed image">`);
+      }
+
+      if (embed?.footer?.text) {
+        const footerParts = [embed.footer.text];
+        if (embed.timestamp) {
+          footerParts.push(formatDate(embed.timestamp));
+        }
+        parts.push(`<div class="embed-footer">${escapeHtml(footerParts.filter(Boolean).join(' • '))}</div>`);
+      }
+
+      wrapper.innerHTML = parts.join('');
+      return wrapper;
+    }
+
+    function renderMessage(message) {
+      const article = document.createElement('article');
+      const metaEmbed = getTranscriptMeta(message);
+      const isDeleted = Boolean(metaEmbed?.isDeleted);
+      article.className = `message${isDeleted ? ' deleted' : ''}`;
+
+      const attachments = Array.isArray(message.attachments) ? message.attachments : [];
+      const embeds = getRenderableEmbeds(message);
+      const displayName = metaEmbed?.displayName || message.author_name || message.author_tag || 'Unknown User';
+      const username = metaEmbed?.username || message.author_tag || '';
+      const avatarUrl = metaEmbed?.avatarUrl || getDefaultAvatarUrl(message.author_discord_id);
+      const isBot = Boolean(metaEmbed?.isBot);
+      const safeContent = message.content
+        ? message.content.split('\n').map((line) => escapeHtml(line)).join('<br>')
+        : '<span class="content empty">No text content</span>';
+
+      article.innerHTML = `
+        <img class="avatar" src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar">
+        <div class="message-body">
+          <div class="message-head">
+            <div class="identity">
+              <span class="display-name">${escapeHtml(displayName)}</span>
+              ${username && username !== displayName ? `<span class="username">@${escapeHtml(username.replace(/^@+/, ''))}</span>` : ''}
+            </div>
+            ${isBot ? '<span class="bot-pill">BOT</span>' : ''}
+            ${isDeleted ? '<span class="deleted-pill">🗑 Deleted Message</span>' : ''}
+          </div>
+          <div class="meta">
+            <span>User ID: ${escapeHtml(message.author_discord_id || 'Unknown')}</span>
+            <span>${escapeHtml(formatDate(message.created_at))}</span>
+            ${message.edited_at ? `<span>Edited ${escapeHtml(formatDate(message.edited_at))}</span>` : ''}
+          </div>
+          <div class="content${message.content ? '' : ' empty'}">${safeContent}</div>
+        </div>
+      `;
+
+      if (attachments.length) {
+        const box = document.createElement('div');
+        box.className = 'attachments';
+        box.innerHTML = `
+          <strong>Attachments</strong>
+          <ul>
+            ${attachments.map((attachment) => `<li><a href="${escapeHtml(attachment.url || '')}" target="_blank" rel="noreferrer">${escapeHtml(attachment.name || attachment.url || 'Attachment')}</a></li>`).join('')}
+          </ul>
+        `;
+        article.querySelector('.message-body').appendChild(box);
+      }
+
+      if (embeds.length) {
+        const box = document.createElement('div');
+        box.className = 'embeds';
+        box.innerHTML = '<strong>Embeds</strong>';
+        const stack = document.createElement('div');
+        stack.className = 'embed-stack';
+        for (const embed of embeds) {
+          stack.appendChild(renderEmbedCard(embed));
+        }
+        box.appendChild(stack);
         article.querySelector('.message-body').appendChild(box);
       }
 
